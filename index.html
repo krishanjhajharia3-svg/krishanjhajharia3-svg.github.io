@@ -419,6 +419,10 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
     <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:12px">Downloads folder → Excel/Google Sheets mein kholo</div>
     <button class="btn-primary" onclick="exportViaWhatsApp();closeExportModal()" style="background:linear-gradient(135deg,#25d366,#128c7e);margin-bottom:6px">💬 WhatsApp par bhejo</button>
     <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:12px">Apne aap ko list WhatsApp pe bhejo</div>
+    <button class="btn-primary" onclick="driveBackup();closeExportModal()" style="background:linear-gradient(135deg,#4285f4,#1a73e8);margin-bottom:6px">☁️ Google Drive Backup</button>
+    <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:12px" id="driveBackupTime">—</div>
+    <button class="btn-primary" onclick="driveRestore();closeExportModal()" style="background:linear-gradient(135deg,#a78bfa,#7c3aed);margin-bottom:6px">🔄 Drive se Restore Karen</button>
+    <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:12px">Purana data wapas lao</div>
     <button class="btn-secondary" onclick="closeExportModal()">रद्द करें</button>
   </div>
 </div>
@@ -429,7 +433,13 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 let leads=JSON.parse(localStorage.getItem('re_leads')||'[]');
 let editingId=null,visitingId=null,contactId=null,currentFilter='all',deferredPrompt=null;
 
-function saveData(){localStorage.setItem('re_leads',JSON.stringify(leads))}
+function saveData(){
+  localStorage.setItem('re_leads', JSON.stringify(leads));
+  localStorage.setItem('re_leads_backup', JSON.stringify(leads));
+  localStorage.setItem('re_leads_backup_time', new Date().toISOString());
+  const day = new Date().getDay();
+  localStorage.setItem('re_leads_snap_' + day, JSON.stringify(leads));
+}
 function generateId(){return Date.now().toString(36)+Math.random().toString(36).substr(2)}
 
 // STATS
@@ -944,11 +954,199 @@ function switchSaveMethod(method) {
   document.getElementById('smt' + method.charAt(0).toUpperCase() + method.slice(1) + 'Content').classList.add('active');
 }
 
-// Init after page load
+// ===== GOOGLE DRIVE BACKUP =====
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
+const BACKUP_FILENAME = 'RE_Diary_Backup.json';
+const BACKUP_FOLDER = 'RE Diary Backup';
+let driveTokenClient = null;
+let driveAccessToken = null;
+let driveFolderId = null;
+let driveFileId = null;
+
+function initDriveAuth() {
+  try {
+    if (!window.google || !window.google.accounts) return;
+    driveTokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: DRIVE_SCOPE + ' ' + CONTACTS_SCOPE,
+      callback: async (tokenResponse) => {
+        if (tokenResponse.error) { showToast('❌ Google login failed'); return; }
+        driveAccessToken = tokenResponse.access_token;
+        googleAccessToken = tokenResponse.access_token;
+        sessionStorage.setItem('drive_token', driveAccessToken);
+        // Fetch user info for contacts too
+        fetchGoogleUserInfo();
+        if (pendingDriveAction === 'backup') await performDriveBackup();
+        else if (pendingDriveAction === 'restore') await performDriveRestore();
+        pendingDriveAction = null;
+      },
+    });
+    const cached = sessionStorage.getItem('drive_token');
+    if (cached) driveAccessToken = cached;
+    // Update backup time display
+    const bt = localStorage.getItem('re_drive_backup_time');
+    if (bt) {
+      const d = new Date(bt).toLocaleString('hi-IN');
+      document.getElementById('driveBackupTime').textContent = '✅ Last backup: ' + d;
+    }
+  } catch(e) { console.log('Drive auth init:', e); }
+}
+
+let pendingDriveAction = null;
+
+function driveBackup() {
+  if (!leads.length) { showToast('⚠️ Koi lead nahi hai backup ke liye'); return; }
+  if (!driveAccessToken) {
+    pendingDriveAction = 'backup';
+    driveTokenClient.requestAccessToken({ prompt: '' });
+    return;
+  }
+  performDriveBackup();
+}
+
+function driveRestore() {
+  if (!driveAccessToken) {
+    pendingDriveAction = 'restore';
+    driveTokenClient.requestAccessToken({ prompt: '' });
+    return;
+  }
+  performDriveRestore();
+}
+
+async function getOrCreateFolder() {
+  // Check if folder exists
+  const searchRes = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=name='${BACKUP_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)`,
+    { headers: { Authorization: `Bearer ${driveAccessToken}` } }
+  );
+  const searchData = await searchRes.json();
+  if (searchData.files && searchData.files.length > 0) {
+    return searchData.files[0].id;
+  }
+  // Create folder
+  const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${driveAccessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: BACKUP_FOLDER, mimeType: 'application/vnd.google-apps.folder' })
+  });
+  const folder = await createRes.json();
+  return folder.id;
+}
+
+async function getBackupFileId(folderId) {
+  const res = await fetch(
+    `https://www.googleapis.com/drive/v3/files?q=name='${BACKUP_FILENAME}' and '${folderId}' in parents and trashed=false&fields=files(id,name,modifiedTime)`,
+    { headers: { Authorization: `Bearer ${driveAccessToken}` } }
+  );
+  const data = await res.json();
+  if (data.files && data.files.length > 0) return data.files[0].id;
+  return null;
+}
+
+async function performDriveBackup() {
+  showToast('☁️ Drive mein backup ho raha hai...', '');
+  try {
+    const backupData = {
+      version: '1.0',
+      backupDate: new Date().toISOString(),
+      totalLeads: leads.length,
+      leads: leads
+    };
+    const content = JSON.stringify(backupData, null, 2);
+
+    // Get or create folder
+    const folderId = await getOrCreateFolder();
+    // Check if file exists
+    const existingFileId = await getBackupFileId(folderId);
+
+    let res;
+    if (existingFileId) {
+      // UPDATE existing file — same file, no new file!
+      res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=multipart`, {
+        method: 'PATCH',
+        headers: {
+          Authorization: `Bearer ${driveAccessToken}`,
+          'Content-Type': 'multipart/related; boundary=backup_boundary'
+        },
+        body: `--backup_boundary\r\nContent-Type: application/json\r\n\r\n${JSON.stringify({ name: BACKUP_FILENAME })}\r\n--backup_boundary\r\nContent-Type: application/json\r\n\r\n${content}\r\n--backup_boundary--`
+      });
+    } else {
+      // CREATE new file (sirf pehli baar)
+      res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${driveAccessToken}`,
+          'Content-Type': 'multipart/related; boundary=backup_boundary'
+        },
+        body: `--backup_boundary\r\nContent-Type: application/json\r\n\r\n${JSON.stringify({ name: BACKUP_FILENAME, parents: [folderId] })}\r\n--backup_boundary\r\nContent-Type: application/json\r\n\r\n${content}\r\n--backup_boundary--`
+      });
+    }
+
+    if (!res.ok) throw new Error('Upload failed');
+
+    const now = new Date().toISOString();
+    localStorage.setItem('re_drive_backup_time', now);
+    const d = new Date(now).toLocaleString('hi-IN');
+    document.getElementById('driveBackupTime').textContent = '✅ Last backup: ' + d;
+    showToast(`✅ ${leads.length} leads Drive mein backup ho gaye!`, 'success');
+
+  } catch(e) {
+    console.error('Drive backup error:', e);
+    if (e.message && e.message.includes('401')) {
+      driveAccessToken = null;
+      sessionStorage.removeItem('drive_token');
+      showToast('⚠️ Session expire — dobara backup karein');
+    } else {
+      showToast('❌ Backup fail: ' + (e.message || 'Unknown error'));
+    }
+  }
+}
+
+async function performDriveRestore() {
+  showToast('🔄 Drive se data la raha hai...', '');
+  try {
+    const folderId = await getOrCreateFolder();
+    const fileId = await getBackupFileId(folderId);
+
+    if (!fileId) {
+      showToast('⚠️ Drive mein koi backup nahi mila — pehle backup karein');
+      return;
+    }
+
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+      headers: { Authorization: `Bearer ${driveAccessToken}` }
+    });
+
+    if (!res.ok) throw new Error('Download failed');
+
+    const backupData = await res.json();
+    if (!backupData.leads || !Array.isArray(backupData.leads)) throw new Error('Invalid backup file');
+
+    const backupDate = backupData.backupDate ? new Date(backupData.backupDate).toLocaleString('hi-IN') : '—';
+
+    if (confirm(`📦 Backup mila!\n\n📅 Date: ${backupDate}\n👥 Leads: ${backupData.leads.length}\n\nKya restore karein? Maujuda data replace ho jayega.`)) {
+      leads = backupData.leads;
+      saveData();
+      renderLeads();
+      renderVisits();
+      renderFollowups();
+      updateStats();
+      showToast(`✅ ${leads.length} leads restore ho gaye!`, 'success');
+    }
+
+  } catch(e) {
+    console.error('Drive restore error:', e);
+    showToast('❌ Restore fail: ' + (e.message || 'Unknown error'));
+  }
+}
+
 window.addEventListener('load', () => {
-  setTimeout(initGoogleAuth, 800);
+  setTimeout(() => {
+    initGoogleAuth();
+    initDriveAuth();
+  }, 800);
 });
-// END GOOGLE CONTACTS
+// END GOOGLE DRIVE BACKUP
 
 ['leadModal','contactModal','visitModal','exportModal'].forEach(id=>{
   document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
