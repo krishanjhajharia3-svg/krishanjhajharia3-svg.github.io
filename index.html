@@ -1439,7 +1439,7 @@ function showCallHistory(id) {
 // END CALL TRACKING
 function waLead(phone,project){
   const msg=encodeURIComponent(`नमस्ते! मैं ${project||'RE'} के बारे में आपसे बात करना चाहता था। क्या आप अभी available हैं?`);
-  window.open(`https://wa.me/91${phone}?text=${msg}`,'_blank');
+  window.location.href=`https://wa.me/91${phone}?text=${msg}`;
 }
 
 // EXPORT
@@ -1473,7 +1473,7 @@ function exportViaWhatsApp(){
     msg+='\n';
   });
   if(leads.length>20)msg+=`... aur ${leads.length-20} leads hain\n`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+  window.location.href=`https://wa.me/?text=${encodeURIComponent(msg)}`;
 }
 
 // TABS
@@ -1505,7 +1505,7 @@ https://drive.google.com/file/d/1IWy4wIYEoOkpGi-YNJT_FrJ-RsspX_nW/view?usp=drive
 📞 *More details ke liye call karein:*
 Krishan Jhajharia
 _RE Diary App_`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
+  window.location.href=`https://wa.me/?text=${encodeURIComponent(msg)}`;
   showToast('💬 WhatsApp khul raha hai!','success');
 }
 
@@ -1514,7 +1514,7 @@ function shareProjectToLead(phone, projectName) {
     'Imperial Galaxy': `🌌 *Imperial Galaxy* — Plot Project, Jaipur\n\n✅ RERA Approved Premium Plots\n📍 Location: https://maps.app.goo.gl/n5y6RHB7KWPmT9a16\n🎥 Video: https://drive.google.com/file/d/1_UMyRYmLaZyt-0TsB7bFgBWwKUxLDLiE/view?usp=sharing\n🗺️ Map: https://drive.google.com/file/d/1IWy4wIYEoOkpGi-YNJT_FrJ-RsspX_nW/view?usp=drive_link`
   };
   const msg = projects[projectName] || `🏗️ ${projectName} ke baare mein details bhej raha hoon...`;
-  window.open(`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`,'_blank');
+  window.location.href=`https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`;
   showToast(`💬 ${projectName} details share ho rahi hain!`,'success');
 }
 
