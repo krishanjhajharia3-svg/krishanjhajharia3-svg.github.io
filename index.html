@@ -160,6 +160,15 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .smt-btn.active{border-color:var(--accent-purple);color:var(--accent-purple);background:rgba(167,139,250,.1)}
 .smt-content{display:none}
 .smt-content.active{display:block}
+.call-result-btn{padding:10px 6px;border-radius:10px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-secondary);font-size:12px;cursor:pointer;transition:all .2s;font-family:'Noto Sans Devanagari',sans-serif;text-align:center}
+.call-result-btn.active{border-color:var(--accent-teal);color:var(--accent-teal);background:rgba(0,212,170,.1)}
+.call-duration-btn{padding:7px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-secondary);font-size:11px;cursor:pointer;transition:all .2s;font-family:'Noto Sans Devanagari',sans-serif}
+.call-duration-btn.active{border-color:var(--accent-gold);color:var(--accent-gold);background:rgba(212,168,67,.1)}
+.call-history-item{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.call-history-item:last-child{border-bottom:none}
+.call-result-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.call-connected{background:rgba(0,212,170,.15)}
+.call-missed{background:rgba(255,77,109,.15)}
 </style>
 </head>
 <body>
@@ -410,6 +419,72 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
   </div>
 </div>
 
+<!-- CALL TRACKING MODAL -->
+<div class="modal-overlay" id="callModal">
+  <div class="modal" style="padding-bottom:20px">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:var(--accent-teal)">📞 Call Record Karein</div>
+    <div class="info-box">
+      <div class="info-box-name" id="callName">—</div>
+      <div class="info-box-sub" id="callPhone">—</div>
+      <div class="info-box-sub" id="callProject" style="margin-top:2px">—</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">📞 Baat Hui?</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+        <button class="call-result-btn active" id="crConnected" onclick="selectCallResult('connected')">✅ Haan Baat Hui</button>
+        <button class="call-result-btn" id="crNotAnswered" onclick="selectCallResult('not_answered')">❌ Nahi Utha</button>
+        <button class="call-result-btn" id="crBusy" onclick="selectCallResult('busy')">🔴 Busy Tha</button>
+        <button class="call-result-btn" id="crLater" onclick="selectCallResult('call_later')">⏰ Baad Mein Bulaya</button>
+      </div>
+    </div>
+
+    <div class="form-group" id="callDurationGroup">
+      <label class="form-label">⏱️ Kitni Der Baat Hui?</label>
+      <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
+        <button class="call-duration-btn active" onclick="selectDuration('< 1 min')">1 min se kam</button>
+        <button class="call-duration-btn" onclick="selectDuration('1-5 min')">1-5 min</button>
+        <button class="call-duration-btn" onclick="selectDuration('5-10 min')">5-10 min</button>
+        <button class="call-duration-btn" onclick="selectDuration('10+ min')">10+ min</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">💬 Call Notes</label>
+      <textarea class="form-textarea" id="callNotes" placeholder="Kya baat hui, kya bola client ne..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">🌡️ Status Update (Optional)</label>
+      <select class="form-select" id="callStatusUpdate">
+        <option value="">— Status same rakhein —</option>
+        <option value="hot">🔥 Hot</option>
+        <option value="warm">⭐ Warm</option>
+        <option value="cold">❄️ Cold</option>
+        <option value="converted">✅ Converted</option>
+      </select>
+    </div>
+
+    <button class="btn-primary" onclick="saveCallRecord()" style="background:linear-gradient(135deg,var(--accent-teal),#00a888)">📞 Call Save Karein</button>
+    <button class="btn-secondary" onclick="closeCallModal()">Baad Mein</button>
+  </div>
+</div>
+
+<!-- CALL HISTORY MODAL -->
+<div class="modal-overlay" id="callHistoryModal">
+  <div class="modal" style="padding-bottom:20px">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:var(--accent-teal)">📞 Call History</div>
+    <div class="info-box">
+      <div class="info-box-name" id="chName">—</div>
+      <div class="info-box-sub" id="chStats">—</div>
+    </div>
+    <div id="callHistoryList"></div>
+    <button class="btn-secondary" onclick="document.getElementById('callHistoryModal').classList.remove('active')">Wapas Jayen</button>
+  </div>
+</div>
+
 <!-- EXPORT MODAL -->
 <div class="modal-overlay" id="exportModal">
   <div class="modal" style="padding-bottom:20px">
@@ -516,8 +591,9 @@ function renderLeads(){
         <div class="meta-item">⏰ Next: ${l.nextDate?formatDate(l.nextDate):'—'}${isOD?'<span class="overdue-badge">Overdue!</span>':''}</div>
       </div>
       ${l.lastTalk?`<div class="lead-notes">💬 ${l.lastTalk}</div>`:''}
+      ${l.callHistory&&l.callHistory.length?`<div class="lead-notes" style="color:var(--accent-teal);cursor:pointer" onclick="event.stopPropagation();showCallHistory('${l.id}')">📞 Calls: ${l.callHistory.length} | Last: ${l.callHistory[l.callHistory.length-1].result==='connected'?'✅ Baat hui':'❌ Nahi utha'} — History dekhen →</div>`:''}
       <div class="lead-actions" onclick="event.stopPropagation()">
-        <button class="action-btn call" onclick="callLead('${l.phone}')">📞 Call</button>
+        <button class="action-btn call" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
         <button class="action-btn whatsapp" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
         <button class="action-btn savecon" onclick="openContactModal('${l.id}')">📱 Save</button>
         <button class="action-btn visitbtn" onclick="openVisitModal('${l.id}')">🏠 Visit</button>
@@ -732,8 +808,114 @@ function deleteLead(){
   showToast('🗑️ Lead delete ho gaya');
 }
 
-// ACTIONS
-function callLead(phone){window.location.href=`tel:${phone}`;}
+// CALL TRACKING
+let callingId = null;
+let selectedCallResult = 'connected';
+let selectedDuration = '< 1 min';
+
+function callLead(id, phone) {
+  callingId = id;
+  const l = leads.find(x => x.id === id);
+  if (!l) return;
+
+  // Pehle call karo
+  window.location.href = `tel:${phone}`;
+
+  // 3 second baad popup aayega
+  setTimeout(() => {
+    document.getElementById('callName').textContent = l.name;
+    document.getElementById('callPhone').textContent = '📱 ' + l.phone;
+    document.getElementById('callProject').textContent = '🏗️ ' + (l.project || '—');
+    document.getElementById('callNotes').value = '';
+    document.getElementById('callStatusUpdate').value = '';
+    selectedCallResult = 'connected';
+    selectedDuration = '< 1 min';
+    // Reset buttons
+    document.querySelectorAll('.call-result-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('crConnected').classList.add('active');
+    document.querySelectorAll('.call-duration-btn').forEach((b,i) => { if(i===0) b.classList.add('active'); else b.classList.remove('active'); });
+    document.getElementById('callDurationGroup').style.display = 'block';
+    document.getElementById('callModal').classList.add('active');
+  }, 2500);
+}
+
+function selectCallResult(result) {
+  selectedCallResult = result;
+  document.querySelectorAll('.call-result-btn').forEach(b => b.classList.remove('active'));
+  const map = { connected: 'crConnected', not_answered: 'crNotAnswered', busy: 'crBusy', call_later: 'crLater' };
+  document.getElementById(map[result]).classList.add('active');
+  // Duration sirf tab dikhao jab baat hui
+  document.getElementById('callDurationGroup').style.display = result === 'connected' ? 'block' : 'none';
+}
+
+function selectDuration(dur) {
+  selectedDuration = dur;
+  document.querySelectorAll('.call-duration-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === dur || b.getAttribute('onclick') === `selectDuration('${dur}')`);
+  });
+}
+
+function saveCallRecord() {
+  if (!callingId) return;
+  const idx = leads.findIndex(l => l.id === callingId);
+  if (idx === -1) return;
+
+  const callRecord = {
+    date: new Date().toISOString(),
+    result: selectedCallResult,
+    duration: selectedCallResult === 'connected' ? selectedDuration : null,
+    notes: document.getElementById('callNotes').value.trim()
+  };
+
+  if (!leads[idx].callHistory) leads[idx].callHistory = [];
+  leads[idx].callHistory.push(callRecord);
+  leads[idx].lastUpdated = new Date().toISOString();
+
+  // Status update if selected
+  const newStatus = document.getElementById('callStatusUpdate').value;
+  if (newStatus) leads[idx].status = newStatus;
+
+  // Last talk update if notes added
+  if (callRecord.notes) leads[idx].lastTalk = callRecord.notes;
+
+  saveData(); renderLeads(); renderVisits(); updateStats();
+  closeCallModal();
+
+  const resultLabels = { connected: '✅ Baat hui', not_answered: '❌ Nahi utha', busy: '🔴 Busy', call_later: '⏰ Baad mein' };
+  showToast(`📞 Call record ho gayi — ${resultLabels[selectedCallResult]}`, 'success');
+}
+
+function closeCallModal() {
+  document.getElementById('callModal').classList.remove('active');
+  callingId = null;
+}
+
+function showCallHistory(id) {
+  const l = leads.find(x => x.id === id);
+  if (!l) return;
+  document.getElementById('chName').textContent = l.name + ' — ' + l.phone;
+  const history = l.callHistory || [];
+  const connected = history.filter(c => c.result === 'connected').length;
+  document.getElementById('chStats').textContent = `Total: ${history.length} calls | Connected: ${connected} | Missed: ${history.length - connected}`;
+
+  const resultLabels = { connected: '✅ Baat hui', not_answered: '❌ Nahi utha', busy: '🔴 Busy tha', call_later: '⏰ Baad mein bulaya' };
+  const icons = { connected: '✅', not_answered: '❌', busy: '🔴', call_later: '⏰' };
+
+  document.getElementById('callHistoryList').innerHTML = history.length ?
+    [...history].reverse().map(c => `
+      <div class="call-history-item">
+        <div class="call-result-icon ${c.result === 'connected' ? 'call-connected' : 'call-missed'}">${icons[c.result] || '📞'}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary)">${resultLabels[c.result] || c.result}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${new Date(c.date).toLocaleString('hi-IN')}${c.duration ? ' | ⏱️ ' + c.duration : ''}</div>
+          ${c.notes ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:3px">💬 ${c.notes}</div>` : ''}
+        </div>
+      </div>`).join('') :
+    '<div class="empty-state"><div class="empty-icon">📞</div><div class="empty-sub">Abhi koi call record nahi</div></div>';
+
+  document.getElementById('callHistoryModal').classList.add('active');
+}
+// END CALL TRACKING
 function waLead(phone,project){
   const msg=encodeURIComponent(`नमस्ते! मैं ${project||'RE'} के बारे में आपसे बात करना चाहता था। क्या आप अभी available हैं?`);
   window.open(`https://wa.me/91${phone}?text=${msg}`,'_blank');
@@ -1162,8 +1344,7 @@ window.addEventListener('load', () => {
 });
 // END GOOGLE DRIVE BACKUP
 
-['leadModal','contactModal','visitModal','exportModal'].forEach(id=>{
-  document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
+['leadModal','contactModal','visitModal','exportModal','callModal','callHistoryModal'].forEach(id=>{ document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
 });
 
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
