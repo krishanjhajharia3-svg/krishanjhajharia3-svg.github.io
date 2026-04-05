@@ -36,6 +36,18 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .tab-btn.vtab{color:var(--text-muted)}
 .tab-btn.vtab.active{color:var(--accent-purple);border-bottom-color:var(--accent-purple);background:rgba(167,139,250,.05)}
 .tab-btn svg{display:block;margin:0 auto 2px}
+
+/* BOTTOM NAVIGATION */
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);padding:8px 6px 12px;z-index:150;box-shadow:0 -4px 20px rgba(0,0,0,.4)}
+@media(max-width:768px){.bottom-nav{display:flex}.tab-nav{display:none}}
+.bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;border-radius:12px;background:transparent;border:none;color:var(--text-muted);cursor:pointer;transition:all .2s}
+.bottom-nav-item.active{color:var(--accent-gold);background:rgba(212,168,67,.1)}
+.bottom-nav-item.active.visit{color:var(--accent-purple);background:rgba(167,139,250,.1)}
+.bottom-nav-item.active.followup{color:var(--accent-gold-light);background:rgba(240,201,106,.1)}
+.bottom-nav-item.active.summary{color:var(--accent-teal);background:rgba(0,212,170,.1)}
+.bottom-nav-icon{font-size:20px;line-height:1}
+.bottom-nav-label{font-size:9px;font-family:'Noto Sans Devanagari',sans-serif;font-weight:500}
+.fab{position:fixed;bottom:80px;right:20px}
 .main-content{padding:14px;padding-bottom:90px}
 .section-title{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent-gold-light);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .section-title::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--border),transparent)}
@@ -267,6 +279,26 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 </div>
 
 <button class="fab" onclick="openAddModal()">+</button>
+
+<!-- BOTTOM NAVIGATION -->
+<div class="bottom-nav">
+  <button class="bottom-nav-item active" id="bn-leads" onclick="switchTab('leads',this);updateBottomNav('leads')">
+    <span class="bottom-nav-icon">📋</span>
+    <span class="bottom-nav-label">Leads</span>
+  </button>
+  <button class="bottom-nav-item visit" id="bn-visits" onclick="switchTab('visits',this);updateBottomNav('visits')">
+    <span class="bottom-nav-icon">🏠</span>
+    <span class="bottom-nav-label">Visits</span>
+  </button>
+  <button class="bottom-nav-item followup" id="bn-followup" onclick="switchTab('followup',this);updateBottomNav('followup')">
+    <span class="bottom-nav-icon">📅</span>
+    <span class="bottom-nav-label">Follow-Up</span>
+  </button>
+  <button class="bottom-nav-item summary" id="bn-summary" onclick="switchTab('summary',this);updateBottomNav('summary')">
+    <span class="bottom-nav-icon">📊</span>
+    <span class="bottom-nav-label">Summary</span>
+  </button>
+</div>
 
 <!-- LEAD MODAL -->
 <div class="modal-overlay" id="leadModal">
