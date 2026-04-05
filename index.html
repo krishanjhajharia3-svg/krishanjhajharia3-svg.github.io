@@ -234,9 +234,9 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
     <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="नाम, मोबाइल, प्रोजेक्ट खोजें..." oninput="renderLeads()"></div>
     <div class="filter-chips" id="filterChips">
       <div class="chip active" onclick="setFilter('all',this)">सभी</div>
-      <div class="chip" onclick="setFilter('hot',this)">🔥 Hot</div>
-      <div class="chip" onclick="setFilter('warm',this)">⭐ Warm</div>
-      <div class="chip" onclick="setFilter('cold',this)">❄️ Cold</div>
+      <div class="chip" onclick="setFilter('hot',this)">🔥 Ready to Buy</div>
+      <div class="chip" onclick="setFilter('warm',this)">⭐ Interested</div>
+      <div class="chip" onclick="setFilter('cold',this)">❄️ Thinking</div>
       <div class="chip" onclick="setFilter('converted',this)">✅ Converted</div>
       <div class="chip" onclick="setFilter('Imperial Estate',this)">Imperial Estate</div>
       <div class="chip" onclick="setFilter('Imperial Galaxy',this)">Imperial Galaxy</div>
@@ -266,9 +266,9 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
   <div class="tab-content" id="tab-summary">
     <p class="section-title">📊 Sales Summary</p>
     <div class="summary-grid">
-      <div class="summary-card"><div class="summary-value sv-hot" id="sumHot">0</div><div class="summary-label">🔥 Hot</div></div>
-      <div class="summary-card"><div class="summary-value sv-warm" id="sumWarm">0</div><div class="summary-label">⭐ Warm</div></div>
-      <div class="summary-card"><div class="summary-value sv-cold" id="sumCold">0</div><div class="summary-label">❄️ Cold</div></div>
+      <div class="summary-card"><div class="summary-value sv-hot" id="sumHot">0</div><div class="summary-label">🔥 Ready to Buy</div></div>
+      <div class="summary-card"><div class="summary-value sv-warm" id="sumWarm">0</div><div class="summary-label">⭐ Interested</div></div>
+      <div class="summary-card"><div class="summary-value sv-cold" id="sumCold">0</div><div class="summary-label">❄️ Thinking</div></div>
       <div class="summary-card"><div class="summary-value sv-converted" id="sumConverted">0</div><div class="summary-label">✅ Converted</div></div>
       <div class="summary-card"><div class="summary-value sv-visit" id="sumVisit">0</div><div class="summary-label">🏠 Site Visits</div></div>
       <div class="summary-card"><div class="summary-value" id="sumTotal" style="color:var(--text-primary)">0</div><div class="summary-label">📋 Total</div></div>
@@ -330,9 +330,9 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
       <div class="form-group">
         <label class="form-label">🌡️ Status</label>
         <select class="form-select" id="fStatus">
-          <option value="warm">⭐ Warm</option>
-          <option value="hot">🔥 Hot</option>
-          <option value="cold">❄️ Cold</option>
+          <option value="warm">⭐ Interested</option>
+          <option value="hot">🔥 Ready to Buy</option>
+          <option value="cold">❄️ Thinking</option>
           <option value="converted">✅ Converted</option>
         </select>
       </div>
@@ -440,9 +440,9 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
     <div class="form-group">
       <label class="form-label">🌡️ Visit ke baad Status Update</label>
       <select class="form-select" id="vStatus">
-        <option value="hot">🔥 Hot — Seriously Interested</option>
-        <option value="warm">⭐ Warm — Sochenge</option>
-        <option value="cold">❄️ Cold — Nahi Lena</option>
+        <option value="hot">🔥 Ready to Buy</option>
+        <option value="warm">⭐ Interested</option>
+        <option value="cold">❄️ Thinking</option>
         <option value="converted">✅ Converted — Deal Ho Gayi!</option>
       </select>
     </div>
@@ -517,10 +517,10 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
       <label class="form-label">🌡️ Status Update (Optional)</label>
       <select class="form-select" id="callStatusUpdate">
         <option value="">— Status same rakhein —</option>
-        <option value="hot">🔥 Hot</option>
-        <option value="warm">⭐ Warm</option>
-        <option value="cold">❄️ Cold</option>
-        <option value="converted">✅ Converted</option>
+        <option value="hot">🔥 Ready to Buy</option>
+        <option value="warm">⭐ Interested</option>
+        <option value="cold">❄️ Thinking</option>
+        <option value="converted">✅ Deal Done</option>
       </select>
     </div>
 
@@ -662,7 +662,7 @@ function renderLeads(){
 
   const c=document.getElementById('leadsContainer');
   if(!filtered.length){c.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">कोई Lead नहीं मिला</div><div class="empty-sub">+ button से नया lead जोड़ें</div></div>`;return;}
-  const slabel={hot:'🔥 Hot',warm:'⭐ Warm',cold:'❄️ Cold',converted:'✅ Converted'};
+  const slabel={hot:'🔥 Ready to Buy',warm:'⭐ Interested',cold:'❄️ Thinking',converted:'✅ Deal Done'};
   c.innerHTML=filtered.map(l=>{
     const isOD=l.nextDate&&new Date(l.nextDate)<new Date()&&l.status!=='converted';
     const ld=l.lastUpdated?new Date(l.lastUpdated).toLocaleDateString('hi-IN'):'—';
@@ -699,7 +699,7 @@ function renderVisits(){
   const visited=leads.filter(l=>l.visited).sort((a,b)=>new Date(b.visitDate||0)-new Date(a.visitDate||0));
   const c=document.getElementById('visitsContainer');
   if(!visited.length){c.innerHTML=`<div class="empty-state"><div class="empty-icon">🏠</div><div class="empty-title">अभी कोई Site Visit नहीं</div><div class="empty-sub">Lead card par 🏠 Visit dabao</div></div>`;return;}
-  const sl={hot:'🔥 Hot',warm:'⭐ Warm',cold:'❄️ Cold',converted:'✅ Converted'};
+  const sl={hot:'🔥 Ready to Buy',warm:'⭐ Interested',cold:'❄️ Thinking',converted:'✅ Deal Done'};
   c.innerHTML=visited.map(l=>`
     <div class="visit-card">
       <div class="visit-header">
