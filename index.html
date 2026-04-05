@@ -266,12 +266,12 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
   <div class="tab-content" id="tab-summary">
     <p class="section-title">📊 Sales Summary</p>
     <div class="summary-grid">
-      <div class="summary-card"><div class="summary-value sv-hot" id="sumHot">0</div><div class="summary-label">🔥 Ready to Buy</div></div>
-      <div class="summary-card"><div class="summary-value sv-warm" id="sumWarm">0</div><div class="summary-label">⭐ Interested</div></div>
-      <div class="summary-card"><div class="summary-value sv-cold" id="sumCold">0</div><div class="summary-label">❄️ Thinking</div></div>
-      <div class="summary-card"><div class="summary-value sv-converted" id="sumConverted">0</div><div class="summary-label">✅ Converted</div></div>
-      <div class="summary-card"><div class="summary-value sv-visit" id="sumVisit">0</div><div class="summary-label">🏠 Site Visits</div></div>
-      <div class="summary-card"><div class="summary-value" id="sumTotal" style="color:var(--text-primary)">0</div><div class="summary-label">📋 Total</div></div>
+      <div class="summary-card" onclick="switchTabByName('leads');setFilterByName('hot')" style="cursor:pointer"><div class="summary-value sv-hot" id="sumHot">0</div><div class="summary-label">🔥 Ready to Buy</div></div>
+      <div class="summary-card" onclick="switchTabByName('leads');setFilterByName('warm')" style="cursor:pointer"><div class="summary-value sv-warm" id="sumWarm">0</div><div class="summary-label">⭐ Interested</div></div>
+      <div class="summary-card" onclick="switchTabByName('leads');setFilterByName('cold')" style="cursor:pointer"><div class="summary-value sv-cold" id="sumCold">0</div><div class="summary-label">❄️ Thinking</div></div>
+      <div class="summary-card" onclick="switchTabByName('leads');setFilterByName('converted')" style="cursor:pointer"><div class="summary-value sv-converted" id="sumConverted">0</div><div class="summary-label">✅ Deal Done</div></div>
+      <div class="summary-card" onclick="switchTabByName('visits')" style="cursor:pointer"><div class="summary-value sv-visit" id="sumVisit">0</div><div class="summary-label">🏠 Site Visits</div></div>
+      <div class="summary-card" onclick="switchTabByName('leads');setFilterByName('all')" style="cursor:pointer"><div class="summary-value" id="sumTotal" style="color:var(--text-primary)">0</div><div class="summary-label">📋 Total</div></div>
     </div>
     <p class="section-title">🏗️ Project-wise</p>
     <div id="projectSummary"></div>
