@@ -47,7 +47,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .bottom-nav-item.active.summary{color:var(--accent-teal);background:rgba(0,212,170,.1)}
 .bottom-nav-icon{font-size:20px;line-height:1}
 .bottom-nav-label{font-size:9px;font-family:'Noto Sans Devanagari',sans-serif;font-weight:500}
-.fab{position:fixed;bottom:80px;right:20px}
 .main-content{padding:14px;padding-bottom:110px}
 .section-title{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--accent-gold-light);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 .section-title::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--border),transparent)}
@@ -86,6 +85,7 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .action-btn.visitbtn{border-color:rgba(167,139,250,.3);color:var(--accent-purple)}
 .action-btn.visitbtn:hover{background:rgba(167,139,250,.1)}
 .fab{position:fixed;bottom:24px;right:20px;width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,var(--accent-gold),#e8881a);border:none;color:#0a0f1a;font-size:28px;cursor:pointer;box-shadow:0 8px 24px rgba(212,168,67,.5);display:flex;align-items:center;justify-content:center;z-index:200;transition:all .2s}
+@media(max-width:768px){.fab{bottom:90px}}
 .fab:hover{transform:scale(1.08)}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;backdrop-filter:blur(4px);align-items:flex-end}
 .modal-overlay.active{display:flex}
