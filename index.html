@@ -2443,9 +2443,9 @@ function homeCallAndOpen(id) {
   if (!lead) return;
   // Phone dial
   window.location.href = 'tel:' + lead.phone;
-  // 1 second baad lead record open karo update ke liye
+  // 800ms baad lead record open karo update ke liye
   setTimeout(() => {
-    openEditModal(lead.id);
+    editLead(lead.id);
     showToast('📞 Call ke baad status update karein!', 'success');
   }, 800);
 }
