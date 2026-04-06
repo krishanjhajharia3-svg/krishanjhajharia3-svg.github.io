@@ -7,9 +7,9 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="RE Diary">
+<meta name="apple-mobile-web-app-title" content="Leado">
 <link rel="manifest" href="manifest.json">
-<title>🏠 Real Estate Lead Diary</title>
+<title>Leado — Real Estate CRM</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
@@ -209,17 +209,109 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .ai-header{background:linear-gradient(135deg,rgba(0,212,170,.1),rgba(0,153,204,.05));border:1px solid rgba(0,212,170,.2);border-radius:var(--radius);padding:14px;margin-bottom:16px;text-align:center}
 .ai-header-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#00d4aa;margin-bottom:4px}
 .ai-header-sub{font-size:11px;color:var(--text-muted);line-height:1.5}
-.quick-lead-select{width:100%;padding:10px 12px;background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:13px;font-family:'Noto Sans Devanagari',sans-serif;outline:none;margin-bottom:10px}
+/* ===== SPLASH SCREEN ===== */
+#splashScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0a0f1a 0%,#0d1f35 60%,#0a0f1a 100%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease}
+#splashScreen.hide{opacity:0;pointer-events:none}
+.splash-logo-wrap{width:100px;height:100px;background:linear-gradient(135deg,#d4a843,#e8881a);border-radius:28px;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:900;font-family:'Rajdhani',sans-serif;color:#0a0f1a;margin-bottom:24px;box-shadow:0 0 60px rgba(212,168,67,.6);animation:splashBounce .8s ease}
+@keyframes splashBounce{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.splash-name{font-family:'Rajdhani',sans-serif;font-size:38px;font-weight:700;color:#f0c96a;letter-spacing:4px;margin-bottom:6px}
+.splash-sub{font-size:13px;color:#8896b3;letter-spacing:2px;margin-bottom:40px}
+.splash-bar{width:160px;height:3px;background:#1e2d42;border-radius:2px;overflow:hidden}
+.splash-fill{height:100%;background:linear-gradient(90deg,#d4a843,#e8881a);border-radius:2px;animation:splashLoad 1.8s ease forwards}
+@keyframes splashLoad{0%{width:0}100%{width:100%}}
+.splash-credit{position:absolute;bottom:30px;font-size:11px;color:#4a5568;letter-spacing:1px}
+
+/* ===== PIN LOCK ===== */
+#pinScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0a0f1a,#0d1f35);z-index:9998;display:none;flex-direction:column;align-items:center;justify-content:center}
+#pinScreen.show{display:flex}
+.pin-logo{width:70px;height:70px;background:linear-gradient(135deg,#d4a843,#e8881a);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;font-family:'Rajdhani',sans-serif;color:#0a0f1a;margin-bottom:16px;box-shadow:0 0 30px rgba(212,168,67,.4)}
+.pin-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#f0c96a;margin-bottom:4px}
+.pin-sub{font-size:12px;color:#8896b3;margin-bottom:32px}
+.pin-dots{display:flex;gap:14px;margin-bottom:32px}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #2a3a50;background:transparent;transition:all .2s}
+.pin-dot.filled{background:#d4a843;border-color:#d4a843;box-shadow:0 0 8px rgba(212,168,67,.5)}
+.pin-dot.error{background:#ff4d6d;border-color:#ff4d6d;animation:shake .3s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pin-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;width:100%;margin:0 auto}
+.pin-btn{height:68px;border-radius:16px;border:1px solid #1e2d42;background:#111827;color:#f0f4ff;font-size:24px;font-weight:600;font-family:'Rajdhani',sans-serif;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.pin-btn:active{background:#1a2235;transform:scale(.95)}
+.pin-btn-sub{font-size:8px;color:#4a5568;letter-spacing:1px;font-family:'Noto Sans Devanagari',sans-serif}
+.pin-btn.del{background:transparent;border-color:transparent;color:#8896b3;font-size:20px}
+.pin-btn.zero{grid-column:2}
+.pin-error-msg{font-size:12px;color:#ff4d6d;margin-top:16px;min-height:20px;text-align:center}
+.pin-forgot{font-size:11px;color:#4a5568;margin-top:20px;cursor:pointer;text-decoration:underline}
+
+/* ===== FOOTER ===== */
+.app-footer{text-align:center;padding:14px 16px 100px;border-top:1px solid var(--border);margin-top:20px}
+.footer-brand{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--accent-gold);margin-bottom:4px}
+.footer-contact{font-size:11px;color:var(--text-muted)}
+.footer-contact a{color:var(--accent-teal);text-decoration:none}
+
+/* ===== NOTIFICATION POPUP ===== */
+.notif-popup{position:fixed;top:70px;left:12px;right:12px;background:linear-gradient(135deg,#1a2235,#111827);border:1px solid rgba(212,168,67,.3);border-radius:16px;padding:14px 16px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.5);display:none;animation:slideDown .3s ease}
+.notif-popup.show{display:block}
+@keyframes slideDown{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.notif-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#f0c96a;margin-bottom:8px}
+.notif-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
+.notif-item:last-child{border-bottom:none}
+.notif-name{font-size:13px;color:var(--text-primary);font-weight:600}
+.notif-date{font-size:11px;color:var(--accent-red)}
+.notif-close{font-size:11px;color:var(--text-muted);cursor:pointer;padding:4px 10px;border:1px solid var(--border);border-radius:6px;margin-top:10px;display:inline-block}
 </style>
 </head>
 <body>
 
+<!-- SPLASH SCREEN -->
+<div id="splashScreen">
+  <div class="splash-logo-wrap">L</div>
+  <div class="splash-name">LEADO</div>
+  <div class="splash-sub">REAL ESTATE CRM</div>
+  <div class="splash-bar"><div class="splash-fill"></div></div>
+  <div class="splash-credit">by Krishan | Jaipur</div>
+</div>
+
+<!-- PIN LOCK SCREEN -->
+<div id="pinScreen">
+  <div class="pin-logo">L</div>
+  <div class="pin-title">LEADO</div>
+  <div class="pin-sub" id="pinSubText">4-digit PIN enter karein</div>
+  <div class="pin-dots">
+    <div class="pin-dot" id="pd0"></div>
+    <div class="pin-dot" id="pd1"></div>
+    <div class="pin-dot" id="pd2"></div>
+    <div class="pin-dot" id="pd3"></div>
+  </div>
+  <div class="pin-grid">
+    <button class="pin-btn" onclick="pinPress('1')">1</button>
+    <button class="pin-btn" onclick="pinPress('2')">2<div class="pin-btn-sub">ABC</div></button>
+    <button class="pin-btn" onclick="pinPress('3')">3<div class="pin-btn-sub">DEF</div></button>
+    <button class="pin-btn" onclick="pinPress('4')">4<div class="pin-btn-sub">GHI</div></button>
+    <button class="pin-btn" onclick="pinPress('5')">5<div class="pin-btn-sub">JKL</div></button>
+    <button class="pin-btn" onclick="pinPress('6')">6<div class="pin-btn-sub">MNO</div></button>
+    <button class="pin-btn" onclick="pinPress('7')">7<div class="pin-btn-sub">PQRS</div></button>
+    <button class="pin-btn" onclick="pinPress('8')">8<div class="pin-btn-sub">TUV</div></button>
+    <button class="pin-btn" onclick="pinPress('9')">9<div class="pin-btn-sub">WXYZ</div></button>
+    <button class="pin-btn del" onclick="pinPress('del')">⌫</button>
+    <button class="pin-btn zero" onclick="pinPress('0')">0</button>
+    <div></div>
+  </div>
+  <div class="pin-error-msg" id="pinErrorMsg"></div>
+  <div class="pin-forgot" onclick="pinForgot()">PIN bhool gaye? Reset karein</div>
+</div>
+
+<!-- NOTIFICATION POPUP -->
+<div class="notif-popup" id="notifPopup">
+  <div class="notif-title">📅 Aaj Ke Follow-ups</div>
+  <div id="notifList"></div>
+  <div class="notif-close" onclick="closeNotifPopup()">✕ Band Karein</div>
+</div>
+
 <div class="app-header">
   <div class="app-logo">
-    <div class="logo-icon">🏠</div>
+    <div class="logo-icon" style="background:linear-gradient(135deg,#d4a843,#e8881a);color:#0a0f1a;font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:900;letter-spacing:-1px">L</div>
     <div>
-      <div class="app-title-text">RE DIARY</div>
-      <div class="app-subtitle">Real Estate Lead Manager</div>
+      <div class="app-title-text">LEADO</div>
+      <div class="app-subtitle">Real Estate CRM by Krishan</div>
     </div>
   </div>
   <div class="header-actions">
@@ -521,6 +613,12 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 </div>
 
 <button class="fab" onclick="openAddModal()">+</button>
+
+<!-- FOOTER -->
+<div class="app-footer">
+  <div class="footer-brand">🏠 LEADO — Real Estate CRM</div>
+  <div class="footer-contact">by Krishan | Jaipur | <a href="tel:+919999999999">📞 Call</a> | <a href="https://wa.me/919999999999">💬 WhatsApp</a></div>
+</div>
 
 <!-- BOTTOM NAVIGATION -->
 <div class="bottom-nav">
@@ -1848,6 +1946,294 @@ function showOverdueAlert(){
   const overdue=leads.filter(l=>l.nextDate&&l.nextDate<today&&l.status!=='converted');
   if(overdue.length>0){let msg=`⚠️ ${overdue.length} Follow-ups overdue hain!\n\n`;overdue.slice(0,5).forEach(l=>msg+=`• ${l.name} - ${l.nextDate}\n`);if(overdue.length>5)msg+=`... aur ${overdue.length-5} more`;alert(msg);localStorage.setItem('re_notified',today);document.getElementById('notifBadge').style.display='none';}
 }
+
+
+// ===== SPLASH SCREEN =====
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const splash = document.getElementById('splashScreen');
+    splash.classList.add('hide');
+    setTimeout(() => {
+      splash.style.display = 'none';
+      initPinLock();
+    }, 600);
+  }, 2200);
+});
+
+// ===== PIN LOCK =====
+const DEFAULT_PIN = '0000';
+let pinEntry = '';
+let pinMode = 'check'; // 'check' | 'set' | 'change'
+
+function initPinLock() {
+  const savedPin = localStorage.getItem('leado_pin');
+  if (!savedPin) {
+    // Pehli baar — PIN set karo
+    localStorage.setItem('leado_pin', DEFAULT_PIN);
+    showMainApp();
+  } else {
+    // PIN check karo
+    pinMode = 'check';
+    document.getElementById('pinSubText').textContent = 'PIN enter karein';
+    document.getElementById('pinScreen').classList.add('show');
+  }
+}
+
+function pinPress(val) {
+  if (val === 'del') {
+    pinEntry = pinEntry.slice(0, -1);
+  } else if (pinEntry.length < 4) {
+    pinEntry += val;
+  }
+  updatePinDots();
+  if (pinEntry.length === 4) {
+    setTimeout(() => checkPin(), 150);
+  }
+}
+
+function updatePinDots(mode = '') {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById('pd' + i);
+    dot.className = 'pin-dot';
+    if (i < pinEntry.length) dot.classList.add(mode || 'filled');
+  }
+}
+
+function checkPin() {
+  const saved = localStorage.getItem('leado_pin') || DEFAULT_PIN;
+  if (pinEntry === saved) {
+    updatePinDots('filled');
+    setTimeout(() => {
+      document.getElementById('pinScreen').classList.remove('show');
+      showMainApp();
+    }, 300);
+  } else {
+    updatePinDots('error');
+    document.getElementById('pinErrorMsg').textContent = '❌ Galat PIN — dobara try karein';
+    setTimeout(() => {
+      pinEntry = '';
+      updatePinDots();
+      document.getElementById('pinErrorMsg').textContent = '';
+    }, 1000);
+  }
+}
+
+function showMainApp() {
+  checkNotifications();
+  showTodayFollowupPopup();
+}
+
+function pinForgot() {
+  if (confirm('PIN reset karein?\n\nNaya PIN "0000" ho jayega — phir change kar lena.')) {
+    localStorage.setItem('leado_pin', DEFAULT_PIN);
+    pinEntry = '';
+    updatePinDots();
+    document.getElementById('pinSubText').textContent = 'PIN reset ho gaya! "0000" enter karein';
+    document.getElementById('pinErrorMsg').textContent = '';
+  }
+}
+
+// Settings mein PIN change
+function changePin() {
+  const oldPin = prompt('Purana PIN enter karein:');
+  if (!oldPin) return;
+  const saved = localStorage.getItem('leado_pin') || DEFAULT_PIN;
+  if (oldPin !== saved) { showToast('❌ Galat PIN'); return; }
+  const newPin = prompt('Naya 4-digit PIN enter karein:');
+  if (!newPin || newPin.length !== 4 || isNaN(newPin)) { showToast('⚠️ 4-digit number hi enter karein'); return; }
+  const confirm2 = prompt('Naya PIN dobara enter karein:');
+  if (newPin !== confirm2) { showToast('❌ PIN match nahi hua'); return; }
+  localStorage.setItem('leado_pin', newPin);
+  showToast('✅ PIN successfully change ho gaya!', 'success');
+}
+
+// ===== TODAY FOLLOWUP POPUP =====
+function showTodayFollowupPopup() {
+  const today = new Date().toISOString().split('T')[0];
+  const todayLeads = leads.filter(l => l.nextDate === today && l.status !== 'converted');
+  const overdue = leads.filter(l => l.nextDate && l.nextDate < today && l.status !== 'converted');
+  const all = [...todayLeads, ...overdue.slice(0, 3)];
+
+  if (!all.length) return;
+
+  const popup = document.getElementById('notifPopup');
+  const list = document.getElementById('notifList');
+  const title = document.querySelector('#notifPopup .notif-title');
+
+  title.textContent = `📅 ${todayLeads.length} aaj ke + ${overdue.length} overdue follow-ups`;
+  list.innerHTML = all.map(l => `
+    <div class="notif-item">
+      <div>
+        <div class="notif-name">${l.name}</div>
+        <div class="notif-date">${l.nextDate === today ? '⏰ Aaj' : '⚠️ Overdue: ' + l.nextDate} — ${l.project || ''}</div>
+      </div>
+      <a href="tel:${l.phone}" style="background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);color:#00d4aa;padding:5px 10px;border-radius:8px;font-size:11px;text-decoration:none">📞 Call</a>
+    </div>
+  `).join('');
+
+  popup.classList.add('show');
+  // 8 second baad auto-hide
+  setTimeout(() => popup.classList.remove('show'), 8000);
+
+  // Badge update
+  document.getElementById('notifBadge').textContent = all.length;
+  document.getElementById('notifBadge').style.display = 'flex';
+}
+
+function closeNotifPopup() {
+  document.getElementById('notifPopup').classList.remove('show');
+}
+
+// Bell icon click — popup toggle
+document.querySelector('.icon-btn[onclick="showOverdueAlert()"]').setAttribute('onclick', 'toggleNotifPopup()');
+function toggleNotifPopup() {
+  const popup = document.getElementById('notifPopup');
+  if (popup.classList.contains('show')) {
+    popup.classList.remove('show');
+  } else {
+    showTodayFollowupPopup();
+    popup.classList.add('show');
+  }
+}
+
+// ===== BROWSER NOTIFICATIONS =====
+function requestNotifPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission().then(perm => {
+      if (perm === 'granted') showToast('🔔 Notifications ON!', 'success');
+    });
+  }
+}
+
+function sendBrowserNotif(title, body) {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(title, { body, icon: 'https://via.placeholder.com/64/d4a843/0a0f1a?text=L' });
+  }
+}
+
+// ===== AI UPGRADE — Instagram Caption =====
+// AI section mein naya button add hoga via JS
+function addInstagramAiBtn() {
+  const nav = document.querySelector('.ai-tab-nav');
+  if (!nav || document.getElementById('ai-insta')) return;
+  const btn = document.createElement('button');
+  btn.className = 'ai-feature-btn';
+  btn.textContent = '📸 Insta Caption';
+  btn.onclick = function() { switchAiSection('insta', this); };
+  nav.appendChild(btn);
+
+  const section = document.createElement('div');
+  section.className = 'ai-section';
+  section.id = 'ai-insta';
+  section.innerHTML = `
+    <div class="ai-card">
+      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Project details → AI Instagram caption + hashtags banayega</div>
+      <div class="form-group">
+        <label class="form-label">🏗️ Project</label>
+        <select class="form-select" id="aiInstaProject">
+          <option>Imperial Estate</option><option>Imperial Galaxy</option>
+          <option>Solitair Home</option><option>Dream Town</option><option>Govind Vihar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📸 Post Type</label>
+        <select class="form-select" id="aiInstaType">
+          <option>Plot Launch</option><option>Site Visit</option>
+          <option>Customer Testimonial</option><option>Investment Tips</option><option>Jaipur Market Update</option>
+        </select>
+      </div>
+      <button class="btn-ai" onclick="aiInstaCaption()" id="aiInstaBtn">📸 Caption + Hashtags Banao</button>
+      <div class="ai-result" id="aiInstaResult"></div>
+      <button class="ai-copy-btn" id="aiInstaCopy" style="display:none" onclick="aiCopy('aiInstaResult','aiInstaCopy')">📋 Copy करें</button>
+    </div>`;
+  document.querySelector('.main-content').querySelector('#tab-ai').appendChild(section);
+}
+
+async function aiInstaCaption() {
+  const proj = document.getElementById('aiInstaProject').value;
+  const type = document.getElementById('aiInstaType').value;
+  const btn = document.getElementById('aiInstaBtn');
+  const result = document.getElementById('aiInstaResult');
+  const copyBtn = document.getElementById('aiInstaCopy');
+  btn.disabled = true; btn.innerHTML = '⏳ Caption ban raha hai...';
+  result.style.display = 'block'; copyBtn.style.display = 'none';
+  result.innerHTML = '<div class="ai-loading"><span>📸 Instagram caption taiyaar ho raha hai...</span></div>';
+  await new Promise(r => setTimeout(r, 1000));
+  const captions = {
+    'Plot Launch': `🏠 Dream Plot Available Now!\n\n✨ ${proj} — Jaipur ka naya residential hub!\n\n📍 Prime Location | Army Area ke paas\n💰 Affordable Price | Easy Payment Plan\n✅ RERA Approved | Bank Loan Available\n\nApna sapna ghar banao — aaj hi call karo!\n📞 [your number]\n\n#${proj.replace(' ','')} #JaipurRealEstate #PlotForSale #JaipurProperty #InvestInJaipur #RealEstate #PropertyJaipur #HomeBuying #PlotBooking #KrishanRealEstate`,
+    'Site Visit': `🎉 Site Visit Successful!\n\n${proj} mein aaj ek aur khush customer ne apna future plot dekha! 🏡\n\nHamari property dekhne aaye aur impressed hue:\n✅ Location — ekdum perfect\n✅ Infrastructure — top class\n✅ Pricing — market se better\n\nAap bhi ek visit karein — change your life!\n📞 [your number]\n\n#SiteVisit #${proj.replace(' ','')} #JaipurProperty #HappyCustomer #RealEstateJaipur #PlotBooking`,
+    'Investment Tips': `💡 Real Estate Investment Tip!\n\nJaipurمیں property kharidna chahte ho? Yeh 3 cheezein hamesha check karo:\n\n1️⃣ RERA Approval — scam se bachao\n2️⃣ Location Growth — future value\n3️⃣ Payment Plan — affordable ho\n\n${proj} — teeno mein pass! ✅\n\n📞 Investment ke liye: [your number]\n\n#PropertyTips #JaipurInvestment #RealEstateTips #PlotInvestment #JaipurRealEstate #KrishanRealEstate`
+  };
+  result.textContent = captions[type] || captions['Plot Launch'];
+  copyBtn.style.display = 'inline-block';
+  btn.disabled = false; btn.innerHTML = '📸 Caption + Hashtags Banao';
+}
+
+// ===== CALLING SCRIPT AI =====
+function addCallingScriptBtn() {
+  const nav = document.querySelector('.ai-tab-nav');
+  if (!nav || document.getElementById('ai-call')) return;
+  const btn = document.createElement('button');
+  btn.className = 'ai-feature-btn';
+  btn.textContent = '📞 Call Script';
+  btn.onclick = function() { switchAiSection('call', this); };
+  nav.appendChild(btn);
+
+  const section = document.createElement('div');
+  section.className = 'ai-section';
+  section.id = 'ai-call';
+  section.innerHTML = `
+    <div class="ai-card">
+      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead ki details → AI calling script banayega</div>
+      <div class="form-group">
+        <label class="form-label">👤 Lead ka Naam</label>
+        <input class="form-input" id="aiCallName" type="text" placeholder="Jaise: Ramesh ji">
+      </div>
+      <div class="form-group">
+        <label class="form-label">🏗️ Project</label>
+        <select class="form-select" id="aiCallProject">
+          <option>Imperial Estate</option><option>Imperial Galaxy</option>
+          <option>Solitair Home</option><option>Dream Town</option><option>Govind Vihar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">📞 Call Type</label>
+        <select class="form-select" id="aiCallType">
+          <option>Pehli baar call</option><option>Follow-up call</option>
+          <option>Site visit ke baad</option><option>Price negotiation</option>
+        </select>
+      </div>
+      <button class="btn-ai" onclick="aiCallScript()" id="aiCallBtn">📞 Calling Script Banao</button>
+      <div class="ai-result" id="aiCallResult"></div>
+      <button class="ai-copy-btn" id="aiCallCopy" style="display:none" onclick="aiCopy('aiCallResult','aiCallCopy')">📋 Copy करें</button>
+    </div>`;
+  document.querySelector('.main-content').querySelector('#tab-ai').appendChild(section);
+}
+
+async function aiCallScript() {
+  const name = document.getElementById('aiCallName').value.trim() || 'Sir';
+  const proj = document.getElementById('aiCallProject').value;
+  const type = document.getElementById('aiCallType').value;
+  const btn = document.getElementById('aiCallBtn');
+  const result = document.getElementById('aiCallResult');
+  const copyBtn = document.getElementById('aiCallCopy');
+  btn.disabled = true; btn.innerHTML = '⏳ Script ban rahi hai...';
+  result.style.display = 'block'; copyBtn.style.display = 'none';
+  result.innerHTML = '<div class="ai-loading"><span>📞 Calling script taiyaar ho rahi hai...</span></div>';
+  await new Promise(r => setTimeout(r, 1000));
+
+  const scripts = {
+    'Pehli baar call': `📞 CALLING SCRIPT — Pehli Baar\n\n"Namaskar! ${name} ji se baat ho rahi hai?\n\nMain Krishan bol raha hoon — Jaipur mein ${proj} ka agent hoon.\n\nSir, aapne recently hamare project ke baare mein enquiry ki thi — toh socha ek baar personally connect karoon.\n\n${proj} mein abhi kuch limited plots available hain — Army Area ke ekdum paas, RERA approved, aur payment plan bhi bahut flexible hai.\n\nSir, kya aap kabhi Jaipur mein property le ne ke baare mein socha hai?\n\n[PAUSE — unka jawab suno]\n\nBilkul sir! Kya main aapko ek baar site dikha sakta hoon — koi commitment nahi, bas ek informal visit? Is weekend free hain aap?"`,
+    'Follow-up call': `📞 FOLLOW-UP SCRIPT\n\n"Namaskar ${name} ji! Main Krishan — ${proj} se.\n\nSir, pichli baar baat hui thi — kaisa chal raha hai?\n\n[PAUSE]\n\nSir, main isliye call kar raha tha — hamare ${proj} mein 2-3 plots jo aapke budget mein the, woh ab almost book ho rahe hain.\n\nAapka interest tha toh socha pehle aapko inform karoon.\n\nSir, kya aap kal ya parson ek baar site dekhne aa sakte hain? Main personally available rahoon ga — aapko poori detail dunga.\n\n[Agar hesitation ho]: Sir, koi bhi final decision nahi karna — bas ek baar physically dekh lena. Kaafi cheezein clear ho jaati hain visit ke baad."`,
+    'Price negotiation': `📞 NEGOTIATION SCRIPT\n\n"${name} ji, main samajhta hoon price ko lekar aapki concern hai.\n\nSir, honestly bolunga — market mein ${proj} se better value kahi nahi milegi is price range mein.\n\nDekhiye:\n✅ Location — Army Area, fastest growing zone\n✅ RERA Approved — 100% safe investment  \n✅ Appreciation — next 2 years mein 25-30% value badhegi\n\nSir, agar aap abhi book karte ho toh main personally ensure karoonga ki best deal mile.\n\nEk kaam karo — kal site aao, baith ke sab discuss karte hain. Deal hogi ya nahi, yeh baad mein — pehle property dekhte hain.\n\nKab aa sakte ho?"`
+  };
+  result.textContent = scripts[type] || scripts['Pehli baar call'];
+  copyBtn.style.display = 'inline-block';
+  btn.disabled = false; btn.innerHTML = '📞 Calling Script Banao';
+}
+
+// Init new AI buttons
+setTimeout(() => { addInstagramAiBtn(); addCallingScriptBtn(); }, 500);
 
 checkNotifications();
 renderLeads();
