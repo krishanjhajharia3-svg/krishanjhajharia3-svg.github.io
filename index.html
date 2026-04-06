@@ -36,17 +36,9 @@
   window._fbAuth = auth;
   window._fbDb = db;
   window._fbProvider = provider;
-  
-  // Redirect se wapas aane pe result check karo
-  getRedirectResult(auth).then((result) => {
-    if (result && result.user) {
-      window._fbUser = result.user;
-      window.dispatchEvent(new CustomEvent('fbUserReady', { detail: result.user }));
-    }
-  }).catch((e) => { console.log('Redirect result:', e.code); });
   window._fbFunctions = { signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, doc, setDoc, getDoc, collection, getDocs, deleteDoc };
 
-  // Auth state listener
+  // Auth state listener — yeh sabse pehle fire hoga
   onAuthStateChanged(auth, (user) => {
     if (user) {
       window._fbUser = user;
@@ -54,6 +46,32 @@
     } else {
       window._fbUser = null;
       window.dispatchEvent(new CustomEvent('fbUserSignedOut'));
+    }
+  });
+
+  // Redirect se wapas aane pe result check karo
+  getRedirectResult(auth).then((result) => {
+    if (result && result.user) {
+      window._fbUser = result.user;
+      // App reload karo — white screen fix
+      if(document.getElementById('splashScreen')){
+        document.getElementById('splashScreen').style.display = 'flex';
+        document.getElementById('splashScreen').classList.remove('hide');
+        setTimeout(()=>{
+          document.getElementById('splashScreen').classList.add('hide');
+          setTimeout(()=>{
+            document.getElementById('splashScreen').style.display = 'none';
+            if(typeof showMainApp === 'function') showMainApp();
+          }, 600);
+        }, 800);
+      }
+      window.dispatchEvent(new CustomEvent('fbUserReady', { detail: result.user }));
+    }
+  }).catch((e) => { 
+    console.log('Redirect result error:', e.code);
+    // Error pe bhi app reload karo
+    if(e.code && e.code !== 'auth/no-auth-event'){
+      console.log('Auth error — app continue karega');
     }
   });
 </script>
@@ -766,7 +784,7 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 <!-- FOOTER -->
 <div class="app-footer">
   <div class="footer-brand">🏠 LEADO — Real Estate CRM</div>
-  <div class="footer-contact">by Krishan | Jaipur | <a href="tel:+919999999999">📞 Call</a> | <a href="https://wa.me/919999999999">💬 WhatsApp</a></div>
+  <div class="footer-contact">by Krishan | Jaipur | <a href="tel:+919999999999">📞 Call</a> | <a href="javascript:void(0)" onclick="openWhatsApp('whatsapp://send?phone=919999999999')">💬 WhatsApp</a></div>
 </div>
 
 <!-- BOTTOM NAVIGATION -->
@@ -1667,26 +1685,33 @@ function showCallHistory(id){
   document.getElementById('callHistoryModal').classList.add('active');
 }
 
+
+// ===== UNIVERSAL WHATSAPP OPENER — history affect nahi hoga =====
+function openWhatsApp(scheme){
+  // Step 1: History replace karo — back button safe rahega
+  history.replaceState(null, '', window.location.href);
+  
+  // Step 2: Hidden iframe — browser history mein entry nahi jayegi
+  // + Play Store nahi khulega + WA Business & Normal dono support
+  let iframe = document.getElementById('_waIframe');
+  if(!iframe){
+    iframe = document.createElement('iframe');
+    iframe.id = '_waIframe';
+    iframe.style.cssText = 'display:none;width:0;height:0;border:none;position:absolute;top:-9999px;left:-9999px';
+    document.body.appendChild(iframe);
+  }
+  iframe.src = 'about:blank';
+  
+  setTimeout(function(){
+    iframe.src = scheme;
+    // 3 sec baad reset
+    setTimeout(function(){ iframe.src = 'about:blank'; }, 3000);
+  }, 50);
+}
+
 function waLead(phone,project){
   const msg=encodeURIComponent('नमस्ते! मैं '+(project||'RE')+' के बारे में आपसे बात करना चाहता था। क्या आप अभी available हैं?');
-  const fallbackUrl='https://wa.me/91'+phone+'?text='+msg;
-  
-  if(/android/i.test(navigator.userAgent)){
-    // Pehle WhatsApp Business try karo, phir Normal WA, phir wa.me
-    const a=document.createElement('a');
-    // whatsapp:// scheme dono apps support karta hai — Play Store nahi khulega
-    a.href='whatsapp://send?phone=91'+phone+'&text='+msg;
-    a.target='_system';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    // 2.5 sec baad agar WA nahi khula to wa.me open karo (browser mein)
-    setTimeout(function(){
-      window.open(fallbackUrl,'_system');
-    }, 2500);
-  } else {
-    window.open(fallbackUrl,'_blank','noopener,noreferrer');
-  }
+  openWhatsApp('whatsapp://send?phone=91'+phone+'&text='+msg);
 }
 
 function showExportOptions(){document.getElementById('exportModal').classList.add('active');}
@@ -1714,16 +1739,8 @@ function exportViaWhatsApp(){
   const ic={hot:'🔥',warm:'⭐',cold:'❄️',converted:'✅'};
   leads.slice(0,20).forEach((l,i)=>{msg+=`*${i+1}. ${l.name}* ${ic[l.status]||''}\n📱 ${l.phone} | 🏗️ ${l.project||'—'}\n`;if(l.nextDate)msg+=`📅 Next: ${l.nextDate}\n`;if(l.visited)msg+=`🏠 Site Visit: Kiya\n`;msg+='\n';});
   if(leads.length>20)msg+=`... aur ${leads.length-20} leads hain\n`;
-  const waExportUrl='https://wa.me/?text='+encodeURIComponent(msg);
-  const wa=document.createElement('a');
-  wa.href='whatsapp://send?text='+encodeURIComponent(msg);
-  wa.target='_blank';wa.rel='noopener noreferrer';
-  document.body.appendChild(wa);wa.click();document.body.removeChild(wa);
-  setTimeout(function(){
-    const wb=document.createElement('a');
-    wb.href=waExportUrl;wb.target='_blank';wb.rel='noopener noreferrer';
-    document.body.appendChild(wb);wb.click();document.body.removeChild(wb);
-  },2000);
+  // iframe trick — history mein save nahi hoga
+  openWhatsApp('whatsapp://send?text='+encodeURIComponent(msg));
 }
 
 function switchTab(tab,btn){
