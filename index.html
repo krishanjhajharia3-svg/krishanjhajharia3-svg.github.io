@@ -1371,6 +1371,7 @@ function saveLead(){
   if(editingId){const idx=leads.findIndex(l=>l.id===editingId);if(idx!==-1)leads[idx]={...leads[idx],...ld};showToast('✅ Lead update ho gaya!','success');}
   else{ld.id=generateId();ld.createdAt=new Date().toISOString();leads.unshift(ld);showToast('✅ Lead save ho gaya!','success');}
   saveData();renderLeads();renderFollowups();updateStats();closeModal();
+  renderHomeDashboard();
   // Refresh AI lead selects
   populateAiLeadSelects();
   if(hnd){const sid=editingId||leads[0].id;setTimeout(()=>{if(confirm('📅 Google Calendar mein Follow-Up add karen?'))addToCalendar(sid);},500);}
@@ -1433,6 +1434,7 @@ function saveCallRecord(){
   const followupDate=document.getElementById('callFollowupDate').value;let addedFollowup=false;
   if(followupChecked&&followupDate){leads[idx].nextDate=followupDate;leads[idx].nextTime=document.getElementById('callFollowupTime').value||'10:00';leads[idx].nextNote=document.getElementById('callFollowupNote').value.trim()||callRecord.notes||'';addedFollowup=true;}
   saveData();renderLeads();renderVisits();renderFollowups();updateStats();closeCallModal();
+  renderHomeDashboard();
   const resultLabels={connected:'✅ Baat hui',not_answered:'❌ Nahi utha',busy:'🔴 Busy',call_later:'⏰ Baad mein'};
   let msg=`📞 Call record ho gayi — ${resultLabels[selectedCallResult]}`;
   if(addedFollowup)msg+=` | 📅 Follow-up set!`;
@@ -2437,38 +2439,20 @@ function renderHomeDashboard() {
   document.getElementById('homeProgVisitsBar').style.width = visitPct + '%';
 }
 
-// Call button: phone dial + lead record open karo
+// Call button: phone dial + CALL RECORD modal open
 function homeCallAndOpen(id) {
   const lead = leads.find(l => String(l.id) === String(id));
   if (!lead) return;
-  // Phone dial
-  window.location.href = 'tel:' + lead.phone;
-  // 800ms baad lead record open karo update ke liye
-  setTimeout(() => {
-    editLead(lead.id);
-    showToast('📞 Call ke baad status update karein!', 'success');
-  }, 800);
+  // callLead already dial bhi karta hai aur call record modal bhi kholta hai
+  callLead(lead.id, lead.phone);
 }
 
-// Done button: follow-up clear karo + home se hatao
+// Done button: lead edit form open karo — status + next date update karo
 function homeDone(id) {
   const lead = leads.find(l => String(l.id) === String(id));
   if (!lead) return;
-  if (confirm(`"${lead.name}" ka follow-up done mark karein?`)) {
-    lead.nextDate = '';
-    lead.nextTime = '';
-    lead.lastUpdated = new Date().toISOString();
-    saveData();
-    // Smooth remove
-    const item = document.getElementById('hfi-' + id);
-    if (item) {
-      item.style.transition = 'all .3s ease';
-      item.style.opacity = '0';
-      item.style.transform = 'translateX(100%)';
-      setTimeout(() => { renderHomeDashboard(); updateStats(); }, 300);
-    }
-    showToast('✅ Follow-up done! ' + lead.name, 'success');
-  }
+  editLead(lead.id);
+  showToast('✅ Status aur next follow-up date update karein!', 'success');
 }
 
 // switchTab mein home refresh add karo
