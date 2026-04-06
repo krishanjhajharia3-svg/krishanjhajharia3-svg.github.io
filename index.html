@@ -35,9 +35,8 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .tab-btn.active{color:var(--accent-gold);border-bottom-color:var(--accent-gold);background:rgba(212,168,67,.05)}
 .tab-btn.vtab{color:var(--text-muted)}
 .tab-btn.vtab.active{color:var(--accent-purple);border-bottom-color:var(--accent-purple);background:rgba(167,139,250,.05)}
+.tab-btn.aitab.active{color:#00d4aa;border-bottom-color:#00d4aa;background:rgba(0,212,170,.05)}
 .tab-btn svg{display:block;margin:0 auto 2px}
-
-/* BOTTOM NAVIGATION */
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);padding:8px 6px 12px;z-index:150;box-shadow:0 -4px 20px rgba(0,0,0,.4)}
 @media(max-width:768px){.bottom-nav{display:flex}.tab-nav{display:none}}
 .bottom-nav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 4px;border-radius:12px;background:transparent;border:none;color:var(--text-muted);cursor:pointer;transition:all .2s}
@@ -45,6 +44,7 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .bottom-nav-item.active.visit{color:var(--accent-purple);background:rgba(167,139,250,.1)}
 .bottom-nav-item.active.followup{color:var(--accent-gold-light);background:rgba(240,201,106,.1)}
 .bottom-nav-item.active.summary{color:var(--accent-teal);background:rgba(0,212,170,.1)}
+.bottom-nav-item.active.ai{color:#00d4aa;background:rgba(0,212,170,.1)}
 .bottom-nav-icon{font-size:20px;line-height:1}
 .bottom-nav-label{font-size:9px;font-family:'Noto Sans Devanagari',sans-serif;font-weight:500}
 .main-content{padding:14px;padding-bottom:110px}
@@ -84,6 +84,8 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .action-btn.savecon:hover{background:rgba(167,139,250,.1)}
 .action-btn.visitbtn{border-color:rgba(167,139,250,.3);color:var(--accent-purple)}
 .action-btn.visitbtn:hover{background:rgba(167,139,250,.1)}
+.action-btn.aibtn{border-color:rgba(0,212,170,.3);color:#00d4aa}
+.action-btn.aibtn:hover{background:rgba(0,212,170,.1)}
 .fab{position:fixed;bottom:24px;right:20px;width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,var(--accent-gold),#e8881a);border:none;color:#0a0f1a;font-size:28px;cursor:pointer;box-shadow:0 8px 24px rgba(212,168,67,.5);display:flex;align-items:center;justify-content:center;z-index:200;transition:all .2s}
 @media(max-width:768px){.fab{bottom:90px}}
 .fab:hover{transform:scale(1.08)}
@@ -107,6 +109,9 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .btn-danger{width:100%;padding:11px;background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);border-radius:12px;color:var(--accent-red);font-size:13px;cursor:pointer;margin-top:8px;font-family:'Noto Sans Devanagari',sans-serif}
 .btn-purple{width:100%;padding:13px;background:linear-gradient(135deg,#a78bfa,#7c3aed);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;font-family:'Rajdhani',sans-serif;cursor:pointer;letter-spacing:.5px;transition:all .2s;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-purple:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(167,139,250,.4)}
+.btn-ai{width:100%;padding:13px;background:linear-gradient(135deg,#00d4aa,#0099cc);border:none;border-radius:12px;color:#0a0f1a;font-size:15px;font-weight:700;font-family:'Rajdhani',sans-serif;cursor:pointer;letter-spacing:.5px;transition:all .2s;margin-top:6px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-ai:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,212,170,.4)}
+.btn-ai:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .search-bar{position:relative;margin-bottom:14px}
 .search-bar input{width:100%;padding:10px 12px 10px 36px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;color:var(--text-primary);font-size:13px;font-family:'Noto Sans Devanagari',sans-serif;outline:none;transition:all .2s}
 .search-bar input:focus{border-color:var(--accent-gold)}
@@ -181,6 +186,30 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .call-result-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .call-connected{background:rgba(0,212,170,.15)}
 .call-missed{background:rgba(255,77,109,.15)}
+
+/* ===== AI TAB STYLES ===== */
+.ai-tab-nav{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.ai-tab-nav::-webkit-scrollbar{display:none}
+.ai-feature-btn{padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-muted);font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:'Noto Sans Devanagari',sans-serif}
+.ai-feature-btn.active{border-color:#00d4aa;color:#00d4aa;background:rgba(0,212,170,.1)}
+.ai-section{display:none}
+.ai-section.active{display:block}
+.ai-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
+.ai-result{background:var(--bg-card2);border:1px solid rgba(0,212,170,.2);border-radius:10px;padding:12px;margin-top:12px;font-size:13px;line-height:1.8;color:var(--text-primary);min-height:60px;white-space:pre-wrap;display:none}
+.ai-loading{text-align:center;padding:20px;color:var(--accent-teal);font-size:13px}
+.ai-loading span{display:inline-block;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+.score-display{text-align:center;padding:16px 0}
+.score-num{font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;color:#00d4aa}
+.score-bar-wrap{height:8px;background:var(--bg-card2);border-radius:4px;overflow:hidden;margin:10px 0}
+.score-bar{height:100%;border-radius:4px;transition:width .6s ease}
+.score-label{font-size:14px;font-weight:600;margin-top:6px}
+.ai-copy-btn{padding:7px 16px;border-radius:8px;border:1px solid rgba(0,212,170,.3);background:rgba(0,212,170,.08);color:#00d4aa;font-size:12px;cursor:pointer;margin-top:8px;font-family:'Noto Sans Devanagari',sans-serif;transition:all .2s}
+.ai-copy-btn:hover{background:rgba(0,212,170,.15)}
+.ai-header{background:linear-gradient(135deg,rgba(0,212,170,.1),rgba(0,153,204,.05));border:1px solid rgba(0,212,170,.2);border-radius:var(--radius);padding:14px;margin-bottom:16px;text-align:center}
+.ai-header-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#00d4aa;margin-bottom:4px}
+.ai-header-sub{font-size:11px;color:var(--text-muted);line-height:1.5}
+.quick-lead-select{width:100%;padding:10px 12px;background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-size:13px;font-family:'Noto Sans Devanagari',sans-serif;outline:none;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -220,6 +249,9 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
   </button>
   <button class="tab-btn" id="tabBtn-summary" onclick="switchTab('summary',this)">
     <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Summary
+  </button>
+  <button class="tab-btn aitab" id="tabBtn-ai" onclick="switchTab('ai',this)">
+    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>🤖 AI
   </button>
 </div>
 
@@ -277,6 +309,215 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
     <p class="section-title">🏗️ Project-wise</p>
     <div id="projectSummary"></div>
   </div>
+
+  <!-- ===== AI TAB ===== -->
+  <div class="tab-content" id="tab-ai">
+    <div class="ai-header">
+      <div class="ai-header-title">🤖 AI Sales Assistant</div>
+      <div class="ai-header-sub">WhatsApp Message · Lead Score · Next Action · Objection Handle</div>
+    </div>
+
+    <!-- AI Sub-tabs -->
+    <div class="ai-tab-nav">
+      <button class="ai-feature-btn active" onclick="switchAiSection('msg',this)">💬 WA Message</button>
+      <button class="ai-feature-btn" onclick="switchAiSection('score',this)">🎯 Lead Score</button>
+      <button class="ai-feature-btn" onclick="switchAiSection('action',this)">⚡ Next Action</button>
+      <button class="ai-feature-btn" onclick="switchAiSection('obj',this)">🛡️ Objection</button>
+    </div>
+
+    <!-- 1. WhatsApp Message Generator -->
+    <div class="ai-section active" id="ai-msg">
+      <div class="ai-card">
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead चुनें या manually details भरें → AI WhatsApp message बनाएगा</div>
+
+        <div class="form-group">
+          <label class="form-label">📋 Quick Lead Select (Optional)</label>
+          <select class="quick-lead-select" id="aiMsgLeadSelect" onchange="fillAiMsgFromLead()">
+            <option value="">-- Lead चुनें या नीचे manually भरें --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">👤 Lead का नाम</label>
+          <input class="form-input" id="aiMsgName" type="text" placeholder="जैसे: Ramesh Sharma">
+        </div>
+        <div class="form-group">
+          <label class="form-label">🏗️ Project</label>
+          <select class="form-select" id="aiMsgProject">
+            <option>Imperial Estate</option>
+            <option>Imperial Galaxy</option>
+            <option>Solitair Home</option>
+            <option>Dream Town</option>
+            <option>Govind Vihar</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🌡️ Status</label>
+          <select class="form-select" id="aiMsgStatus">
+            <option value="warm">⭐ Interested</option>
+            <option value="hot">🔥 Ready to Buy</option>
+            <option value="cold">❄️ Thinking</option>
+            <option value="converted">✅ Converted</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">💬 Last बात क्या हुई</label>
+          <textarea class="form-textarea" id="aiMsgLast" placeholder="जैसे: Budget ₹25L तक बताया, site visit करनी है..."></textarea>
+        </div>
+        <button class="btn-ai" onclick="aiGenerateMsg()" id="aiMsgBtn">🤖 AI से WhatsApp Message बनाएं</button>
+        <div class="ai-result" id="aiMsgResult"></div>
+        <button class="ai-copy-btn" id="aiMsgCopy" style="display:none" onclick="aiCopy('aiMsgResult','aiMsgCopy')">📋 Copy करें</button>
+      </div>
+    </div>
+
+    <!-- 2. Lead Score -->
+    <div class="ai-section" id="ai-score">
+      <div class="ai-card">
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead की details → AI 0-100 score देगा</div>
+
+        <div class="form-group">
+          <label class="form-label">📋 Quick Lead Select (Optional)</label>
+          <select class="quick-lead-select" id="aiScoreLeadSelect" onchange="fillAiScoreFromLead()">
+            <option value="">-- Lead चुनें या नीचे manually भरें --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">📣 Source</label>
+          <select class="form-select" id="aiScoreSource">
+            <option>Meta Ads</option>
+            <option>Referral</option>
+            <option>Cold Call</option>
+            <option>WhatsApp</option>
+            <option>Site Visit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">💰 Budget</label>
+          <select class="form-select" id="aiScoreBudget">
+            <option>₹20-30 लाख</option>
+            <option>₹30-50 लाख</option>
+            <option>₹50 लाख+</option>
+            <option>Budget नहीं बताया</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">📅 कितने दिन से follow-up है</label>
+          <select class="form-select" id="aiScoreDays">
+            <option>आज पहली बात</option>
+            <option>1-3 दिन</option>
+            <option>1 हफ्ता</option>
+            <option>1 महीने से ज्यादा</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">🏠 Site Visit</label>
+          <select class="form-select" id="aiScoreVisit">
+            <option>हाँ, visit हो चुकी</option>
+            <option>नहीं, अभी नहीं</option>
+            <option>Scheduled है</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">📞 Response Quality</label>
+          <select class="form-select" id="aiScoreResp">
+            <option>बहुत अच्छा — खुद call करता है</option>
+            <option>ठीक है — उठाता है</option>
+            <option>कभी-कभी उठाता है</option>
+            <option>नहीं उठाता</option>
+          </select>
+        </div>
+        <button class="btn-ai" onclick="aiLeadScore()" id="aiScoreBtn">🎯 AI Lead Score निकालें</button>
+        <div class="ai-result" id="aiScoreResult">
+          <div class="score-display" id="aiScoreDisplay" style="display:none">
+            <div class="score-num" id="aiScoreNum">0</div>
+            <div class="score-bar-wrap"><div class="score-bar" id="aiScoreBar" style="width:0%"></div></div>
+            <div class="score-label" id="aiScoreLabel"></div>
+          </div>
+          <div id="aiScoreText"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Next Action -->
+    <div class="ai-section" id="ai-action">
+      <div class="ai-card">
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead की situation → AI बताएगा आज क्या करें</div>
+
+        <div class="form-group">
+          <label class="form-label">📋 Quick Lead Select (Optional)</label>
+          <select class="quick-lead-select" id="aiActionLeadSelect" onchange="fillAiActionFromLead()">
+            <option value="">-- Lead चुनें या नीचे manually भरें --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">👤 Lead का नाम</label>
+          <input class="form-input" id="aiActionName" type="text" placeholder="जैसे: Suresh Kumar">
+        </div>
+        <div class="form-group">
+          <label class="form-label">🌡️ Current Status</label>
+          <select class="form-select" id="aiActionStatus">
+            <option value="warm">⭐ Interested</option>
+            <option value="hot">🔥 Ready to Buy</option>
+            <option value="cold">❄️ Thinking</option>
+            <option>Site Visit हो चुकी</option>
+            <option>Negotiation चल रही</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">📅 आखिरी contact कब</label>
+          <select class="form-select" id="aiActionWhen">
+            <option>आज</option>
+            <option>2-3 दिन पहले</option>
+            <option>1 हफ्ते पहले</option>
+            <option>2+ हफ्ते पहले</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">⚠️ Main Concern</label>
+          <select class="form-select" id="aiActionConcern">
+            <option>Budget / Price</option>
+            <option>Location पसंद नहीं</option>
+            <option>Family approval चाहिए</option>
+            <option>Loan नहीं मिल रहा</option>
+            <option>दूसरे projects देख रहे</option>
+            <option>कोई issue नहीं बताया</option>
+          </select>
+        </div>
+        <button class="btn-ai" onclick="aiNextAction()" id="aiActionBtn">⚡ AI Next Action बताए</button>
+        <div class="ai-result" id="aiActionResult"></div>
+        <button class="ai-copy-btn" id="aiActionCopy" style="display:none" onclick="aiCopy('aiActionResult','aiActionCopy')">📋 Copy करें</button>
+      </div>
+    </div>
+
+    <!-- 4. Objection Handler -->
+    <div class="ai-section" id="ai-obj">
+      <div class="ai-card">
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead की objection → AI counter script तैयार करेगा</div>
+        <div class="form-group">
+          <label class="form-label">🏗️ Project</label>
+          <select class="form-select" id="aiObjProject">
+            <option>Imperial Estate</option>
+            <option>Imperial Galaxy</option>
+            <option>Solitair Home</option>
+            <option>Dream Town</option>
+            <option>Govind Vihar</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">💬 Lead की Objection लिखें</label>
+          <textarea class="form-textarea" id="aiObjText" placeholder="जैसे: Price बहुत ज्यादा है, दूसरी जगह सस्ता मिल रहा है..."></textarea>
+        </div>
+        <button class="btn-ai" onclick="aiHandleObj()" id="aiObjBtn">🛡️ AI Objection Handle करे</button>
+        <div class="ai-result" id="aiObjResult"></div>
+        <button class="ai-copy-btn" id="aiObjCopy" style="display:none" onclick="aiCopy('aiObjResult','aiObjCopy')">📋 Copy करें</button>
+      </div>
+    </div>
+
+  </div>
+  <!-- END AI TAB -->
+
 </div>
 
 <button class="fab" onclick="openAddModal()">+</button>
@@ -298,6 +539,10 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
   <button class="bottom-nav-item summary" id="bn-summary" onclick="switchTab('summary',this);updateBottomNav('summary')">
     <span class="bottom-nav-icon">📊</span>
     <span class="bottom-nav-label">Summary</span>
+  </button>
+  <button class="bottom-nav-item ai" id="bn-ai" onclick="switchTab('ai',this);updateBottomNav('ai')">
+    <span class="bottom-nav-icon">🤖</span>
+    <span class="bottom-nav-label">AI</span>
   </button>
 </div>
 
@@ -371,16 +616,11 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
       <div class="info-box-sub" id="cPhone">—</div>
       <div class="info-box-sub" id="cProject" style="margin-top:2px">—</div>
     </div>
-
-    <!-- Save Method Tabs -->
     <div class="save-method-tabs">
       <div class="smt-btn active" id="smtGoogle" onclick="switchSaveMethod('google')">🔵 Google Contacts</div>
       <div class="smt-btn" id="smtVcf" onclick="switchSaveMethod('vcf')">📁 VCF File</div>
     </div>
-
-    <!-- Google Contacts Method -->
     <div class="smt-content active" id="smtGoogleContent">
-      <!-- Not logged in -->
       <div id="googleNotLoggedIn">
         <div style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;line-height:1.7;background:var(--bg-card2);border-radius:10px;padding:10px">
           🔵 Google account se login karein → Contact <strong style="color:#4285f4">directly Google Contacts</strong> mein save hoga<br>
@@ -391,8 +631,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
           Google se Login karein
         </button>
       </div>
-
-      <!-- Logged in -->
       <div id="googleLoggedIn" style="display:none">
         <div class="google-status connected" id="googleStatusBox">
           <div class="google-avatar" id="googleAvatar">👤</div>
@@ -408,8 +646,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
         <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:8px">Contact seedha Google mein jayega → Phone pe sync hoga</div>
       </div>
     </div>
-
-    <!-- VCF Method -->
     <div class="smt-content" id="smtVcfContent">
       <p style="font-size:12px;color:var(--text-secondary);margin-bottom:14px;line-height:1.7;background:var(--bg-card2);border-radius:10px;padding:10px">
         👇 Button dabao → Phone mein <strong style="color:var(--accent-purple)">.vcf file</strong> download hogi<br>
@@ -418,7 +654,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
       </p>
       <button class="btn-purple" onclick="doSaveContact()">📱 VCF File Download करें</button>
     </div>
-
     <button class="btn-secondary" onclick="closeContactModal()" style="margin-top:10px">Baad Mein</button>
   </div>
 </div>
@@ -447,32 +682,19 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
         <option value="converted">✅ Converted — Deal Ho Gayi!</option>
       </select>
     </div>
-
-    <!-- OPTIONAL PHOTO SECTION -->
     <div style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:12px;padding:12px;margin-bottom:12px">
       <div style="font-size:13px;font-weight:600;color:var(--accent-purple);margin-bottom:6px">📸 Photos (Optional)</div>
       <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Site ki photos add kar sakte hain — chahein toh skip karein</div>
-      
-      <!-- Photo Upload Button -->
       <input type="file" id="photoInput" accept="image/*" multiple style="display:none" onchange="handlePhotoSelect(event)">
       <div style="display:flex;gap:8px;margin-bottom:10px">
-        <button class="action-btn visitbtn" style="flex:1;padding:10px" onclick="document.getElementById('photoInput').click()">
-          📷 Camera / Gallery
-        </button>
+        <button class="action-btn visitbtn" style="flex:1;padding:10px" onclick="document.getElementById('photoInput').click()">📷 Camera / Gallery</button>
       </div>
-
-      <!-- Photo Preview Area -->
       <div id="photoPreviewArea" style="display:none">
         <div style="font-size:11px;color:var(--text-secondary);margin-bottom:6px" id="photoCount">0 photos selected</div>
         <div id="photoPreviewGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"></div>
-        
-        <!-- Drive Upload Status -->
-        <div id="driveUploadStatus" style="display:none;margin-top:8px;font-size:11px;padding:8px;background:var(--bg-card2);border-radius:8px;color:var(--text-secondary)">
-          ☁️ Drive mein upload hoga visit save hone ke baad...
-        </div>
+        <div id="driveUploadStatus" style="display:none;margin-top:8px;font-size:11px;padding:8px;background:var(--bg-card2);border-radius:8px;color:var(--text-secondary)">☁️ Drive mein upload hoga visit save hone ke baad...</div>
       </div>
     </div>
-
     <button class="btn-purple" onclick="saveVisit()">🏠 Visit Save करें</button>
     <button class="btn-secondary" onclick="closeVisitModal()">रद्द करें</button>
   </div>
@@ -488,7 +710,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
       <div class="info-box-sub" id="callPhone">—</div>
       <div class="info-box-sub" id="callProject" style="margin-top:2px">—</div>
     </div>
-
     <div class="form-group">
       <label class="form-label">📞 Baat Hui?</label>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
@@ -498,7 +719,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
         <button class="call-result-btn" id="crLater" onclick="selectCallResult('call_later')">⏰ Baad Mein Bulaya</button>
       </div>
     </div>
-
     <div class="form-group" id="callDurationGroup">
       <label class="form-label">⏱️ Kitni Der Baat Hui?</label>
       <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap">
@@ -508,12 +728,10 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
         <button class="call-duration-btn" onclick="selectDuration('10+ min')">10+ min</button>
       </div>
     </div>
-
     <div class="form-group">
       <label class="form-label">💬 Call Notes</label>
       <textarea class="form-textarea" id="callNotes" placeholder="Kya baat hui, kya bola client ne..."></textarea>
     </div>
-
     <div class="form-group">
       <label class="form-label">🌡️ Status Update (Optional)</label>
       <select class="form-select" id="callStatusUpdate">
@@ -524,8 +742,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
         <option value="converted">✅ Deal Done</option>
       </select>
     </div>
-
-    <!-- FOLLOW UP SECTION -->
     <div style="background:rgba(212,168,67,.08);border:1px solid rgba(212,168,67,.2);border-radius:12px;padding:12px;margin-bottom:6px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:13px;font-weight:600;color:var(--accent-gold)">📅 Next Follow-Up Set Karein?</div>
@@ -536,23 +752,13 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
       </div>
       <div id="callFollowupFields" style="display:none">
         <div class="form-row" style="margin-bottom:8px">
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">📅 Date</label>
-            <input class="form-input" id="callFollowupDate" type="date">
-          </div>
-          <div class="form-group" style="margin-bottom:0">
-            <label class="form-label">⏰ Time</label>
-            <input class="form-input" id="callFollowupTime" type="time">
-          </div>
+          <div class="form-group" style="margin-bottom:0"><label class="form-label">📅 Date</label><input class="form-input" id="callFollowupDate" type="date"></div>
+          <div class="form-group" style="margin-bottom:0"><label class="form-label">⏰ Time</label><input class="form-input" id="callFollowupTime" type="time"></div>
         </div>
-        <div class="form-group" style="margin-bottom:0">
-          <label class="form-label">📝 Reminder Note</label>
-          <input class="form-input" id="callFollowupNote" type="text" placeholder="Kya karna hai next call mein...">
-        </div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">📝 Reminder Note</label><input class="form-input" id="callFollowupNote" type="text" placeholder="Kya karna hai next call mein..."></div>
       </div>
       <div id="callFollowupHint" style="font-size:11px;color:var(--text-muted)">Checkbox tick karo → date & time set karo</div>
     </div>
-
     <button class="btn-primary" onclick="saveCallRecord()" style="background:linear-gradient(135deg,var(--accent-teal),#00a888)">📞 Call Save Karein</button>
     <button class="btn-secondary" onclick="closeCallModal()">Baad Mein</button>
   </div>
@@ -599,22 +805,15 @@ let leads=JSON.parse(localStorage.getItem('re_leads')||'[]');
 let editingId=null,visitingId=null,contactId=null,currentFilter='all',deferredPrompt=null;
 
 function saveData(){
-  localStorage.setItem('re_leads', JSON.stringify(leads));
-  localStorage.setItem('re_leads_backup', JSON.stringify(leads));
-  localStorage.setItem('re_leads_backup_time', new Date().toISOString());
-  const day = new Date().getDay();
-  localStorage.setItem('re_leads_snap_' + day, JSON.stringify(leads));
-  // Auto Drive backup - agar logged in hai toh silently backup karo
-  if (driveAccessToken) {
-    clearTimeout(window._autoBackupTimer);
-    window._autoBackupTimer = setTimeout(() => {
-      performDriveBackup(true); // true = silent mode
-    }, 3000); // 3 second baad - taaki ek saath kai changes ek backup mein jayen
-  }
+  localStorage.setItem('re_leads',JSON.stringify(leads));
+  localStorage.setItem('re_leads_backup',JSON.stringify(leads));
+  localStorage.setItem('re_leads_backup_time',new Date().toISOString());
+  const day=new Date().getDay();
+  localStorage.setItem('re_leads_snap_'+day,JSON.stringify(leads));
+  if(driveAccessToken){clearTimeout(window._autoBackupTimer);window._autoBackupTimer=setTimeout(()=>{performDriveBackup(true);},3000);}
 }
 function generateId(){return Date.now().toString(36)+Math.random().toString(36).substr(2)}
 
-// STATS
 function updateStats(){
   const t=leads.length,h=leads.filter(l=>l.status==='hot').length,w=leads.filter(l=>l.status==='warm').length,cv=leads.filter(l=>l.status==='converted').length,vi=leads.filter(l=>l.visited).length;
   document.getElementById('statTotal').textContent=t;
@@ -637,7 +836,6 @@ function updateStats(){
     </div>`).join('')||'<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-sub">कोई lead नहीं</div></div>';
 }
 
-// RENDER LEADS
 function setFilter(f,el){
   currentFilter=f;
   document.querySelectorAll('#filterChips .chip').forEach(c=>c.classList.remove('active'));
@@ -660,7 +858,6 @@ function renderLeads(){
     const ms=!q||l.name.toLowerCase().includes(q)||l.phone.includes(q)||(l.project||'').toLowerCase().includes(q)||(l.area||'').toLowerCase().includes(q);
     return mf&&ms;
   }).sort((a,b)=>{const o={hot:0,warm:1,cold:2,converted:3};return(o[a.status]||2)-(o[b.status]||2)});
-
   const c=document.getElementById('leadsContainer');
   if(!filtered.length){c.innerHTML=`<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">कोई Lead नहीं मिला</div><div class="empty-sub">+ button से नया lead जोड़ें</div></div>`;return;}
   const slabel={hot:'🔥 Ready to Buy',warm:'⭐ Interested',cold:'❄️ Thinking',converted:'✅ Deal Done'};
@@ -688,6 +885,7 @@ function renderLeads(){
         <button class="action-btn whatsapp" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
         <button class="action-btn savecon" onclick="openContactModal('${l.id}')">📱 Save</button>
         <button class="action-btn visitbtn" onclick="openVisitModal('${l.id}')">🏠 Visit</button>
+        <button class="action-btn aibtn" onclick="openAiForLead('${l.id}')">🤖 AI</button>
         ${l.nextDate?`<button class="action-btn calendar" onclick="addToCalendar('${l.id}')">📅 Cal</button>`:''}
         <button class="action-btn edit" onclick="editLead('${l.id}')">✏️</button>
       </div>
@@ -695,7 +893,6 @@ function renderLeads(){
   }).join('');
 }
 
-// RENDER VISITS
 function renderVisits(){
   const visited=leads.filter(l=>l.visited).sort((a,b)=>new Date(b.visitDate||0)-new Date(a.visitDate||0));
   const c=document.getElementById('visitsContainer');
@@ -725,20 +922,19 @@ function renderVisits(){
         <button class="action-btn call" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
         <button class="action-btn whatsapp" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
         <button class="action-btn savecon" onclick="openContactModal('${l.id}')">📱 Save</button>
+        <button class="action-btn aibtn" onclick="openAiForLead('${l.id}')">🤖 AI</button>
         <button class="action-btn edit" onclick="editLead('${l.id}')">✏️ Edit</button>
         <button class="action-btn" style="border-color:rgba(255,77,109,.3);color:var(--accent-red)" onclick="removeVisit('${l.id}')">❌ Remove</button>
       </div>
     </div>`).join('');
 }
 
-// RENDER FOLLOWUPS
 function renderFollowups(){
   const today=new Date();today.setHours(0,0,0,0);
   const up=leads.filter(l=>l.nextDate&&new Date(l.nextDate)>=today&&l.status!=='converted').sort((a,b)=>new Date(a.nextDate)-new Date(b.nextDate));
   const od=leads.filter(l=>l.nextDate&&new Date(l.nextDate)<today&&l.status!=='converted').sort((a,b)=>new Date(b.nextDate)-new Date(a.nextDate));
   const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const slabel={hot:'🔥',warm:'⭐',cold:'❄️',converted:'✅'};
-
   document.getElementById('followupContainer').innerHTML=up.length?up.map(l=>{
     const d=new Date(l.nextDate);
     const isToday=d.toDateString()===new Date().toDateString();
@@ -757,12 +953,11 @@ function renderFollowups(){
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="action-btn call" style="flex:1;min-width:60px" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
         <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
-        <button class="action-btn visitbtn" style="flex:1;min-width:60px" onclick="openVisitModal('${l.id}')">🏠 Visit</button>
+        <button class="action-btn aibtn" style="flex:1;min-width:60px" onclick="openAiForLead('${l.id}')">🤖 AI</button>
         <button class="action-btn edit" style="flex:1;min-width:60px" onclick="editLead('${l.id}')">✏️ Edit</button>
       </div>
     </div>`;
   }).join(''):`<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">कोई Follow-Up नहीं</div><div class="empty-sub">Lead add karte waqt date set karo</div></div>`;
-
   document.getElementById('overdueContainer').innerHTML=od.length?od.map(l=>{
     const d=new Date(l.nextDate);
     return `<div class="followup-item" style="border-color:rgba(255,77,109,.3);flex-direction:column;align-items:stretch;padding:12px">
@@ -780,14 +975,13 @@ function renderFollowups(){
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="action-btn call" style="flex:1;min-width:60px" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
         <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
-        <button class="action-btn visitbtn" style="flex:1;min-width:60px" onclick="openVisitModal('${l.id}')">🏠 Visit</button>
+        <button class="action-btn aibtn" style="flex:1;min-width:60px" onclick="openAiForLead('${l.id}')">🤖 AI</button>
         <button class="action-btn edit" style="flex:1;min-width:60px" onclick="editLead('${l.id}')">✏️ Edit</button>
       </div>
     </div>`;
   }).join(''):`<p style="font-size:12px;color:var(--text-muted);text-align:center;padding:16px">✅ कोई overdue नहीं!</p>`;
 }
 
-// GOOGLE CALENDAR
 function addToCalendar(id){
   const l=leads.find(x=>x.id===id);
   if(!l||!l.nextDate){showToast('⚠️ Follow-up date set karein pehle');return;}
@@ -797,143 +991,68 @@ function addToCalendar(id){
   const sdt=`${dp[0]}${dp[1]}${dp[2]}T${tp[0]}${tp[1]}00`;
   const ed=new Date(l.nextDate+'T'+(l.nextTime||'10:00'));ed.setMinutes(ed.getMinutes()+30);
   const edt=ed.toISOString().replace(/[-:]/g,'').split('.')[0];
-  window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${sdt}/${edt}&details=${detail}&location=${encodeURIComponent('Jaipur, Rajasthan')}`, '_blank');
+  window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${sdt}/${edt}&details=${detail}&location=${encodeURIComponent('Jaipur, Rajasthan')}`,'_blank');
   showToast('✅ Google Calendar khul raha hai!','success');
 }
 
-// PHOTO HANDLING
-let selectedPhotos = [];
-
-function handlePhotoSelect(event) {
-  const files = Array.from(event.target.files);
-  if (!files.length) return;
-
-  // Max 5 photos
-  const remaining = 5 - selectedPhotos.length;
-  const toAdd = files.slice(0, remaining);
-
-  if (files.length > remaining) {
-    showToast(`⚠️ Max 5 photos — sirf ${remaining} add ho sakti hain`);
-  }
-
-  toAdd.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      selectedPhotos.push({
-        name: file.name,
-        type: file.type,
-        dataUrl: e.target.result,
-        size: file.size
-      });
-      updatePhotoPreview();
-    };
+let selectedPhotos=[];
+function handlePhotoSelect(event){
+  const files=Array.from(event.target.files);
+  if(!files.length)return;
+  const remaining=5-selectedPhotos.length;
+  const toAdd=files.slice(0,remaining);
+  if(files.length>remaining)showToast(`⚠️ Max 5 photos — sirf ${remaining} add ho sakti hain`);
+  toAdd.forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=(e)=>{selectedPhotos.push({name:file.name,type:file.type,dataUrl:e.target.result,size:file.size});updatePhotoPreview();};
     reader.readAsDataURL(file);
   });
-
-  // Reset input
-  event.target.value = '';
+  event.target.value='';
 }
-
-function updatePhotoPreview() {
-  const area = document.getElementById('photoPreviewArea');
-  const grid = document.getElementById('photoPreviewGrid');
-  const count = document.getElementById('photoCount');
-  const driveStatus = document.getElementById('driveUploadStatus');
-
-  if (!selectedPhotos.length) {
-    area.style.display = 'none';
-    return;
-  }
-
-  area.style.display = 'block';
-  count.textContent = `${selectedPhotos.length} photo${selectedPhotos.length > 1 ? 's' : ''} selected`;
-
-  // Show Drive upload status if logged in
-  if (driveAccessToken) {
-    driveStatus.style.display = 'block';
-    driveStatus.innerHTML = '☁️ Visit save hote hi <strong style="color:var(--accent-purple)">Google Drive</strong> mein upload hogi!';
-  } else {
-    driveStatus.style.display = 'block';
-    driveStatus.innerHTML = '💡 <strong style="color:var(--accent-gold)">Drive mein save karne ke liye</strong> Export → Google Drive Backup se pehle login karein<br><span style="color:var(--text-muted)">Ya photos sirf is device pe save hongi</span>';
-  }
-
-  grid.innerHTML = selectedPhotos.map((p, i) => `
+function updatePhotoPreview(){
+  const area=document.getElementById('photoPreviewArea');
+  const grid=document.getElementById('photoPreviewGrid');
+  const count=document.getElementById('photoCount');
+  const driveStatus=document.getElementById('driveUploadStatus');
+  if(!selectedPhotos.length){area.style.display='none';return;}
+  area.style.display='block';
+  count.textContent=`${selectedPhotos.length} photo${selectedPhotos.length>1?'s':''} selected`;
+  if(driveAccessToken){driveStatus.style.display='block';driveStatus.innerHTML='☁️ Visit save hote hi <strong style="color:var(--accent-purple)">Google Drive</strong> mein upload hogi!';}
+  else{driveStatus.style.display='block';driveStatus.innerHTML='💡 <strong style="color:var(--accent-gold)">Drive mein save karne ke liye</strong> Export → Google Drive Backup se pehle login karein<br><span style="color:var(--text-muted)">Ya photos sirf is device pe save hongi</span>';}
+  grid.innerHTML=selectedPhotos.map((p,i)=>`
     <div style="position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--border)">
       <img src="${p.dataUrl}" style="width:100%;height:100%;object-fit:cover">
       <button onclick="removePhoto(${i})" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.7);border:none;color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-
-function removePhoto(idx) {
-  selectedPhotos.splice(idx, 1);
-  updatePhotoPreview();
-}
-
-async function uploadPhotosToDrive(leadId, leadName) {
-  if (!driveAccessToken || !selectedPhotos.length) return [];
-
-  const links = [];
-  try {
-    // Photos folder
-    let photosFolderId = localStorage.getItem('re_photos_folder_id');
-    if (!photosFolderId) {
-      const res = await fetch('https://www.googleapis.com/drive/v3/files', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${driveAccessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'RE Diary Photos', mimeType: 'application/vnd.google-apps.folder' })
-      });
-      const folder = await res.json();
-      photosFolderId = folder.id;
-      localStorage.setItem('re_photos_folder_id', photosFolderId);
+function removePhoto(idx){selectedPhotos.splice(idx,1);updatePhotoPreview();}
+async function uploadPhotosToDrive(leadId,leadName){
+  if(!driveAccessToken||!selectedPhotos.length)return[];
+  const links=[];
+  try{
+    let photosFolderId=localStorage.getItem('re_photos_folder_id');
+    if(!photosFolderId){
+      const res=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:`Bearer ${driveAccessToken}`,'Content-Type':'application/json'},body:JSON.stringify({name:'RE Diary Photos',mimeType:'application/vnd.google-apps.folder'})});
+      const folder=await res.json();photosFolderId=folder.id;localStorage.setItem('re_photos_folder_id',photosFolderId);
     }
-
-    for (let i = 0; i < selectedPhotos.length; i++) {
-      const photo = selectedPhotos[i];
-      showToast(`☁️ Photo ${i+1}/${selectedPhotos.length} upload ho rahi hai...`);
-
-      // Convert dataUrl to blob
-      const response = await fetch(photo.dataUrl);
-      const blob = await response.blob();
-
-      const fileName = `${leadName}_${new Date().toLocaleDateString('en-IN').replace(/\//g,'-')}_${i+1}.jpg`;
-      const metadata = { name: fileName, parents: [photosFolderId] };
-
-      const form = new FormData();
-      form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      form.append('file', blob);
-
-      const uploadRes = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${driveAccessToken}` },
-        body: form
-      });
-
-      if (uploadRes.ok) {
-        const file = await uploadRes.json();
-        // Make shareable
-        await fetch(`https://www.googleapis.com/drive/v3/files/${file.id}/permissions`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${driveAccessToken}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ role: 'reader', type: 'anyone' })
-        });
-        links.push({
-          id: file.id,
-          name: fileName,
-          url: `https://drive.google.com/file/d/${file.id}/view`
-        });
+    for(let i=0;i<selectedPhotos.length;i++){
+      const photo=selectedPhotos[i];showToast(`☁️ Photo ${i+1}/${selectedPhotos.length} upload ho rahi hai...`);
+      const response=await fetch(photo.dataUrl);const blob=await response.blob();
+      const fileName=`${leadName}_${new Date().toLocaleDateString('en-IN').replace(/\//g,'-')}_${i+1}.jpg`;
+      const metadata={name:fileName,parents:[photosFolderId]};
+      const form=new FormData();form.append('metadata',new Blob([JSON.stringify(metadata)],{type:'application/json'}));form.append('file',blob);
+      const uploadRes=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:`Bearer ${driveAccessToken}`},body:form});
+      if(uploadRes.ok){
+        const file=await uploadRes.json();
+        await fetch(`https://www.googleapis.com/drive/v3/files/${file.id}/permissions`,{method:'POST',headers:{Authorization:`Bearer ${driveAccessToken}`,'Content-Type':'application/json'},body:JSON.stringify({role:'reader',type:'anyone'})});
+        links.push({id:file.id,name:fileName,url:`https://drive.google.com/file/d/${file.id}/view`});
       }
     }
-    showToast(`✅ ${links.length} photos Drive mein save ho gayi!`, 'success');
-  } catch(e) {
-    console.error('Photo upload error:', e);
-    showToast('⚠️ Photos local mein save hain — Drive upload baad mein');
-  }
+    showToast(`✅ ${links.length} photos Drive mein save ho gayi!`,'success');
+  }catch(e){console.error('Photo upload error:',e);showToast('⚠️ Photos local mein save hain — Drive upload baad mein');}
   return links;
 }
-// END PHOTO HANDLING
 
-// VISIT MODAL
 function openVisitModal(id){
   const l=leads.find(x=>x.id===id);if(!l)return;
   visitingId=id;
@@ -944,7 +1063,6 @@ function openVisitModal(id){
   document.getElementById('vTime').value=new Date().toTimeString().slice(0,5);
   document.getElementById('vNotes').value='';
   document.getElementById('vStatus').value=l.status||'warm';
-  // Reset photos
   selectedPhotos=[];
   document.getElementById('photoPreviewArea').style.display='none';
   document.getElementById('photoPreviewGrid').innerHTML='';
@@ -960,30 +1078,13 @@ async function saveVisit(){
   leads[idx].visitNotes=document.getElementById('vNotes').value.trim();
   leads[idx].status=document.getElementById('vStatus').value;
   leads[idx].lastUpdated=new Date().toISOString();
-
-  // Save local photo thumbnails (compressed)
-  if(selectedPhotos.length){
-    leads[idx].visitPhotosLocal = selectedPhotos.map(p=>({
-      dataUrl: p.dataUrl,
-      name: p.name
-    }));
-  }
-
+  if(selectedPhotos.length){leads[idx].visitPhotosLocal=selectedPhotos.map(p=>({dataUrl:p.dataUrl,name:p.name}));}
   saveData();renderLeads();renderVisits();updateStats();closeVisitModal();
   showToast('🏠 Site Visit save ho gayi!','success');
-
-  // Upload to Drive in background (optional)
-  if(selectedPhotos.length && driveAccessToken){
-    const leadName = leads[idx].name.replace(/\s+/g,'_');
-    const driveLinks = await uploadPhotosToDrive(visitingId, leadName);
-    if(driveLinks.length){
-      const i = leads.findIndex(l=>l.id===visitingId);
-      if(i!==-1){
-        leads[i].visitPhotos = driveLinks;
-        leads[i].visitPhotosLocal = null; // Drive pe hai toh local hatao
-        saveData();
-      }
-    }
+  if(selectedPhotos.length&&driveAccessToken){
+    const leadName=leads[idx].name.replace(/\s+/g,'_');
+    const driveLinks=await uploadPhotosToDrive(visitingId,leadName);
+    if(driveLinks.length){const i=leads.findIndex(l=>l.id===visitingId);if(i!==-1){leads[i].visitPhotos=driveLinks;leads[i].visitPhotosLocal=null;saveData();}}
   }
   selectedPhotos=[];
 }
@@ -991,22 +1092,10 @@ function closeVisitModal(){document.getElementById('visitModal').classList.remov
 function removeVisit(id){
   if(confirm('क्या आप visit delete करना चाहते हैं?')){
     const idx=leads.findIndex(l=>l.id===id);
-    if(idx!==-1){
-      leads[idx].visited=false;
-      leads[idx].visitDate=null;
-      leads[idx].visitNotes=null;
-      leads[idx].visitPhotos=null;
-      leads[idx].visitPhotosLocal=null;
-      saveData();
-      renderLeads();
-      renderVisits();
-      updateStats();
-      showToast('Visit delete ho gaya!','success');
-    }
+    if(idx!==-1){leads[idx].visited=false;leads[idx].visitDate=null;leads[idx].visitNotes=null;leads[idx].visitPhotos=null;leads[idx].visitPhotosLocal=null;saveData();renderLeads();renderVisits();updateStats();showToast('Visit delete ho gaya!','success');}
   }
 }
 
-// CONTACT MODAL
 function openContactModal(id){
   const l=leads.find(x=>x.id===id);if(!l)return;
   contactId=id;
@@ -1023,12 +1112,10 @@ function doSaveContact(){
   const a=document.createElement('a');a.href=url;a.download=`${l.name.replace(/\s+/g,'_')}.vcf`;
   document.body.appendChild(a);a.click();document.body.removeChild(a);
   setTimeout(()=>URL.revokeObjectURL(url),1000);
-  closeContactModal();
-  showToast('📱 .vcf file download hui — Open karke Save karo!','success');
+  closeContactModal();showToast('📱 .vcf file download hui — Open karke Save karo!','success');
 }
 function closeContactModal(){document.getElementById('contactModal').classList.remove('active');contactId=null;}
 
-// LEAD MODAL
 function openAddModal(){
   editingId=null;
   document.getElementById('modalTitle').textContent='➕ नया Lead जोड़ें';
@@ -1048,18 +1135,9 @@ function editLead(id){
   document.getElementById('fPhone').value=l.phone||'';
   document.getElementById('fArea').value=l.area||'';
   const kp=['Imperial Estate','Imperial Galaxy','Solitair Home','Dream Town','Govind Vihar'];
-  if(kp.includes(l.project)){
-    document.getElementById('fProject').value=l.project;
-    document.getElementById('otherProjectGroup').style.display='none';
-    document.getElementById('fProjectOther').value='';
-  } else if(l.project){
-    document.getElementById('fProject').value='Other';
-    document.getElementById('otherProjectGroup').style.display='block';
-    document.getElementById('fProjectOther').value=l.project;
-  } else {
-    document.getElementById('fProject').value='';
-    document.getElementById('otherProjectGroup').style.display='none';
-  }
+  if(kp.includes(l.project)){document.getElementById('fProject').value=l.project;document.getElementById('otherProjectGroup').style.display='none';document.getElementById('fProjectOther').value='';}
+  else if(l.project){document.getElementById('fProject').value='Other';document.getElementById('otherProjectGroup').style.display='block';document.getElementById('fProjectOther').value=l.project;}
+  else{document.getElementById('fProject').value='';document.getElementById('otherProjectGroup').style.display='none';}
   document.getElementById('fStatus').value=l.status||'warm';
   document.getElementById('fSource').value=l.source||'Meta Ads';
   document.getElementById('fLastTalk').value=l.lastTalk||'';
@@ -1082,24 +1160,19 @@ function checkOtherProject(){
   if(v!=='Other')document.getElementById('fProjectOther').value='';
 }
 
-// SAVE LEAD
 function saveLead(){
   const name=document.getElementById('fName').value.trim();
   const phone=document.getElementById('fPhone').value.trim();
   if(!name||!phone){showToast('⚠️ नाम और मोबाइल नंबर ज़रूरी है!');return;}
   let project=document.getElementById('fProject').value;
-  if(project==='Other') project=document.getElementById('fProjectOther').value.trim()||'Other';
+  if(project==='Other')project=document.getElementById('fProjectOther').value.trim()||'Other';
   const ld={name,phone,area:document.getElementById('fArea').value.trim(),project,status:document.getElementById('fStatus').value,source:document.getElementById('fSource').value,lastTalk:document.getElementById('fLastTalk').value.trim(),nextDate:document.getElementById('fNextDate').value,nextTime:document.getElementById('fNextTime').value,nextNote:document.getElementById('fNextNote').value.trim(),lastUpdated:new Date().toISOString()};
   const hnd=ld.nextDate;
-  if(editingId){
-    const idx=leads.findIndex(l=>l.id===editingId);
-    if(idx!==-1)leads[idx]={...leads[idx],...ld};
-    showToast('✅ Lead update ho gaya!','success');
-  } else {
-    ld.id=generateId();ld.createdAt=new Date().toISOString();leads.unshift(ld);
-    showToast('✅ Lead save ho gaya!','success');
-  }
+  if(editingId){const idx=leads.findIndex(l=>l.id===editingId);if(idx!==-1)leads[idx]={...leads[idx],...ld};showToast('✅ Lead update ho gaya!','success');}
+  else{ld.id=generateId();ld.createdAt=new Date().toISOString();leads.unshift(ld);showToast('✅ Lead save ho gaya!','success');}
   saveData();renderLeads();renderFollowups();updateStats();closeModal();
+  // Refresh AI lead selects
+  populateAiLeadSelects();
   if(hnd){const sid=editingId||leads[0].id;setTimeout(()=>{if(confirm('📅 Google Calendar mein Follow-Up add karen?'))addToCalendar(sid);},500);}
 }
 function deleteLead(){
@@ -1107,171 +1180,96 @@ function deleteLead(){
   if(!confirm('क्या आप इस lead को delete करना चाहते हैं?'))return;
   leads=leads.filter(l=>l.id!==editingId);
   saveData();renderLeads();renderFollowups();renderVisits();updateStats();closeModal();
+  populateAiLeadSelects();
   showToast('🗑️ Lead delete ho gaya');
 }
 
-// CALL TRACKING
-let callingId = null;
-let selectedCallResult = 'connected';
-let selectedDuration = '< 1 min';
-
-function callLead(id, phone) {
-  callingId = id;
-  const l = leads.find(x => x.id === id);
-  if (!l) return;
-
-  // Pehle call karo
-  window.location.href = `tel:${phone}`;
-
-  // 3 second baad popup aayega
-  setTimeout(() => {
-    document.getElementById('callName').textContent = l.name;
-    document.getElementById('callPhone').textContent = '📱 ' + l.phone;
-    document.getElementById('callProject').textContent = '🏗️ ' + (l.project || '—');
-    document.getElementById('callNotes').value = '';
-    document.getElementById('callStatusUpdate').value = '';
-    selectedCallResult = 'connected';
-    selectedDuration = '< 1 min';
-    // Reset buttons
-    document.querySelectorAll('.call-result-btn').forEach(b => b.classList.remove('active'));
+let callingId=null,selectedCallResult='connected',selectedDuration='< 1 min';
+function callLead(id,phone){
+  callingId=id;const l=leads.find(x=>x.id===id);if(!l)return;
+  window.location.href=`tel:${phone}`;
+  setTimeout(()=>{
+    document.getElementById('callName').textContent=l.name;
+    document.getElementById('callPhone').textContent='📱 '+l.phone;
+    document.getElementById('callProject').textContent='🏗️ '+(l.project||'—');
+    document.getElementById('callNotes').value='';document.getElementById('callStatusUpdate').value='';
+    selectedCallResult='connected';selectedDuration='< 1 min';
+    document.querySelectorAll('.call-result-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById('crConnected').classList.add('active');
-    document.querySelectorAll('.call-duration-btn').forEach((b,i) => { if(i===0) b.classList.add('active'); else b.classList.remove('active'); });
-    document.getElementById('callDurationGroup').style.display = 'block';
-    // Reset followup
-    document.getElementById('callFollowupCheck').checked = false;
-    document.getElementById('callFollowupFields').style.display = 'none';
-    document.getElementById('callFollowupHint').style.display = 'block';
-    document.getElementById('callFollowupDate').value = '';
-    document.getElementById('callFollowupTime').value = '';
-    document.getElementById('callFollowupNote').value = '';
+    document.querySelectorAll('.call-duration-btn').forEach((b,i)=>{if(i===0)b.classList.add('active');else b.classList.remove('active');});
+    document.getElementById('callDurationGroup').style.display='block';
+    document.getElementById('callFollowupCheck').checked=false;
+    document.getElementById('callFollowupFields').style.display='none';
+    document.getElementById('callFollowupHint').style.display='block';
+    document.getElementById('callFollowupDate').value='';document.getElementById('callFollowupTime').value='';document.getElementById('callFollowupNote').value='';
     document.getElementById('callModal').classList.add('active');
-  }, 2500);
+  },2500);
 }
-
-function selectCallResult(result) {
-  selectedCallResult = result;
-  document.querySelectorAll('.call-result-btn').forEach(b => b.classList.remove('active'));
-  const map = { connected: 'crConnected', not_answered: 'crNotAnswered', busy: 'crBusy', call_later: 'crLater' };
+function selectCallResult(result){
+  selectedCallResult=result;
+  document.querySelectorAll('.call-result-btn').forEach(b=>b.classList.remove('active'));
+  const map={connected:'crConnected',not_answered:'crNotAnswered',busy:'crBusy',call_later:'crLater'};
   document.getElementById(map[result]).classList.add('active');
-  // Duration sirf tab dikhao jab baat hui
-  document.getElementById('callDurationGroup').style.display = result === 'connected' ? 'block' : 'none';
+  document.getElementById('callDurationGroup').style.display=result==='connected'?'block':'none';
 }
-
-function selectDuration(dur) {
-  selectedDuration = dur;
-  document.querySelectorAll('.call-duration-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent.trim() === dur || b.getAttribute('onclick') === `selectDuration('${dur}')`);
-  });
+function selectDuration(dur){
+  selectedDuration=dur;
+  document.querySelectorAll('.call-duration-btn').forEach(b=>{b.classList.toggle('active',b.getAttribute('onclick')===`selectDuration('${dur}')`);});
 }
-
-function toggleCallFollowup() {
-  const checked = document.getElementById('callFollowupCheck').checked;
-  document.getElementById('callFollowupFields').style.display = checked ? 'block' : 'none';
-  document.getElementById('callFollowupHint').style.display = checked ? 'none' : 'block';
-  if (checked) {
-    // Default: kal ka date, 10 baje
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    document.getElementById('callFollowupDate').value = tomorrow.toISOString().split('T')[0];
-    document.getElementById('callFollowupTime').value = '10:00';
-  }
+function toggleCallFollowup(){
+  const checked=document.getElementById('callFollowupCheck').checked;
+  document.getElementById('callFollowupFields').style.display=checked?'block':'none';
+  document.getElementById('callFollowupHint').style.display=checked?'none':'block';
+  if(checked){const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);document.getElementById('callFollowupDate').value=tomorrow.toISOString().split('T')[0];document.getElementById('callFollowupTime').value='10:00';}
 }
-
-function saveCallRecord() {
-  if (!callingId) return;
-  const idx = leads.findIndex(l => l.id === callingId);
-  if (idx === -1) return;
-
-  const callRecord = {
-    date: new Date().toISOString(),
-    result: selectedCallResult,
-    duration: selectedCallResult === 'connected' ? selectedDuration : null,
-    notes: document.getElementById('callNotes').value.trim()
-  };
-
-  if (!leads[idx].callHistory) leads[idx].callHistory = [];
-  leads[idx].callHistory.push(callRecord);
-  leads[idx].lastUpdated = new Date().toISOString();
-
-  // Status update
-  const newStatus = document.getElementById('callStatusUpdate').value;
-  if (newStatus) leads[idx].status = newStatus;
-
-  // Last talk update
-  if (callRecord.notes) leads[idx].lastTalk = callRecord.notes;
-
-  // Follow-up update
-  const followupChecked = document.getElementById('callFollowupCheck').checked;
-  const followupDate = document.getElementById('callFollowupDate').value;
-  let addedFollowup = false;
-  if (followupChecked && followupDate) {
-    leads[idx].nextDate = followupDate;
-    leads[idx].nextTime = document.getElementById('callFollowupTime').value || '10:00';
-    leads[idx].nextNote = document.getElementById('callFollowupNote').value.trim() || callRecord.notes || '';
-    addedFollowup = true;
-  }
-
-  saveData(); renderLeads(); renderVisits(); renderFollowups(); updateStats();
-  closeCallModal();
-
-  const resultLabels = { connected: '✅ Baat hui', not_answered: '❌ Nahi utha', busy: '🔴 Busy', call_later: '⏰ Baad mein' };
-  let msg = `📞 Call record ho gayi — ${resultLabels[selectedCallResult]}`;
-  if (addedFollowup) msg += ` | 📅 Follow-up set!`;
-  showToast(msg, 'success');
-
-  // Calendar mein add karo agar followup set kiya
-  if (addedFollowup) {
-    setTimeout(() => {
-      if (confirm('📅 Google Calendar mein Follow-Up add karein?')) addToCalendar(callingId);
-    }, 500);
-  }
+function saveCallRecord(){
+  if(!callingId)return;const idx=leads.findIndex(l=>l.id===callingId);if(idx===-1)return;
+  const callRecord={date:new Date().toISOString(),result:selectedCallResult,duration:selectedCallResult==='connected'?selectedDuration:null,notes:document.getElementById('callNotes').value.trim()};
+  if(!leads[idx].callHistory)leads[idx].callHistory=[];
+  leads[idx].callHistory.push(callRecord);leads[idx].lastUpdated=new Date().toISOString();
+  const newStatus=document.getElementById('callStatusUpdate').value;if(newStatus)leads[idx].status=newStatus;
+  if(callRecord.notes)leads[idx].lastTalk=callRecord.notes;
+  const followupChecked=document.getElementById('callFollowupCheck').checked;
+  const followupDate=document.getElementById('callFollowupDate').value;let addedFollowup=false;
+  if(followupChecked&&followupDate){leads[idx].nextDate=followupDate;leads[idx].nextTime=document.getElementById('callFollowupTime').value||'10:00';leads[idx].nextNote=document.getElementById('callFollowupNote').value.trim()||callRecord.notes||'';addedFollowup=true;}
+  saveData();renderLeads();renderVisits();renderFollowups();updateStats();closeCallModal();
+  const resultLabels={connected:'✅ Baat hui',not_answered:'❌ Nahi utha',busy:'🔴 Busy',call_later:'⏰ Baad mein'};
+  let msg=`📞 Call record ho gayi — ${resultLabels[selectedCallResult]}`;
+  if(addedFollowup)msg+=` | 📅 Follow-up set!`;
+  showToast(msg,'success');
+  if(addedFollowup){setTimeout(()=>{if(confirm('📅 Google Calendar mein Follow-Up add karein?'))addToCalendar(callingId);},500);}
 }
-
-function closeCallModal() {
-  document.getElementById('callModal').classList.remove('active');
-  callingId = null;
-}
-
-function showCallHistory(id) {
-  const l = leads.find(x => x.id === id);
-  if (!l) return;
-  document.getElementById('chName').textContent = l.name + ' — ' + l.phone;
-  const history = l.callHistory || [];
-  const connected = history.filter(c => c.result === 'connected').length;
-  document.getElementById('chStats').textContent = `Total: ${history.length} calls | Connected: ${connected} | Missed: ${history.length - connected}`;
-
-  const resultLabels = { connected: '✅ Baat hui', not_answered: '❌ Nahi utha', busy: '🔴 Busy tha', call_later: '⏰ Baad mein bulaya' };
-  const icons = { connected: '✅', not_answered: '❌', busy: '🔴', call_later: '⏰' };
-
-  document.getElementById('callHistoryList').innerHTML = history.length ?
-    [...history].reverse().map(c => `
-      <div class="call-history-item">
-        <div class="call-result-icon ${c.result === 'connected' ? 'call-connected' : 'call-missed'}">${icons[c.result] || '📞'}</div>
-        <div style="flex:1">
-          <div style="font-size:13px;font-weight:600;color:var(--text-primary)">${resultLabels[c.result] || c.result}</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${new Date(c.date).toLocaleString('hi-IN')}${c.duration ? ' | ⏱️ ' + c.duration : ''}</div>
-          ${c.notes ? `<div style="font-size:11px;color:var(--text-secondary);margin-top:3px">💬 ${c.notes}</div>` : ''}
-        </div>
-      </div>`).join('') :
-    '<div class="empty-state"><div class="empty-icon">📞</div><div class="empty-sub">Abhi koi call record nahi</div></div>';
-
+function closeCallModal(){document.getElementById('callModal').classList.remove('active');callingId=null;}
+function showCallHistory(id){
+  const l=leads.find(x=>x.id===id);if(!l)return;
+  document.getElementById('chName').textContent=l.name+' — '+l.phone;
+  const history=l.callHistory||[];
+  const connected=history.filter(c=>c.result==='connected').length;
+  document.getElementById('chStats').textContent=`Total: ${history.length} calls | Connected: ${connected} | Missed: ${history.length-connected}`;
+  const resultLabels={connected:'✅ Baat hui',not_answered:'❌ Nahi utha',busy:'🔴 Busy tha',call_later:'⏰ Baad mein bulaya'};
+  const icons={connected:'✅',not_answered:'❌',busy:'🔴',call_later:'⏰'};
+  document.getElementById('callHistoryList').innerHTML=history.length?[...history].reverse().map(c=>`
+    <div class="call-history-item">
+      <div class="call-result-icon ${c.result==='connected'?'call-connected':'call-missed'}">${icons[c.result]||'📞'}</div>
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;color:var(--text-primary)">${resultLabels[c.result]||c.result}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${new Date(c.date).toLocaleString('hi-IN')}${c.duration?' | ⏱️ '+c.duration:''}</div>
+        ${c.notes?`<div style="font-size:11px;color:var(--text-secondary);margin-top:3px">💬 ${c.notes}</div>`:''}
+      </div>
+    </div>`).join(''):'<div class="empty-state"><div class="empty-icon">📞</div><div class="empty-sub">Abhi koi call record nahi</div></div>';
   document.getElementById('callHistoryModal').classList.add('active');
 }
-// END CALL TRACKING
+
 function waLead(phone,project){
   const msg=encodeURIComponent(`नमस्ते! मैं ${project||'RE'} के बारे में आपसे बात करना चाहता था। क्या आप अभी available हैं?`);
   window.open(`https://wa.me/91${phone}?text=${msg}`,'_blank');
 }
 
-// EXPORT
 function showExportOptions(){document.getElementById('exportModal').classList.add('active');}
 function closeExportModal(){document.getElementById('exportModal').classList.remove('active');}
 function clearAllData(){
   if(confirm('क्या आप सभी leads delete करना चाहते हैं? यह वापस नहीं किया जा सकता!')){
-    leads=[];
-    saveData();
-    renderLeads();
-    showToast('सारा data delete ho gaya!','success');
+    leads=[];saveData();renderLeads();showToast('सारा data delete ho gaya!','success');
   }
 }
 function exportData(){
@@ -1281,31 +1279,20 @@ function exportData(){
   const fn=`RE_Leads_${new Date().toLocaleDateString('en-IN').replace(/\//g,'-')}.csv`;
   try{
     const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;a.download=fn;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=fn;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(url),1000);
     showToast('📊 CSV Export ho gaya! Downloads mein dekhein','success');
-  }catch(e){
-    window.open('data:text/csv;charset=utf-8,'+encodeURIComponent('\uFEFF'+csv),'_blank');
-    showToast('📊 Nayi tab mein khula — Save karein!','success');
-  }
+  }catch(e){window.open('data:text/csv;charset=utf-8,'+encodeURIComponent('\uFEFF'+csv),'_blank');showToast('📊 Nayi tab mein khula — Save karein!','success');}
 }
 function exportViaWhatsApp(){
   if(!leads.length){showToast('कोई lead नहीं है');return;}
   let msg='🏠 *RE Diary - Lead List*\n\n';
   const ic={hot:'🔥',warm:'⭐',cold:'❄️',converted:'✅'};
-  leads.slice(0,20).forEach((l,i)=>{
-    msg+=`*${i+1}. ${l.name}* ${ic[l.status]||''}\n📱 ${l.phone} | 🏗️ ${l.project||'—'}\n`;
-    if(l.nextDate)msg+=`📅 Next: ${l.nextDate}\n`;
-    if(l.visited)msg+=`🏠 Site Visit: Kiya\n`;
-    msg+='\n';
-  });
+  leads.slice(0,20).forEach((l,i)=>{msg+=`*${i+1}. ${l.name}* ${ic[l.status]||''}\n📱 ${l.phone} | 🏗️ ${l.project||'—'}\n`;if(l.nextDate)msg+=`📅 Next: ${l.nextDate}\n`;if(l.visited)msg+=`🏠 Site Visit: Kiya\n`;msg+='\n';});
   if(leads.length>20)msg+=`... aur ${leads.length-20} leads hain\n`;
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`,'_blank');
 }
 
-// TABS
 function switchTab(tab,btn){
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -1315,419 +1302,505 @@ function switchTab(tab,btn){
   if(tab==='followup')renderFollowups();
   if(tab==='summary')updateStats();
   if(tab==='visits')renderVisits();
+  if(tab==='ai')populateAiLeadSelects();
   updateBottomNav(tab);
 }
 function switchTabByName(tab){switchTab(tab,document.getElementById('tabBtn-'+tab));}
 function updateBottomNav(tab){
   document.querySelectorAll('.bottom-nav-item').forEach(b=>b.classList.remove('active'));
-  const bn=document.getElementById('bn-'+tab);
-  if(bn)bn.classList.add('active');
+  const bn=document.getElementById('bn-'+tab);if(bn)bn.classList.add('active');
 }
 
 function formatDate(ds){if(!ds)return'—';return new Date(ds).toLocaleDateString('hi-IN',{day:'numeric',month:'short'});}
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${type}`;setTimeout(()=>t.className='toast',3000);}
 function openSearch(){switchTabByName('leads');document.getElementById('searchInput').focus();}
 
-// PWA
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('installBanner').classList.add('visible');});
 function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(r=>{if(r.outcome==='accepted')showToast('🎉 App install ho gayi!','success');deferredPrompt=null;document.getElementById('installBanner').classList.remove('visible');});}}
 
-// SAMPLE DATA
-function loadSampleData(){
-  if(leads.length>0)return;
-  const td=new Date(),t1=new Date(td),t2=new Date(td),t3=new Date(td);
-  t1.setDate(td.getDate()+1);t2.setDate(td.getDate()+3);t3.setDate(td.getDate()-1);
-  leads=[
-    {id:generateId(),name:'Rajesh Sharma',phone:'9876543210',area:'Ajmer Road',project:'Imperial Estate',status:'hot',source:'Meta Ads',lastTalk:'Plot location pasand aayi, budget ₹25-30L',nextDate:t1.toISOString().split('T')[0],nextTime:'11:00',nextNote:'Site visit schedule karein',lastUpdated:td.toISOString(),createdAt:td.toISOString(),visited:false},
-    {id:generateId(),name:'Priya Verma',phone:'9988776655',area:'Army Area',project:'Imperial Galaxy',status:'warm',source:'Referral',lastTalk:'Husband ke saath aaengi',nextDate:t2.toISOString().split('T')[0],nextTime:'10:00',nextNote:'Weekend visit confirm',lastUpdated:td.toISOString(),createdAt:td.toISOString(),visited:true,visitDate:td.toISOString().split('T')[0],visitNotes:'Property bahut pasand aayi'},
-    {id:generateId(),name:'Sunil Jain',phone:'9123456789',area:'Mansarovar',project:'Dream Town',status:'cold',source:'Cold Call',lastTalk:'3 mahine baad contact karein',nextDate:t3.toISOString().split('T')[0],nextTime:'15:00',nextNote:'3 mahine baad',lastUpdated:td.toISOString(),createdAt:td.toISOString(),visited:false},
-    {id:generateId(),name:'Amit Meena',phone:'9765432100',area:'Vaishali Nagar',project:'Govind Vihar',status:'converted',source:'WhatsApp',lastTalk:'Deal close! ₹1L booking',nextDate:'',nextTime:'',nextNote:'Agreement',lastUpdated:td.toISOString(),createdAt:td.toISOString(),visited:true,visitDate:td.toISOString().split('T')[0],visitNotes:'Site visit ke baad turant book kiya'}
-  ];
-  saveData();
+// ===== AI FEATURES =====
+const AI_API_KEY = 'YOUR_ANTHROPIC_API_KEY_HERE';
+
+function switchAiSection(id, btn) {
+  document.querySelectorAll('.ai-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ai-feature-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('ai-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 
-
-// ===== GOOGLE CONTACTS INTEGRATION =====
-// IMPORTANT: Replace this with your actual Google OAuth Client ID
-// Get it from: https://console.cloud.google.com/
-const GOOGLE_CLIENT_ID = '340057596820-su1s5i6i54vp9cvhdqo319ugl678ep1t.apps.googleusercontent.com';
-const CONTACTS_SCOPE = 'https://www.googleapis.com/auth/contacts';
-
-let googleAccessToken = null;
-let googleUser = null;
-let tokenClient = null;
-
-function initGoogleAuth() {
-  try {
-    if (!window.google || !window.google.accounts) return;
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: CONTACTS_SCOPE,
-      callback: (tokenResponse) => {
-        if (tokenResponse.error) { showToast('❌ Google login failed'); return; }
-        googleAccessToken = tokenResponse.access_token;
-        fetchGoogleUserInfo();
-      },
+function populateAiLeadSelects() {
+  const selects = ['aiMsgLeadSelect', 'aiScoreLeadSelect', 'aiActionLeadSelect'];
+  selects.forEach(selectId => {
+    const el = document.getElementById(selectId);
+    if (!el) return;
+    const current = el.value;
+    el.innerHTML = '<option value="">-- Lead चुनें या नीचे manually भरें --</option>';
+    leads.forEach(l => {
+      const opt = document.createElement('option');
+      opt.value = l.id;
+      const statusEmoji = {hot:'🔥',warm:'⭐',cold:'❄️',converted:'✅'}[l.status]||'';
+      opt.textContent = `${statusEmoji} ${l.name} — ${l.project||'—'}`;
+      el.appendChild(opt);
     });
-    // Restore session if token cached
-    const cached = sessionStorage.getItem('g_token');
-    if (cached) {
-      googleAccessToken = cached;
-      const cachedUser = sessionStorage.getItem('g_user');
-      if (cachedUser) { googleUser = JSON.parse(cachedUser); showGoogleLoggedIn(); }
-    }
-  } catch(e) { console.log('Google Auth init error:', e); }
-}
-
-function googleSignIn() {
-  if (GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com') {
-    showToast('⚠️ Pehle Google Client ID set karein — README dekhen');
-    // Show setup instructions
-    document.getElementById('googleNotLoggedIn').innerHTML = `
-      <div style="background:rgba(255,77,109,.1);border:1px solid rgba(255,77,109,.3);border-radius:10px;padding:12px;font-size:12px;color:var(--text-secondary);line-height:1.8">
-        <strong style="color:var(--accent-red)">⚙️ Setup Required:</strong><br>
-        1. <a href="https://console.cloud.google.com/" target="_blank" style="color:#4285f4">console.cloud.google.com</a> par jayen<br>
-        2. New Project → APIs & Services → Credentials<br>
-        3. OAuth 2.0 Client ID banayein (Web Application)<br>
-        4. index.html mein <code style="color:var(--accent-gold)">GOOGLE_CLIENT_ID</code> replace karein<br>
-        5. File GitHub par update karein
-        <br><br>
-        <strong style="color:var(--accent-gold)">Ya abhi VCF method use karein 👇</strong>
-      </div>
-      <button class="btn-secondary" onclick="switchSaveMethod('vcf')" style="margin-top:10px">📁 VCF File se Save Karen</button>
-    `;
-    return;
-  }
-  if (!tokenClient) { showToast('⚠️ Google library load nahi hui, refresh karen'); return; }
-  tokenClient.requestAccessToken({ prompt: 'consent' });
-}
-
-async function fetchGoogleUserInfo() {
-  try {
-    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: { Authorization: `Bearer ${googleAccessToken}` }
-    });
-    googleUser = await res.json();
-    sessionStorage.setItem('g_token', googleAccessToken);
-    sessionStorage.setItem('g_user', JSON.stringify(googleUser));
-    showGoogleLoggedIn();
-    showToast('✅ Google account connected!', 'success');
-  } catch(e) { showToast('❌ User info fetch nahi hui'); }
-}
-
-function showGoogleLoggedIn() {
-  document.getElementById('googleNotLoggedIn').style.display = 'none';
-  document.getElementById('googleLoggedIn').style.display = 'block';
-  if (googleUser) {
-    document.getElementById('googleUserName').textContent = googleUser.name || 'Google User';
-    document.getElementById('googleUserEmail').textContent = googleUser.email || '—';
-    if (googleUser.picture) {
-      document.getElementById('googleAvatar').innerHTML = `<img src="${googleUser.picture}" style="width:32px;height:32px;border-radius:50%;object-fit:cover">`;
-    }
-  }
-}
-
-function googleSignOut() {
-  googleAccessToken = null;
-  googleUser = null;
-  sessionStorage.removeItem('g_token');
-  sessionStorage.removeItem('g_user');
-  document.getElementById('googleNotLoggedIn').style.display = 'block';
-  document.getElementById('googleLoggedIn').style.display = 'none';
-  showToast('👋 Google logout ho gaya');
-}
-
-async function saveToGoogleContacts() {
-  const l = leads.find(x => x.id === contactId);
-  if (!l) return;
-  if (!googleAccessToken) { showToast('⚠️ Pehle Google login karein'); return; }
-
-  const btn = document.getElementById('saveToGoogleBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Saving...';
-
-  const contactBody = {
-    names: [{ givenName: l.name.split(' ')[0], familyName: l.name.split(' ').slice(1).join(' ') || '' }],
-    phoneNumbers: [{ value: `+91${l.phone}`, type: 'mobile' }],
-    organizations: [{ name: l.project || 'RE Lead', title: `${l.status} Lead` }],
-    addresses: l.area ? [{ city: l.area, region: 'Rajasthan', country: 'India' }] : [],
-    biographies: [{ value: `RE Diary | Project: ${l.project||'—'} | Area: ${l.area||'—'} | Status: ${l.status} | Source: ${l.source||'—'}`, contentType: 'TEXT_PLAIN' }]
-  };
-
-  try {
-    const res = await fetch('https://people.googleapis.com/v1/people:createContact', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${googleAccessToken}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(contactBody)
-    });
-
-    if (res.status === 401) {
-      googleSignOut();
-      showToast('⚠️ Token expire hua — dobara login karein');
-      btn.disabled = false; btn.innerHTML = '🔵 Google Contacts में Save करें';
-      return;
-    }
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error?.message || 'API error');
-    }
-
-    btn.disabled = false;
-    btn.innerHTML = '✅ Saved!';
-    showToast(`✅ ${l.name} Google Contacts mein save ho gaya! Phone pe sync hoga.`, 'success');
-    setTimeout(() => {
-      btn.innerHTML = '🔵 Google Contacts में Save करें';
-      closeContactModal();
-    }, 1500);
-
-  } catch(e) {
-    btn.disabled = false;
-    btn.innerHTML = '🔵 Google Contacts में Save करें';
-    showToast(`❌ Error: ${e.message || 'Contact save nahi hua'}`, '');
-    console.error('Google Contacts error:', e);
-  }
-}
-
-function switchSaveMethod(method) {
-  document.querySelectorAll('.smt-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.smt-content').forEach(c => c.classList.remove('active'));
-  document.getElementById('smt' + method.charAt(0).toUpperCase() + method.slice(1)).classList.add('active');
-  document.getElementById('smt' + method.charAt(0).toUpperCase() + method.slice(1) + 'Content').classList.add('active');
-}
-
-// ===== GOOGLE DRIVE BACKUP =====
-const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
-const BACKUP_FILENAME = 'RE_Diary_Backup.json';
-const BACKUP_FOLDER = 'RE Diary Backup';
-let driveTokenClient = null;
-let driveAccessToken = null;
-let driveFolderId = null;
-let driveFileId = null;
-
-function initDriveAuth() {
-  try {
-    if (!window.google || !window.google.accounts) return;
-    driveTokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: DRIVE_SCOPE + ' ' + CONTACTS_SCOPE,
-      callback: async (tokenResponse) => {
-        if (tokenResponse.error) { showToast('❌ Google login failed'); return; }
-        driveAccessToken = tokenResponse.access_token;
-        googleAccessToken = tokenResponse.access_token;
-        sessionStorage.setItem('drive_token', driveAccessToken);
-        // Fetch user info for contacts too
-        fetchGoogleUserInfo();
-        if (pendingDriveAction === 'backup') await performDriveBackup();
-        else if (pendingDriveAction === 'restore') await performDriveRestore();
-        pendingDriveAction = null;
-      },
-    });
-    const cached = sessionStorage.getItem('drive_token');
-    if (cached) driveAccessToken = cached;
-    // Update backup time display
-    const bt = localStorage.getItem('re_drive_backup_time');
-    if (bt) {
-      const d = new Date(bt).toLocaleString('hi-IN');
-      document.getElementById('driveBackupTime').textContent = '✅ Last backup: ' + d;
-    }
-  } catch(e) { console.log('Drive auth init:', e); }
-}
-
-let pendingDriveAction = null;
-
-function driveBackup() {
-  if (!leads.length) { showToast('⚠️ Koi lead nahi hai backup ke liye'); return; }
-  if (!driveAccessToken) {
-    pendingDriveAction = 'backup';
-    driveTokenClient.requestAccessToken({ prompt: '' });
-    return;
-  }
-  performDriveBackup();
-}
-
-function driveRestore() {
-  if (!driveAccessToken) {
-    pendingDriveAction = 'restore';
-    driveTokenClient.requestAccessToken({ prompt: '' });
-    return;
-  }
-  performDriveRestore();
-}
-
-async function getOrCreateFolder() {
-  // Check if folder exists
-  const searchRes = await fetch(
-    `https://www.googleapis.com/drive/v3/files?q=name='${BACKUP_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)`,
-    { headers: { Authorization: `Bearer ${driveAccessToken}` } }
-  );
-  const searchData = await searchRes.json();
-  if (searchData.files && searchData.files.length > 0) {
-    return searchData.files[0].id;
-  }
-  // Create folder
-  const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${driveAccessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: BACKUP_FOLDER, mimeType: 'application/vnd.google-apps.folder' })
+    if (current) el.value = current;
   });
-  const folder = await createRes.json();
-  return folder.id;
 }
 
-async function getBackupFileId(folderId) {
-  const res = await fetch(
-    `https://www.googleapis.com/drive/v3/files?q=name='${BACKUP_FILENAME}' and '${folderId}' in parents and trashed=false&fields=files(id,name,modifiedTime)`,
-    { headers: { Authorization: `Bearer ${driveAccessToken}` } }
-  );
+function fillAiMsgFromLead() {
+  const id = document.getElementById('aiMsgLeadSelect').value;
+  if (!id) return;
+  const l = leads.find(x => x.id === id);
+  if (!l) return;
+  document.getElementById('aiMsgName').value = l.name || '';
+  if (l.project) document.getElementById('aiMsgProject').value = l.project;
+  document.getElementById('aiMsgStatus').value = l.status || 'warm';
+  document.getElementById('aiMsgLast').value = l.lastTalk || '';
+}
+
+function fillAiScoreFromLead() {
+  const id = document.getElementById('aiScoreLeadSelect').value;
+  if (!id) return;
+  const l = leads.find(x => x.id === id);
+  if (!l) return;
+  if (l.source) {
+    const srcMap = {'Meta Ads':'Meta Ads','WhatsApp':'WhatsApp','Referral':'Referral','Cold Call':'Cold Call','Site Visit':'Site Visit'};
+    if (srcMap[l.source]) document.getElementById('aiScoreSource').value = srcMap[l.source];
+  }
+  document.getElementById('aiScoreVisit').value = l.visited ? 'हाँ, visit हो चुकी' : 'नहीं, अभी नहीं';
+  if (l.createdAt) {
+    const days = Math.floor((new Date() - new Date(l.createdAt)) / (1000*60*60*24));
+    if (days === 0) document.getElementById('aiScoreDays').value = 'आज पहली बात';
+    else if (days <= 3) document.getElementById('aiScoreDays').value = '1-3 दिन';
+    else if (days <= 7) document.getElementById('aiScoreDays').value = '1 हफ्ता';
+    else document.getElementById('aiScoreDays').value = '1 महीने से ज्यादा';
+  }
+  const callHistory = l.callHistory || [];
+  if (callHistory.length) {
+    const connected = callHistory.filter(c => c.result === 'connected').length;
+    const ratio = connected / callHistory.length;
+    if (ratio >= 0.7) document.getElementById('aiScoreResp').value = 'बहुत अच्छा — खुद call करता है';
+    else if (ratio >= 0.4) document.getElementById('aiScoreResp').value = 'ठीक है — उठाता है';
+    else if (ratio > 0) document.getElementById('aiScoreResp').value = 'कभी-कभी उठाता है';
+    else document.getElementById('aiScoreResp').value = 'नहीं उठाता';
+  }
+}
+
+function fillAiActionFromLead() {
+  const id = document.getElementById('aiActionLeadSelect').value;
+  if (!id) return;
+  const l = leads.find(x => x.id === id);
+  if (!l) return;
+  document.getElementById('aiActionName').value = l.name || '';
+  document.getElementById('aiActionStatus').value = l.status || 'warm';
+  if (l.lastUpdated) {
+    const days = Math.floor((new Date() - new Date(l.lastUpdated)) / (1000*60*60*24));
+    if (days === 0) document.getElementById('aiActionWhen').value = 'आज';
+    else if (days <= 3) document.getElementById('aiActionWhen').value = '2-3 दिन पहले';
+    else if (days <= 7) document.getElementById('aiActionWhen').value = '1 हफ्ते पहले';
+    else document.getElementById('aiActionWhen').value = '2+ हफ्ते पहले';
+  }
+}
+
+// Open AI tab with lead pre-filled
+function openAiForLead(id) {
+  switchTabByName('ai');
+  updateBottomNav('ai');
+  document.getElementById('aiMsgLeadSelect').value = id;
+  fillAiMsgFromLead();
+  populateAiLeadSelects();
+  // Pre-fill other sections too
+  document.getElementById('aiScoreLeadSelect').value = id;
+  fillAiScoreFromLead();
+  document.getElementById('aiActionLeadSelect').value = id;
+  fillAiActionFromLead();
+  showToast('🤖 AI tab mein lead load ho gaya!', 'success');
+}
+
+async function callClaudeAPI(prompt) {
+  if (AI_API_KEY === 'YOUR_ANTHROPIC_API_KEY_HERE') {
+    // Demo mode — return simulated response
+    await new Promise(r => setTimeout(r, 1500));
+    return null; // will trigger demo mode
+  }
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-api-key': AI_API_KEY, 'anthropic-version': '2023-06-01' },
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 800, messages: [{ role: 'user', content: prompt }] })
+  });
+  if (!res.ok) throw new Error('API error: ' + res.status);
   const data = await res.json();
-  if (data.files && data.files.length > 0) return data.files[0].id;
-  return null;
+  return data.content.map(i => i.text || '').join('');
 }
 
-async function performDriveBackup(silent = false) {
-  if (!silent) showToast('☁️ Drive mein backup ho raha hai...', '');
+function setAiLoading(btnId, resultId, loading) {
+  const btn = document.getElementById(btnId);
+  const result = document.getElementById(resultId);
+  if (loading) {
+    btn.disabled = true;
+    btn.innerHTML = '<span style="animation:pulse 1s infinite">⏳</span> AI सोच रहा है...';
+    result.style.display = 'block';
+    result.innerHTML = '<div class="ai-loading"><span>🤖 AI processing...</span></div>';
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = btn.getAttribute('data-original') || btn.textContent;
+  }
+}
+
+async function aiGenerateMsg() {
+  const name = document.getElementById('aiMsgName').value.trim() || 'Client';
+  const project = document.getElementById('aiMsgProject').value;
+  const status = document.getElementById('aiMsgStatus').value;
+  const last = document.getElementById('aiMsgLast').value.trim() || 'पहली बात हो रही है';
+  const btn = document.getElementById('aiMsgBtn');
+  const result = document.getElementById('aiMsgResult');
+  const copyBtn = document.getElementById('aiMsgCopy');
+  const origText = '🤖 AI से WhatsApp Message बनाएं';
+  btn.disabled = true;
+  btn.innerHTML = '⏳ AI message बना रहा है...';
+  result.style.display = 'block';
+  result.innerHTML = '<div class="ai-loading"><span>🤖 WhatsApp message तैयार हो रहा है...</span></div>';
+  copyBtn.style.display = 'none';
+  const statusLabel = {hot:'🔥 Ready to Buy',warm:'⭐ Interested',cold:'❄️ Thinking',converted:'✅ Converted'}[status]||status;
+  const prompt = `Tu ek experienced real estate sales agent hai Jaipur, Rajasthan mein. Ek professional aur friendly WhatsApp follow-up message likho Hindi mein ek lead ke liye.
+
+Lead ka naam: ${name}
+Project: ${project}, Jaipur
+Status: ${statusLabel}
+Last baat: ${last}
+
+Instructions:
+- Pure Hindi mein likho (Roman script bilkul nahi)
+- 3-4 lines ka short message
+- Friendly aur professional tone
+- Ek clear call-to-action ho (call ya visit ke liye)
+- Sirf message text likho, koi explanation nahi`;
+
   try {
-    const backupData = {
-      version: '1.0',
-      backupDate: new Date().toISOString(),
-      totalLeads: leads.length,
-      leads: leads
-    };
-    const content = JSON.stringify(backupData, null, 2);
-
-    const folderId = await getOrCreateFolder();
-    const existingFileId = await getBackupFileId(folderId);
-
-    let res;
-    if (existingFileId) {
-      res = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=multipart`, {
-        method: 'PATCH',
-        headers: {
-          Authorization: `Bearer ${driveAccessToken}`,
-          'Content-Type': 'multipart/related; boundary=backup_boundary'
-        },
-        body: `--backup_boundary\r\nContent-Type: application/json\r\n\r\n${JSON.stringify({ name: BACKUP_FILENAME })}\r\n--backup_boundary\r\nContent-Type: application/json\r\n\r\n${content}\r\n--backup_boundary--`
-      });
+    const res = await callClaudeAPI(prompt);
+    if (res === null) {
+      // Demo mode
+      const demos = {
+        hot: `नमस्ते ${name} जी! 🙏\n\nआपसे ${project} के बारे में बात करके बहुत अच्छा लगा। आप ready to buy हैं — तो चलिए इस weekend site visit confirm करते हैं!\n\nCall करें: [your number]`,
+        warm: `नमस्ते ${name} जी! 🏠\n\n${project} में आपकी interest के लिए धन्यवाद। आज plots की availability limited है — क्या हम कल एक छोटी सी बात कर सकते हैं?\n\nCall करें: [your number]`,
+        cold: `नमस्ते ${name} जी! 😊\n\nआशा है आप अच्छे हैं। ${project} में कुछ नए offers आए हैं जो शायद आपको पसंद आएं। जब भी समय हो, एक बार जरूर देखें!\n\nCall: [your number]`
+      };
+      result.textContent = demos[status] || demos.warm;
     } else {
-      res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${driveAccessToken}`,
-          'Content-Type': 'multipart/related; boundary=backup_boundary'
-        },
-        body: `--backup_boundary\r\nContent-Type: application/json\r\n\r\n${JSON.stringify({ name: BACKUP_FILENAME, parents: [folderId] })}\r\n--backup_boundary\r\nContent-Type: application/json\r\n\r\n${content}\r\n--backup_boundary--`
-      });
+      result.textContent = res;
     }
-
-    if (!res.ok) throw new Error('Upload failed');
-
-    const now = new Date().toISOString();
-    localStorage.setItem('re_drive_backup_time', now);
-    const d = new Date(now).toLocaleString('hi-IN');
-    const el = document.getElementById('driveBackupTime');
-    if (el) el.textContent = '✅ Last backup: ' + d;
-
-    if (!silent) showToast(`✅ ${leads.length} leads Drive mein backup ho gaye!`, 'success');
-    else showToast('☁️ Auto backup ho gaya!', 'success');
-
+    copyBtn.style.display = 'inline-block';
   } catch(e) {
-    console.error('Drive backup error:', e);
-    if (!silent) {
-      if (e.message && e.message.includes('401')) {
-        driveAccessToken = null;
-        sessionStorage.removeItem('drive_token');
-        showToast('⚠️ Session expire — dobara backup karein');
+    result.textContent = '❌ Error: API call failed. App mein valid API key add karein.';
+  }
+  btn.disabled = false;
+  btn.innerHTML = origText;
+}
+
+async function aiLeadScore() {
+  const source = document.getElementById('aiScoreSource').value;
+  const budget = document.getElementById('aiScoreBudget').value;
+  const days = document.getElementById('aiScoreDays').value;
+  const visit = document.getElementById('aiScoreVisit').value;
+  const resp = document.getElementById('aiScoreResp').value;
+  const btn = document.getElementById('aiScoreBtn');
+  const result = document.getElementById('aiScoreResult');
+  const origText = '🎯 AI Lead Score निकालें';
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Score calculate हो रहा है...';
+  result.style.display = 'block';
+  document.getElementById('aiScoreDisplay').style.display = 'none';
+  result.innerHTML = '<div class="ai-loading"><span>🎯 Lead analyze हो रही है...</span></div>';
+
+  const prompt = `Tu ek real estate sales expert hai. Neeche diye lead details ke basis par ek score do 0 se 100 ke beech aur analysis karo.
+
+Source: ${source}
+Budget: ${budget}
+Follow-up kitne din se: ${days}
+Site visit: ${visit}
+Response quality: ${resp}
+
+Response format EXACTLY aisa ho (koi extra text nahi):
+SCORE: [number 0-100]
+LABEL: [Hot/Warm/Cold]
+ANALYSIS: [2-3 lines Hindi mein kyun yeh score diya, kya improve karna chahiye]`;
+
+  try {
+    const res = await callClaudeAPI(prompt);
+    let score, label, analysis;
+    if (res === null) {
+      // Demo scoring
+      let s = 50;
+      if (source === 'Referral') s += 15; else if (source === 'Site Visit') s += 20; else if (source === 'Meta Ads') s += 5;
+      if (budget === '₹30-50 लाख' || budget === '₹50 लाख+') s += 15;
+      if (visit === 'हाँ, visit हो चुकी') s += 20;
+      if (days === 'आज पहली बात') s += 10; else if (days === '1 महीने से ज्यादा') s -= 15;
+      if (resp === 'बहुत अच्छा — खुद call करता है') s += 15; else if (resp === 'नहीं उठाता') s -= 20;
+      score = Math.min(95, Math.max(10, s));
+      label = score >= 70 ? 'Hot' : score >= 40 ? 'Warm' : 'Cold';
+      analysis = score >= 70 ? 'यह lead बहुत promising है! Site visit हो चुकी है और response बढ़िया है। जल्दी से follow-up karein aur deal close karein।' : score >= 40 ? 'यह lead average है। थोड़ी और nurturing की जरूरत है। Budget clear करें और site visit schedule करें।' : 'यह lead अभी cold है। Regular follow-up जारी रखें लेकिन hot leads पर ज्यादा focus करें।';
+    } else {
+      const scoreMatch = res.match(/SCORE:\s*(\d+)/);
+      const labelMatch = res.match(/LABEL:\s*(\w+)/);
+      const analysisMatch = res.match(/ANALYSIS:\s*([\s\S]+)/);
+      score = scoreMatch ? parseInt(scoreMatch[1]) : 50;
+      label = labelMatch ? labelMatch[1] : 'Warm';
+      analysis = analysisMatch ? analysisMatch[1].trim() : res;
+    }
+    result.innerHTML = '';
+    const display = document.getElementById('aiScoreDisplay');
+    display.style.display = 'block';
+    document.getElementById('aiScoreNum').textContent = score;
+    const bar = document.getElementById('aiScoreBar');
+    bar.style.width = score + '%';
+    bar.style.background = score >= 70 ? '#ff4d6d' : score >= 40 ? '#d4a843' : '#4d9fff';
+    const scoreLabel = document.getElementById('aiScoreLabel');
+    scoreLabel.textContent = label === 'Hot' ? '🔥 Hot Lead' : label === 'Warm' ? '⭐ Warm Lead' : '❄️ Cold Lead';
+    scoreLabel.style.color = score >= 70 ? '#ff4d6d' : score >= 40 ? '#d4a843' : '#4d9fff';
+    document.getElementById('aiScoreText').textContent = analysis;
+  } catch(e) {
+    result.innerHTML = '<div style="color:var(--accent-red);padding:10px">❌ Error: API failed. Valid API key add karein.</div>';
+  }
+  btn.disabled = false;
+  btn.innerHTML = origText;
+}
+
+async function aiNextAction() {
+  const name = document.getElementById('aiActionName').value.trim() || 'Lead';
+  const status = document.getElementById('aiActionStatus').value;
+  const when = document.getElementById('aiActionWhen').value;
+  const concern = document.getElementById('aiActionConcern').value;
+  const btn = document.getElementById('aiActionBtn');
+  const result = document.getElementById('aiActionResult');
+  const copyBtn = document.getElementById('aiActionCopy');
+  const origText = '⚡ AI Next Action बताए';
+  btn.disabled = true;
+  btn.innerHTML = '⏳ AI सोच रहा है...';
+  result.style.display = 'block';
+  result.innerHTML = '<div class="ai-loading"><span>⚡ Best action plan बन रहा है...</span></div>';
+  copyBtn.style.display = 'none';
+
+  const prompt = `Tu ek real estate sales coach hai Jaipur mein. Ek real estate agent ko next best action suggest karo Hindi mein.
+
+Lead: ${name}
+Current status: ${status}
+Last contact: ${when}
+Main concern: ${concern}
+
+Suggest karo (Hindi mein, practical aur specific):
+1. 🎯 Aaj ka action (ek specific step)
+2. 💬 Kya bolna hai (2-3 key points)
+3. ⏰ Follow-up timing
+4. 📊 Conversion probability estimate
+
+150 words se kam mein likho. Headings include karo.`;
+
+  try {
+    const res = await callClaudeAPI(prompt);
+    if (res === null) {
+      const demos = {
+        hot: `🎯 **आज का Action:** तुरंत call करें और booking amount confirm करें। Site visit already हो चुकी है।\n\n💬 **Key Points:**\n• "Sir, plot ki availability कम हो रही है — आज hi booking करें"\n• Payment plan flexible है — EMI option भी available है\n• Documents ready रखें\n\n⏰ **Follow-up:** आज शाम 5-7 बजे call करें\n\n📊 **Conversion:** 75-85%`,
+        warm: `🎯 **आज का Action:** Call karke site visit schedule करें।\n\n💬 **Key Points:**\n• "Sir, weekend pe एक बार plot देखने आइए — कोई commitment नहीं"\n• Location benefits बताएं — army area proximity\n• 2-3 similar clients जिन्होंने recently invest किया\n\n⏰ **Follow-up:** 2 दिन में अगर response नहीं आया तो WhatsApp\n\n📊 **Conversion:** 40-55%`,
+        cold: `🎯 **आज का Action:** Value-add message भेजें — pushy mat hona।\n\n💬 **Key Points:**\n• Market update share करें — Jaipur property prices बढ़ रहे हैं\n• कोई pressure नहीं — "जब ready हों तब"\n• Referral program mention करें\n\n⏰ **Follow-up:** 1 हफ्ते बाद\n\n📊 **Conversion:** 15-25%`
+      };
+      result.textContent = demos[status] || demos.warm;
+    } else {
+      result.textContent = res;
+    }
+    copyBtn.style.display = 'inline-block';
+  } catch(e) {
+    result.textContent = '❌ Error: API failed. Valid API key add karein.';
+  }
+  btn.disabled = false;
+  btn.innerHTML = origText;
+}
+
+async function aiHandleObj() {
+  const project = document.getElementById('aiObjProject').value;
+  const objection = document.getElementById('aiObjText').value.trim();
+  const btn = document.getElementById('aiObjBtn');
+  const result = document.getElementById('aiObjResult');
+  const copyBtn = document.getElementById('aiObjCopy');
+  const origText = '🛡️ AI Objection Handle करे';
+  if (!objection) { showToast('⚠️ Pehle objection likho!'); return; }
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Counter script बन रहा है...';
+  result.style.display = 'block';
+  result.innerHTML = '<div class="ai-loading"><span>🛡️ Objection handle karne ki strategy बन रही है...</span></div>';
+  copyBtn.style.display = 'none';
+
+  const prompt = `Tu ek senior real estate sales expert hai Jaipur mein jo ${project} project bechta hai.
+
+Lead ne yeh objection di: "${objection}"
+
+Ek effective response script likho Hindi mein jo:
+1. 😊 Empathy se objection acknowledge kare (1-2 lines)
+2. 💡 Smart counter-argument de with logic/facts (2-3 points)  
+3. 🏠 ${project} ki specific value highlight kare
+4. 📞 Clear call-to-action de
+
+Direct speech mein likho jaise agent bol raha ho. 150 words mein raho.`;
+
+  try {
+    const res = await callClaudeAPI(prompt);
+    if (res === null) {
+      if (objection.toLowerCase().includes('price') || objection.toLowerCase().includes('महंगा') || objection.toLowerCase().includes('सस्ता')) {
+        result.textContent = `"Sir, मैं आपकी बात बिल्कुल समझता हूँ — budget सबका important होता है। 😊\n\nलेकिन sir, एक बात सोचिए:\n\n✅ ${project} का location premium है — Army Area के पास, Jaipur की सबसे fast-growing zone में\n✅ अभी जो price है वो next 6 months में 15-20% बढ़ने वाला है\n✅ हमारा flexible payment plan है — 20% down payment में booking हो जाती है\n\nSir, investment सोच कर देखिए — यह expense नहीं, asset है जो हर साल बढ़ेगा।\n\nएक बार site देखने आइए — कोई commitment नहीं। Call करें: [your number]"`;
       } else {
-        showToast('❌ Backup fail: ' + (e.message || 'Unknown error'));
+        result.textContent = `"Sir, आपकी बात सुनकर अच्छा लगा — honest feedback हमेशा helpful होती है। 😊\n\nMere hisab se:\n\n✅ ${project} mein jo concern hai woh hum personally address kar sakte hain\n✅ Hamara track record strong hai — satisfied customers referral dete hain\n✅ Ek site visit mein saari doubts clear ho jayengi\n\nSir, aap ek baar personally dekhein — aapko khud hi sab clear ho jayega.\n\nCall karein ya WhatsApp karein: [your number]"`;
       }
     } else {
-      // Silent mode mein token expire ho jaye toh reset karo
-      if (e.message && e.message.includes('401')) {
-        driveAccessToken = null;
-        sessionStorage.removeItem('drive_token');
-      }
+      result.textContent = res;
     }
-  }
-}
-
-async function performDriveRestore() {
-  showToast('🔄 Drive se data la raha hai...', '');
-  try {
-    const folderId = await getOrCreateFolder();
-    const fileId = await getBackupFileId(folderId);
-
-    if (!fileId) {
-      showToast('⚠️ Drive mein koi backup nahi mila — pehle backup karein');
-      return;
-    }
-
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-      headers: { Authorization: `Bearer ${driveAccessToken}` }
-    });
-
-    if (!res.ok) throw new Error('Download failed');
-
-    const backupData = await res.json();
-    if (!backupData.leads || !Array.isArray(backupData.leads)) throw new Error('Invalid backup file');
-
-    const backupDate = backupData.backupDate ? new Date(backupData.backupDate).toLocaleString('hi-IN') : '—';
-
-    if (confirm(`📦 Backup mila!\n\n📅 Date: ${backupDate}\n👥 Leads: ${backupData.leads.length}\n\nKya restore karein? Maujuda data replace ho jayega.`)) {
-      leads = backupData.leads;
-      saveData();
-      renderLeads();
-      renderVisits();
-      renderFollowups();
-      updateStats();
-      showToast(`✅ ${leads.length} leads restore ho gaye!`, 'success');
-    }
-
+    copyBtn.style.display = 'inline-block';
   } catch(e) {
-    console.error('Drive restore error:', e);
-    showToast('❌ Restore fail: ' + (e.message || 'Unknown error'));
+    result.textContent = '❌ Error: API failed. Valid API key add karein.';
   }
+  btn.disabled = false;
+  btn.innerHTML = origText;
 }
 
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    initGoogleAuth();
-    initDriveAuth();
-  }, 800);
-});
-// END GOOGLE DRIVE BACKUP
+function aiCopy(resultId, copyBtnId) {
+  const text = document.getElementById(resultId).innerText || document.getElementById(resultId).textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showToast('📋 Message copy ho gaya!', 'success')).catch(() => showToast('⚠️ Copy karne mein error'));
+  } else {
+    const el = document.createElement('textarea');
+    el.value = text;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast('📋 Message copy ho gaya!', 'success');
+  }
+}
+// ===== END AI FEATURES =====
 
-['leadModal','contactModal','visitModal','exportModal','callModal','callHistoryModal'].forEach(id=>{ document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});
-});
+// GOOGLE AUTH
+const GOOGLE_CLIENT_ID='340057596820-su1s5i6i54vp9cvhdqo319ugl678ep1t.apps.googleusercontent.com';
+const CONTACTS_SCOPE='https://www.googleapis.com/auth/contacts';
+let googleAccessToken=null,googleUser=null,tokenClient=null;
+
+function initGoogleAuth(){
+  try{
+    if(!window.google||!window.google.accounts)return;
+    tokenClient=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:CONTACTS_SCOPE,callback:(tokenResponse)=>{if(tokenResponse.error){showToast('❌ Google login failed');return;}googleAccessToken=tokenResponse.access_token;fetchGoogleUserInfo();}});
+    const cached=sessionStorage.getItem('g_token');
+    if(cached){googleAccessToken=cached;const cachedUser=sessionStorage.getItem('g_user');if(cachedUser){googleUser=JSON.parse(cachedUser);showGoogleLoggedIn();}}
+  }catch(e){console.log('Google Auth init error:',e);}
+}
+function googleSignIn(){
+  if(!tokenClient){showToast('⚠️ Google library load nahi hui, refresh karen');return;}
+  tokenClient.requestAccessToken({prompt:'consent'});
+}
+async function fetchGoogleUserInfo(){
+  try{
+    const res=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:`Bearer ${googleAccessToken}`}});
+    googleUser=await res.json();sessionStorage.setItem('g_token',googleAccessToken);sessionStorage.setItem('g_user',JSON.stringify(googleUser));showGoogleLoggedIn();showToast('✅ Google account connected!','success');
+  }catch(e){showToast('❌ User info fetch nahi hui');}
+}
+function showGoogleLoggedIn(){
+  document.getElementById('googleNotLoggedIn').style.display='none';document.getElementById('googleLoggedIn').style.display='block';
+  if(googleUser){document.getElementById('googleUserName').textContent=googleUser.name||'Google User';document.getElementById('googleUserEmail').textContent=googleUser.email||'—';if(googleUser.picture)document.getElementById('googleAvatar').innerHTML=`<img src="${googleUser.picture}" style="width:32px;height:32px;border-radius:50%;object-fit:cover">`;}
+}
+function googleSignOut(){
+  googleAccessToken=null;googleUser=null;sessionStorage.removeItem('g_token');sessionStorage.removeItem('g_user');
+  document.getElementById('googleNotLoggedIn').style.display='block';document.getElementById('googleLoggedIn').style.display='none';showToast('👋 Google logout ho gaya');
+}
+async function saveToGoogleContacts(){
+  const l=leads.find(x=>x.id===contactId);if(!l)return;
+  if(!googleAccessToken){showToast('⚠️ Pehle Google login karein');return;}
+  const btn=document.getElementById('saveToGoogleBtn');btn.disabled=true;btn.textContent='⏳ Saving...';
+  const contactBody={names:[{givenName:l.name.split(' ')[0],familyName:l.name.split(' ').slice(1).join(' ')||''}],phoneNumbers:[{value:`+91${l.phone}`,type:'mobile'}],organizations:[{name:l.project||'RE Lead',title:`${l.status} Lead`}],addresses:l.area?[{city:l.area,region:'Rajasthan',country:'India'}]:[],biographies:[{value:`RE Diary | Project: ${l.project||'—'} | Area: ${l.area||'—'} | Status: ${l.status} | Source: ${l.source||'—'}`,contentType:'TEXT_PLAIN'}]};
+  try{
+    const res=await fetch('https://people.googleapis.com/v1/people:createContact',{method:'POST',headers:{'Authorization':`Bearer ${googleAccessToken}`,'Content-Type':'application/json'},body:JSON.stringify(contactBody)});
+    if(res.status===401){googleSignOut();showToast('⚠️ Token expire hua — dobara login karein');btn.disabled=false;btn.innerHTML='🔵 Google Contacts में Save करें';return;}
+    if(!res.ok){const err=await res.json();throw new Error(err.error?.message||'API error');}
+    btn.disabled=false;btn.innerHTML='✅ Saved!';showToast(`✅ ${l.name} Google Contacts mein save ho gaya!`,'success');
+    setTimeout(()=>{btn.innerHTML='🔵 Google Contacts में Save करें';closeContactModal();},1500);
+  }catch(e){btn.disabled=false;btn.innerHTML='🔵 Google Contacts में Save करें';showToast(`❌ Error: ${e.message||'Contact save nahi hua'}`);}
+}
+function switchSaveMethod(method){
+  document.querySelectorAll('.smt-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.smt-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('smt'+method.charAt(0).toUpperCase()+method.slice(1)).classList.add('active');
+  document.getElementById('smt'+method.charAt(0).toUpperCase()+method.slice(1)+'Content').classList.add('active');
+}
+
+// GOOGLE DRIVE BACKUP
+const DRIVE_SCOPE='https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/drive.file';
+const BACKUP_FILENAME='RE_Diary_Backup.json';
+const BACKUP_FOLDER='RE Diary Backup';
+let driveTokenClient=null,driveAccessToken=null,driveFolderId=null,driveFileId=null;
+
+function initDriveAuth(){
+  try{
+    if(!window.google||!window.google.accounts)return;
+    driveTokenClient=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:DRIVE_SCOPE+' '+CONTACTS_SCOPE,callback:async(tokenResponse)=>{if(tokenResponse.error){showToast('❌ Google login failed');return;}driveAccessToken=tokenResponse.access_token;googleAccessToken=tokenResponse.access_token;sessionStorage.setItem('drive_token',driveAccessToken);fetchGoogleUserInfo();if(pendingDriveAction==='backup')await performDriveBackup();else if(pendingDriveAction==='restore')await performDriveRestore();pendingDriveAction=null;}});
+    const cached=sessionStorage.getItem('drive_token');if(cached)driveAccessToken=cached;
+    const bt=localStorage.getItem('re_drive_backup_time');
+    if(bt){const d=new Date(bt).toLocaleString('hi-IN');document.getElementById('driveBackupTime').textContent='✅ Last backup: '+d;}
+  }catch(e){console.log('Drive auth init:',e);}
+}
+let pendingDriveAction=null;
+function driveBackup(){if(!leads.length){showToast('⚠️ Koi lead nahi hai backup ke liye');return;}if(!driveAccessToken){pendingDriveAction='backup';driveTokenClient.requestAccessToken({prompt:''});return;}performDriveBackup();}
+function driveRestore(){if(!driveAccessToken){pendingDriveAction='restore';driveTokenClient.requestAccessToken({prompt:''});return;}performDriveRestore();}
+async function getOrCreateFolder(){
+  const searchRes=await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${BACKUP_FOLDER}' and mimeType='application/vnd.google-apps.folder' and trashed=false&fields=files(id,name)`,{headers:{Authorization:`Bearer ${driveAccessToken}`}});
+  const searchData=await searchRes.json();
+  if(searchData.files&&searchData.files.length>0)return searchData.files[0].id;
+  const createRes=await fetch('https://www.googleapis.com/drive/v3/files',{method:'POST',headers:{Authorization:`Bearer ${driveAccessToken}`,'Content-Type':'application/json'},body:JSON.stringify({name:BACKUP_FOLDER,mimeType:'application/vnd.google-apps.folder'})});
+  const folder=await createRes.json();return folder.id;
+}
+async function getBackupFileId(folderId){
+  const res=await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${BACKUP_FILENAME}' and '${folderId}' in parents and trashed=false&fields=files(id,name,modifiedTime)`,{headers:{Authorization:`Bearer ${driveAccessToken}`}});
+  const data=await res.json();if(data.files&&data.files.length>0)return data.files[0].id;return null;
+}
+async function performDriveBackup(silent=false){
+  if(!silent)showToast('☁️ Drive mein backup ho raha hai...','');
+  try{
+    const backupData={version:'1.0',backupDate:new Date().toISOString(),totalLeads:leads.length,leads:leads};
+    const content=JSON.stringify(backupData,null,2);
+    const folderId=await getOrCreateFolder();const existingFileId=await getBackupFileId(folderId);let res;
+    if(existingFileId){res=await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existingFileId}?uploadType=multipart`,{method:'PATCH',headers:{Authorization:`Bearer ${driveAccessToken}`,'Content-Type':'multipart/related; boundary=backup_boundary'},body:`--backup_boundary\r\nContent-Type: application/json\r\n\r\n${JSON.stringify({name:BACKUP_FILENAME})}\r\n--backup_boundary\r\nContent-Type: application/json\r\n\r\n${content}\r\n--backup_boundary--`});}
+    else{res=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:`Bearer ${driveAccessToken}`,'Content-Type':'multipart/related; boundary=backup_boundary'},body:`--backup_boundary\r\nContent-Type: application/json\r\n\r\n${JSON.stringify({name:BACKUP_FILENAME,parents:[folderId]})}\r\n--backup_boundary\r\nContent-Type: application/json\r\n\r\n${content}\r\n--backup_boundary--`});}
+    if(!res.ok)throw new Error('Upload failed');
+    const now=new Date().toISOString();localStorage.setItem('re_drive_backup_time',now);
+    const d=new Date(now).toLocaleString('hi-IN');const el=document.getElementById('driveBackupTime');if(el)el.textContent='✅ Last backup: '+d;
+    if(!silent)showToast(`✅ ${leads.length} leads Drive mein backup ho gaye!`,'success');else showToast('☁️ Auto backup ho gaya!','success');
+  }catch(e){console.error('Drive backup error:',e);if(!silent){if(e.message&&e.message.includes('401')){driveAccessToken=null;sessionStorage.removeItem('drive_token');showToast('⚠️ Session expire — dobara backup karein');}else showToast('❌ Backup fail: '+(e.message||'Unknown error'));}else{if(e.message&&e.message.includes('401')){driveAccessToken=null;sessionStorage.removeItem('drive_token');}}}
+}
+async function performDriveRestore(){
+  showToast('🔄 Drive se data la raha hai...','');
+  try{
+    const folderId=await getOrCreateFolder();const fileId=await getBackupFileId(folderId);
+    if(!fileId){showToast('⚠️ Drive mein koi backup nahi mila — pehle backup karein');return;}
+    const res=await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,{headers:{Authorization:`Bearer ${driveAccessToken}`}});
+    if(!res.ok)throw new Error('Download failed');
+    const backupData=await res.json();if(!backupData.leads||!Array.isArray(backupData.leads))throw new Error('Invalid backup file');
+    const backupDate=backupData.backupDate?new Date(backupData.backupDate).toLocaleString('hi-IN'):'—';
+    if(confirm(`📦 Backup mila!\n\n📅 Date: ${backupDate}\n👥 Leads: ${backupData.leads.length}\n\nKya restore karein? Maujuda data replace ho jayega.`)){
+      leads=backupData.leads;saveData();renderLeads();renderVisits();renderFollowups();updateStats();showToast(`✅ ${leads.length} leads restore ho gaye!`,'success');
+    }
+  }catch(e){console.error('Drive restore error:',e);showToast('❌ Restore fail: '+(e.message||'Unknown error'));}
+}
+
+window.addEventListener('load',()=>{setTimeout(()=>{initGoogleAuth();initDriveAuth();},800);});
+
+['leadModal','contactModal','visitModal','exportModal','callModal','callHistoryModal'].forEach(id=>{document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});});
 
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 
-// NOTIFICATION CHECK
 function checkNotifications(){
   const today=new Date().toISOString().split('T')[0];
   const overdue=leads.filter(l=>l.nextDate&&l.nextDate<today&&l.status!=='converted');
-  if(overdue.length>0&&localStorage.getItem('re_notified')!==today){
-    document.getElementById('notifBadge').textContent=overdue.length;
-    document.getElementById('notifBadge').style.display='flex';
-  }
+  if(overdue.length>0&&localStorage.getItem('re_notified')!==today){document.getElementById('notifBadge').textContent=overdue.length;document.getElementById('notifBadge').style.display='flex';}
 }
 function showOverdueAlert(){
   const today=new Date().toISOString().split('T')[0];
   const overdue=leads.filter(l=>l.nextDate&&l.nextDate<today&&l.status!=='converted');
-  if(overdue.length>0){
-    let msg=`⚠️ ${overdue.length} Follow-ups overdue hain!\n\n`;
-    overdue.slice(0,5).forEach(l=>msg+=`• ${l.name} - ${l.nextDate}\n`);
-    if(overdue.length>5)msg+=`...aur ${overdue.length-5} more`;
-    alert(msg);
-    localStorage.setItem('re_notified',today);
-    document.getElementById('notifBadge').style.display='none';
-  }
+  if(overdue.length>0){let msg=`⚠️ ${overdue.length} Follow-ups overdue hain!\n\n`;overdue.slice(0,5).forEach(l=>msg+=`• ${l.name} - ${l.nextDate}\n`);if(overdue.length>5)msg+=`... aur ${overdue.length-5} more`;alert(msg);localStorage.setItem('re_notified',today);document.getElementById('notifBadge').style.display='none';}
 }
 
-// loadSampleData(); // Disabled - sample leads won't appear on first install
 checkNotifications();
 renderLeads();
 updateStats();
