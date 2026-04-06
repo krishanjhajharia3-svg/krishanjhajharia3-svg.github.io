@@ -1319,7 +1319,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
 function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(r=>{if(r.outcome==='accepted')showToast('🎉 App install ho gayi!','success');deferredPrompt=null;document.getElementById('installBanner').classList.remove('visible');});}}
 
 // ===== AI FEATURES =====
-const AI_API_KEY = 'AIzaSyBMK7pPzoZUFhfk5zMMSRpT_mi26FqvfpM'; // Gemini API Key
+const AI_API_KEY = 'AIzaSyBMK7pPzoZUFhfk5zMMSRpT_mi26FqvfpM';
 
 function switchAiSection(id, btn) {
   document.querySelectorAll('.ai-section').forEach(s => s.classList.remove('active'));
@@ -1416,46 +1416,23 @@ function openAiForLead(id) {
   showToast('🤖 AI tab mein lead load ho gaya!', 'success');
 }
 
-// Conversation history — "bar bar ek hi jawab" problem ka solution
-const _aiConversationHistory = [];
-
-async function callClaudeAPI(prompt) {
-  // History mein naya prompt add karo
-  _aiConversationHistory.push({
-    role: 'user',
-    parts: [{ text: prompt }]
-  });
-
-  const payload = {
-    system_instruction: {
-      parts: [{ text: `Tu ek expert real estate sales assistant hai jo Jaipur, Rajasthan mein kaam karta hai. Tu Krishan ke liye kaam karta hai.
-Projects: Imperial Estate, Imperial Galaxy, Solitair Home, Dream Town, Govind Vihar — sab Jaipur mein hain.
-Tu lead scoring, WhatsApp messages, objection handling, aur next action plans mein expert hai.
-Hamesha Hindi ya Hinglish mein jawab de. Har sawaal ka alag aur specific jawab de — kabhi generic mat bol.` }]
-    },
-    contents: _aiConversationHistory,
-    generationConfig: { maxOutputTokens: 900, temperature: 0.85, topP: 0.92 }
-  };
-
-  const res = await fetch(
+const _aiH=[];
+async function callClaudeAPI(prompt){
+  _aiH.push({role:'user',parts:[{text:prompt}]});
+  const r=await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${AI_API_KEY}`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
+    {method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      system_instruction:{parts:[{text:`Tu ek expert real estate sales assistant hai Jaipur mein. Tu Krishan ke liye kaam karta hai. Projects: Imperial Estate, Imperial Galaxy, Solitair Home, Dream Town, Govind Vihar. Tu WhatsApp messages, lead scoring, objection handling, next actions mein expert hai. Hamesha Hindi ya Hinglish mein jawab de. Har baar alag aur specific jawab de.`}]},
+      contents:_aiH,
+      generationConfig:{maxOutputTokens:900,temperature:0.85}
+    })}
   );
-  if (!res.ok) {
-    const errText = await res.text();
-    throw new Error('API error: ' + res.status + ' — ' + errText);
-  }
-  const data = await res.json();
-  const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || null;
-
-  // AI ka jawab bhi history mein save karo — context yaad rahega
-  if (aiText) {
-    _aiConversationHistory.push({
-      role: 'model',
-      parts: [{ text: aiText }]
-    });
-  }
-  return aiText;
+  if(!r.ok){const e=await r.text();throw new Error('API error:'+r.status+' '+e);}
+  const d=await r.json();
+  const t=d.candidates?.[0]?.content?.parts?.[0]?.text||null;
+  if(t)_aiH.push({role:'model',parts:[{text:t}]});
+  return t;
 }
 
 function setAiLoading(btnId, resultId, loading) {
