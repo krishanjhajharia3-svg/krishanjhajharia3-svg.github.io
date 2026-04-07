@@ -33,4 +33,20 @@
       "purpose": "maskable"
     }
   ]
+"id": "/",
+"categories": ["business", "productivity"],
+"screenshots": [
+  {
+    "src": "screen-mobile.png",
+    "sizes": "400x586",
+    "type": "image/png",
+    "form_factor": "narrow"
+  },
+  {
+    "src": "screen-wide.png",
+    "sizes": "1280x720",
+    "type": "image/png",
+    "form_factor": "wide"
+  }
+]
 }
