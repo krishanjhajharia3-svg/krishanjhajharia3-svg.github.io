@@ -1,85 +1,83 @@
 importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
 
-// ===== LEADO CRM — Background Notifications Service Worker =====
-let scheduledNotifications = {};
+// ===== LEADO CRM Service Worker =====
+let scheduledNotifs = {};
 
-self.addEventListener('install', function(e) {
-  console.log('[SW] Installed');
+self.addEventListener('install', e => {
+  console.log('[SW] Install');
   self.skipWaiting();
 });
 
-self.addEventListener('activate', function(e) {
-  console.log('[SW] Activated');
+self.addEventListener('activate', e => {
+  console.log('[SW] Activate');
   e.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('message', function(e) {
-  if (!e.data) return;
+// App se message
+self.addEventListener('message', e => {
+  if(!e.data) return;
   
-  if (e.data.type === 'SCHEDULE_NOTIFICATION') {
-    const data = e.data.data;
-    const delay = data.scheduledTime - Date.now();
-    if (delay <= 0) return;
+  if(e.data.type === 'SCHEDULE_NOTIFICATION'){
+    const { leadId, title, body, scheduledTime } = e.data.data;
+    const delay = scheduledTime - Date.now();
     
-    if (scheduledNotifications[data.leadId]) {
-      clearTimeout(scheduledNotifications[data.leadId]);
+    console.log('[SW] Schedule karo:', leadId, 'delay:', Math.round(delay/1000)+'s');
+    
+    if(delay <= 0){
+      // Abhi dikhao
+      self.registration.showNotification(title, {
+        body: body,
+        icon: '/icon-192.png',
+        tag: 'lead-'+leadId,
+        requireInteraction: true,
+        vibrate: [300, 100, 300],
+        data: { leadId }
+      });
+      return;
     }
     
-    scheduledNotifications[data.leadId] = setTimeout(function() {
-      self.registration.showNotification(data.title, {
-        body: data.body,
-        icon: 'https://krishanjhajharia3-svg.github.io/icon-192.png',
-        tag: 'followup-' + data.leadId,
+    // Cancel purana
+    if(scheduledNotifs[leadId]) clearTimeout(scheduledNotifs[leadId]);
+    
+    // Schedule naya
+    scheduledNotifs[leadId] = setTimeout(() => {
+      self.registration.showNotification(title, {
+        body: body,
+        icon: '/icon-192.png',
+        tag: 'lead-'+leadId,
         requireInteraction: true,
-        vibrate: [200, 100, 200],
-        data: { leadId: data.leadId },
-        actions: [
-          { action: 'open', title: '📞 Call Karein' },
-          { action: 'dismiss', title: '✕ Baad Mein' }
-        ]
+        vibrate: [300, 100, 300],
+        data: { leadId }
       });
-      delete scheduledNotifications[data.leadId];
+      delete scheduledNotifs[leadId];
+      console.log('[SW] Notification shown:', leadId);
     }, delay);
   }
   
-  if (e.data.type === 'CANCEL_NOTIFICATION') {
-    if (scheduledNotifications[e.data.leadId]) {
-      clearTimeout(scheduledNotifications[e.data.leadId]);
-      delete scheduledNotifications[e.data.leadId];
+  if(e.data.type === 'CANCEL_NOTIFICATION'){
+    if(scheduledNotifs[e.data.leadId]){
+      clearTimeout(scheduledNotifs[e.data.leadId]);
+      delete scheduledNotifs[e.data.leadId];
     }
   }
 });
 
-self.addEventListener('notificationclick', function(e) {
+// Notification click
+self.addEventListener('notificationclick', e => {
   e.notification.close();
-  if (e.action === 'dismiss') return;
-  const leadId = e.notification.data && e.notification.data.leadId;
+  const leadId = e.notification.data?.leadId;
+  
   e.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true })
-      .then(function(clients) {
-        for (let client of clients) {
-          if (client.url.includes('krishanjhajharia3-svg.github.io')) {
-            client.focus();
-            if (leadId) client.postMessage({ type: 'OPEN_LEAD', leadId: leadId });
+    self.clients.matchAll({type:'window', includeUncontrolled:true})
+      .then(clients => {
+        for(let c of clients){
+          if(c.url.includes('krishanjhajharia3-svg.github.io')){
+            c.focus();
+            if(leadId) c.postMessage({type:'OPEN_LEAD', leadId});
             return;
           }
         }
         return self.clients.openWindow('https://krishanjhajharia3-svg.github.io/');
       })
   );
-});
-
-self.addEventListener('push', function(e) {
-  if (!e.data) return;
-  try {
-    const data = e.data.json();
-    e.waitUntil(
-      self.registration.showNotification(data.title || 'Leado CRM', {
-        body: data.body || 'Follow-up reminder!',
-        icon: 'https://krishanjhajharia3-svg.github.io/icon-192.png',
-        requireInteraction: true,
-        vibrate: [200, 100, 200]
-      })
-    );
-  } catch(err) {}
 });
