@@ -59,8 +59,11 @@
       }
 
       // FCM Token lo
+      // SW ready hone ka wait karo phir token lo
+      const swReg = await navigator.serviceWorker.ready;
       const token = await getToken(messaging, {
-        vapidKey: 'BIWp7MB4UU6R-OLHn16Tq2Uld8M3fAkNeMzGMaR07YVPMbVgNY8iPHpNoDIxdfEPjDfWXCdbX8Wd3gtraB809S8'
+        vapidKey: 'BIWp7MB4UU6R-OLHn16Tq2Uld8M3fAkNeMzGMaR07YVPMbVgNY8iPHpNoDIxdfEPjDfWXCdbX8Wd3gtraB809S8',
+        serviceWorkerRegistration: swReg
       });
 
       if (token) {
@@ -642,21 +645,28 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
           localStorage.setItem('os_player_id', playerId);
           console.log('OneSignal Player ID saved:', playerId);
           
-          // FCM Token bhi save karo
+          // FCM Token bhi save karo — window._fbMessaging use karo (module scope fix)
           try {
-            const fcmToken = await getToken(messaging, {
-              vapidKey: 'BIWp7MB4UU6R-OLHn16Tq2Uld8M3fAkNeMzGMaR07YVPMbVgNY8iPHpNoDIxdfEPjDfWXCdbX8Wd3gtraB809S8'
-            });
-            if(fcmToken){
-              const uid = window._fbAuth?.currentUser?.uid || 'anonymous';
-              await setDoc(doc(db, 'fcm_tokens', uid), {
-                token: fcmToken,
-                updatedAt: new Date().toISOString()
+            if(window._fbMessaging && window._fbFunctions) {
+              const { doc, setDoc } = window._fbFunctions;
+              const db = window._fbDb;
+              // Dynamic import for getToken
+              const { getToken } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js');
+              const fcmToken = await getToken(window._fbMessaging, {
+                vapidKey: 'BIWp7MB4UU6R-OLHn16Tq2Uld8M3fAkNeMzGMaR07YVPMbVgNY8iPHpNoDIxdfEPjDfWXCdbX8Wd3gtraB809S8',
+                serviceWorkerRegistration: await navigator.serviceWorker.getRegistration('/')
               });
-              console.log('FCM Token saved!', fcmToken);
-              window._fcmToken = fcmToken;
+              if(fcmToken){
+                const uid = window._fbAuth?.currentUser?.uid || 'anonymous';
+                await setDoc(doc(db, 'fcm_tokens', uid), {
+                  token: fcmToken,
+                  updatedAt: new Date().toISOString()
+                });
+                console.log('[FCM] Token saved via OneSignal block!', fcmToken.substring(0,20)+'...');
+                window._fcmToken = fcmToken;
+              }
             }
-          } catch(e){ console.log('FCM token error:', e); }
+          } catch(e){ console.log('[FCM] Token error in OneSignal block:', e.message); }
         }
       }, 2000);
       
@@ -2177,6 +2187,11 @@ function saveLead(){
   renderHomeDashboard();
   // Refresh AI lead selects
   populateAiLeadSelects();
+  // ✅ Notification schedule karo — app band ho tab bhi aayegi!
+  const savedLead = editingId ? leads.find(l=>l.id===editingId) : leads[0];
+  if(savedLead && savedLead.nextDate && savedLead.nextTime){
+    scheduleFollowupNotification(savedLead);
+  }
   if(hnd){const sid=editingId||leads[0].id;setTimeout(()=>{if(confirm('📅 Google Calendar mein Follow-Up add karen?'))addToCalendar(sid);},500);}
 }
 function deleteLead(){
@@ -2871,24 +2886,34 @@ window.addEventListener('load',()=>{setTimeout(()=>{initGoogleAuth();initDriveAu
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
-    // 1. Custom sw.js register karo (notifications ke liye)
+
+    // 1. firebase-messaging-sw.js — FCM background notifications (MOST IMPORTANT!)
+    navigator.serviceWorker.register('/firebase-messaging-sw.js', {scope: '/'})
+      .then(function(reg){
+        console.log('[FCM SW] firebase-messaging-sw.js registered!');
+        // FCM token ko is SW se link karo
+        window._swRegistration = reg;
+      })
+      .catch(function(err){ console.log('[FCM SW] Error:', err); });
+
+    // 2. Custom sw.js — caching + push fallback
     navigator.serviceWorker.register('/sw.js', {scope: '/'})
       .then(function(reg){
         console.log('[SW] Custom sw.js registered:', reg.scope);
         return navigator.serviceWorker.ready;
       })
-      .then(function(reg){
-        console.log('[SW] Custom SW ready!');
+      .then(function(){
+        console.log('[SW] Ready! Scheduling notifications...');
         setTimeout(scheduleAllNotifications, 1000);
       })
-      .catch(function(err){ console.log('[SW] Custom SW error:', err); });
+      .catch(function(err){ console.log('[SW] Error:', err); });
 
-    // 2. OneSignal SW register karo
+    // 3. OneSignal SW
     navigator.serviceWorker.register('/OneSignalSDKWorker.js', {scope: '/'})
-      .then(function(reg){ console.log('[OneSignal SW] Registered:', reg.scope); })
+      .then(function(reg){ console.log('[OneSignal SW] Registered!'); })
       .catch(function(err){ console.log('[OneSignal SW] Error:', err); });
   });
-  
+
   // SW se message receive karo
   navigator.serviceWorker.addEventListener('message', function(e){
     if(e.data && e.data.type === 'OPEN_LEAD'){
@@ -2896,7 +2921,7 @@ if('serviceWorker' in navigator){
     }
   });
 }
-// SW registration upar handle ho gaya
+
 
 function checkNotifications(){
   const today=new Date().toISOString().split('T')[0];
@@ -3624,7 +3649,9 @@ const OS_REST_API_KEY = 'os_v2_app_69f0132ef79944569a8298c255827e3d'; // Update 
 
 // Follow-up reminder schedule karo
 async function scheduleFollowupNotification(lead){
-  if(!lead.nextDate || !lead.nextTime) return;
+  if(!lead.nextDate) return;
+  // nextTime nahi hai toh default 09:00 use karo
+  if(!lead.nextTime) lead = {...lead, nextTime: '09:00'};
   
   try{
     // Date + Time combine karo
