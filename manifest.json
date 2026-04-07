@@ -1,5 +1,6 @@
 {
   "name": "Leado CRM - Real Estate",
+  "gcm_sender_id": "897766415254",
   "short_name": "Leado",
   "description": "Real Estate Lead Management App",
   "start_url": "/",
