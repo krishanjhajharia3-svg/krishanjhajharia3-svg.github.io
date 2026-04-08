@@ -623,6 +623,24 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
         serviceWorkerParam: { scope: "/" },
         notifyButton: { enable: false },
         allowLocalhostAsSecureOrigin: true,
+        // TWA ke liye prompt automatically dikhao
+        promptOptions: {
+          slidedown: {
+            prompts: [{
+              type: "push",
+              autoPrompt: true,
+              text: {
+                actionMessage: "Leado se follow-up reminders paane ke liye allow karein!",
+                acceptButton: "Allow",
+                cancelButton: "Baad mein"
+              },
+              delay: {
+                pageViews: 1,
+                timeDelay: 3
+              }
+            }]
+          }
+        },
         welcomeNotification: {
           title: "Leado CRM",
           message: "Notifications ON! Follow-up reminders milenge! 🎉"
