@@ -4,6 +4,15 @@
     "namespace": "android_app",
     "package_name": "io.github.krishanjhajharia3_svg.twa",
     "sha256_cert_fingerprints": [
+      "84:C0:CF:A3:D8:C0:0A:12:F4:F3:9C:68:1F:BA:07:B6:31:C7:B8:6B:34:D1:F7:78:10:41:6D:0D:7A:1E:27:AB"
+    ]
+  }
+}][{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "io.github.krishanjhajharia3_svg.twa",
+    "sha256_cert_fingerprints": [
       "B1:A4:69:CE:08:73:3D:F3:84:8B:F6:70:27:29:60:4B:02:5F:13:FD:9A:09:D8:C0:29:F7:A8:7E:E3:59:48:D1"
     ]
   }
