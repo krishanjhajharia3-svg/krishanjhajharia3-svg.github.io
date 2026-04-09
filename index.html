@@ -317,28 +317,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .call-connected{background:rgba(0,212,170,.15)}
 .call-missed{background:rgba(255,77,109,.15)}
 
-/* ===== AI TAB STYLES ===== */
-.ai-tab-nav{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
-.ai-tab-nav::-webkit-scrollbar{display:none}
-.ai-feature-btn{padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-muted);font-size:12px;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:'Noto Sans Devanagari',sans-serif}
-.ai-feature-btn.active{border-color:#00d4aa;color:#00d4aa;background:rgba(0,212,170,.1)}
-.ai-section{display:none}
-.ai-section.active{display:block}
-.ai-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px}
-.ai-result{background:var(--bg-card2);border:1px solid rgba(0,212,170,.2);border-radius:10px;padding:12px;margin-top:12px;font-size:13px;line-height:1.8;color:var(--text-primary);min-height:60px;white-space:pre-wrap;display:none}
-.ai-loading{text-align:center;padding:20px;color:var(--accent-teal);font-size:13px}
-.ai-loading span{display:inline-block;animation:pulse 1.2s infinite}
-@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-.score-display{text-align:center;padding:16px 0}
-.score-num{font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;color:#00d4aa}
-.score-bar-wrap{height:8px;background:var(--bg-card2);border-radius:4px;overflow:hidden;margin:10px 0}
-.score-bar{height:100%;border-radius:4px;transition:width .6s ease}
-.score-label{font-size:14px;font-weight:600;margin-top:6px}
-.ai-copy-btn{padding:7px 16px;border-radius:8px;border:1px solid rgba(0,212,170,.3);background:rgba(0,212,170,.08);color:#00d4aa;font-size:12px;cursor:pointer;margin-top:8px;font-family:'Noto Sans Devanagari',sans-serif;transition:all .2s}
-.ai-copy-btn:hover{background:rgba(0,212,170,.15)}
-.ai-header{background:linear-gradient(135deg,rgba(0,212,170,.1),rgba(0,153,204,.05));border:1px solid rgba(0,212,170,.2);border-radius:var(--radius);padding:14px;margin-bottom:16px;text-align:center}
-.ai-header-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:#00d4aa;margin-bottom:4px}
-.ai-header-sub{font-size:11px;color:var(--text-muted);line-height:1.5}
 /* ===== SPLASH SCREEN ===== */
 #splashScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0a0f1a 0%,#0d1f35 60%,#0a0f1a 100%);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s ease}
 #splashScreen.hide{opacity:0;pointer-events:none}
@@ -737,6 +715,31 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 }
 .tab-btn{position:relative}
 
+
+/* ===== LEAD HISTORY TIMELINE ===== */
+.lh-modal-body{flex:1;overflow-y:auto;padding-bottom:8px}
+.lh-stats{font-size:11px;color:var(--text-muted);padding:6px 2px 10px}
+.lh-timeline{position:relative;padding-left:22px}
+.lh-timeline::before{content:'';position:absolute;left:7px;top:4px;bottom:4px;width:2px;background:linear-gradient(to bottom,var(--accent-gold),transparent)}
+.lh-item{position:relative;margin-bottom:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:10px 12px}
+.lh-item::before{content:'';position:absolute;left:-19px;top:13px;width:10px;height:10px;border-radius:50%;border:2px solid var(--bg-primary)}
+.lh-created::before{background:var(--accent-gold)}
+.lh-call::before{background:var(--accent-teal)}
+.lh-visit::before{background:var(--accent-purple)}
+.lh-followup::before{background:var(--accent-blue)}
+.lh-note::before{background:var(--text-muted)}
+.lh-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.lh-label{font-size:12px;font-weight:700}
+.lh-created .lh-label{color:var(--accent-gold)}
+.lh-call .lh-label{color:var(--accent-teal)}
+.lh-visit .lh-label{color:var(--accent-purple)}
+.lh-followup .lh-label{color:var(--accent-blue)}
+.lh-note .lh-label{color:var(--text-secondary)}
+.lh-date{font-size:10px;color:var(--text-muted);white-space:nowrap}
+.lh-text{font-size:12px;color:var(--text-secondary);line-height:1.5;margin-top:4px}
+.lh-empty{text-align:center;padding:32px 16px;color:var(--text-muted)}
+.lh-empty-icon{font-size:32px;margin-bottom:8px}
+
 </style>
 
 <!-- OneSignal Push Notifications -->
@@ -917,9 +920,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
   <button class="tab-btn" id="tabBtn-summary" onclick="switchTab('summary',this)">
     <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Summary
   </button>
-  <button class="tab-btn aitab" id="tabBtn-ai" onclick="switchTab('ai',this)">
-    🤖 AI
-  </button>
 </div>
 
 <div class="main-content">
@@ -983,15 +983,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
       <div class="home-prog-bar" style="margin-bottom:0"><div class="home-prog-fill" id="homeProgVisitsBar" style="width:0%;background:var(--accent-blue)"></div></div>
     </div>
 
-    <!-- AI Quick Access -->
-    <div class="home-ai-quick" onclick="switchTabByName('ai');updateBottomNav('ai')">
-      <div class="home-ai-icon">🤖</div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:#00d4aa">AI Assistant</div>
-        <div style="font-size:11px;color:var(--text-secondary);margin-top:2px">WhatsApp msg · Calling script · Lead score</div>
-      </div>
-      <div style="color:var(--text-muted);margin-left:auto;font-size:18px">›</div>
-    </div>
   </div>
 
   <!-- LEADS TAB -->
@@ -1042,214 +1033,6 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
     <div id="projectSummary"></div>
   </div>
 
-  <!-- ===== AI TAB ===== -->
-  <div class="tab-content" id="tab-ai">
-    <div class="ai-header">
-      <div class="ai-header-title">🤖 AI Sales Assistant</div>
-      <div class="ai-header-sub">WhatsApp Message · Lead Score · Next Action · Objection Handle</div>
-    </div>
-
-    <!-- AI Sub-tabs -->
-    <div class="ai-tab-nav">
-      <button class="ai-feature-btn active" onclick="switchAiSection('msg',this)">💬 WA Message</button>
-      <button class="ai-feature-btn" onclick="switchAiSection('score',this)">🎯 Lead Score</button>
-      <button class="ai-feature-btn" onclick="switchAiSection('action',this)">⚡ Next Action</button>
-      <button class="ai-feature-btn" onclick="switchAiSection('obj',this)">🛡️ Objection</button>
-    </div>
-
-    <!-- 1. WhatsApp Message Generator -->
-    <div class="ai-section active" id="ai-msg">
-      <div class="ai-card">
-        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead चुनें या manually details भरें → AI WhatsApp message बनाएगा</div>
-
-        <div class="form-group">
-          <label class="form-label">📋 Quick Lead Select (Optional)</label>
-          <select class="quick-lead-select" id="aiMsgLeadSelect" onchange="fillAiMsgFromLead()">
-            <option value="">-- Lead चुनें या नीचे manually भरें --</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">👤 Lead का नाम</label>
-          <input class="form-input" id="aiMsgName" type="text" placeholder="जैसे: Ramesh Sharma">
-        </div>
-        <div class="form-group">
-          <label class="form-label">🏗️ Project</label>
-          <select class="form-select" id="aiMsgProject">
-            <option>Imperial Estate</option>
-            <option>Imperial Galaxy</option>
-            <option>Solitair Home</option>
-            <option>Dream Town</option>
-            <option>Govind Vihar</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">🌡️ Status</label>
-          <select class="form-select" id="aiMsgStatus">
-            <option value="warm">⭐ Interested</option>
-            <option value="hot">🔥 Ready to Buy</option>
-            <option value="cold">❄️ Thinking</option>
-            <option value="converted">✅ Converted</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">💬 Last बात क्या हुई</label>
-          <textarea class="form-textarea" id="aiMsgLast" placeholder="जैसे: Budget ₹25L तक बताया, site visit करनी है..."></textarea>
-        </div>
-        <button class="btn-ai" onclick="aiGenerateMsg()" id="aiMsgBtn">🤖 AI से WhatsApp Message बनाएं</button>
-        <div class="ai-result" id="aiMsgResult"></div>
-        <button class="ai-copy-btn" id="aiMsgCopy" style="display:none" onclick="aiCopy('aiMsgResult','aiMsgCopy')">📋 Copy करें</button>
-      </div>
-    </div>
-
-    <!-- 2. Lead Score -->
-    <div class="ai-section" id="ai-score">
-      <div class="ai-card">
-        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead की details → AI 0-100 score देगा</div>
-
-        <div class="form-group">
-          <label class="form-label">📋 Quick Lead Select (Optional)</label>
-          <select class="quick-lead-select" id="aiScoreLeadSelect" onchange="fillAiScoreFromLead()">
-            <option value="">-- Lead चुनें या नीचे manually भरें --</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">📣 Source</label>
-          <select class="form-select" id="aiScoreSource">
-            <option>Meta Ads</option>
-            <option>Referral</option>
-            <option>Cold Call</option>
-            <option>WhatsApp</option>
-            <option>Site Visit</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">💰 Budget</label>
-          <select class="form-select" id="aiScoreBudget">
-            <option>₹20-30 लाख</option>
-            <option>₹30-50 लाख</option>
-            <option>₹50 लाख+</option>
-            <option>Budget नहीं बताया</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">📅 कितने दिन से follow-up है</label>
-          <select class="form-select" id="aiScoreDays">
-            <option>आज पहली बात</option>
-            <option>1-3 दिन</option>
-            <option>1 हफ्ता</option>
-            <option>1 महीने से ज्यादा</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">🏠 Site Visit</label>
-          <select class="form-select" id="aiScoreVisit">
-            <option>हाँ, visit हो चुकी</option>
-            <option>नहीं, अभी नहीं</option>
-            <option>Scheduled है</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">📞 Response Quality</label>
-          <select class="form-select" id="aiScoreResp">
-            <option>बहुत अच्छा — खुद call करता है</option>
-            <option>ठीक है — उठाता है</option>
-            <option>कभी-कभी उठाता है</option>
-            <option>नहीं उठाता</option>
-          </select>
-        </div>
-        <button class="btn-ai" onclick="aiLeadScore()" id="aiScoreBtn">🎯 AI Lead Score निकालें</button>
-        <div class="ai-result" id="aiScoreResult">
-          <div class="score-display" id="aiScoreDisplay" style="display:none">
-            <div class="score-num" id="aiScoreNum">0</div>
-            <div class="score-bar-wrap"><div class="score-bar" id="aiScoreBar" style="width:0%"></div></div>
-            <div class="score-label" id="aiScoreLabel"></div>
-          </div>
-          <div id="aiScoreText"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. Next Action -->
-    <div class="ai-section" id="ai-action">
-      <div class="ai-card">
-        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead की situation → AI बताएगा आज क्या करें</div>
-
-        <div class="form-group">
-          <label class="form-label">📋 Quick Lead Select (Optional)</label>
-          <select class="quick-lead-select" id="aiActionLeadSelect" onchange="fillAiActionFromLead()">
-            <option value="">-- Lead चुनें या नीचे manually भरें --</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">👤 Lead का नाम</label>
-          <input class="form-input" id="aiActionName" type="text" placeholder="जैसे: Suresh Kumar">
-        </div>
-        <div class="form-group">
-          <label class="form-label">🌡️ Current Status</label>
-          <select class="form-select" id="aiActionStatus">
-            <option value="warm">⭐ Interested</option>
-            <option value="hot">🔥 Ready to Buy</option>
-            <option value="cold">❄️ Thinking</option>
-            <option>Site Visit हो चुकी</option>
-            <option>Negotiation चल रही</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">📅 आखिरी contact कब</label>
-          <select class="form-select" id="aiActionWhen">
-            <option>आज</option>
-            <option>2-3 दिन पहले</option>
-            <option>1 हफ्ते पहले</option>
-            <option>2+ हफ्ते पहले</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">⚠️ Main Concern</label>
-          <select class="form-select" id="aiActionConcern">
-            <option>Budget / Price</option>
-            <option>Location पसंद नहीं</option>
-            <option>Family approval चाहिए</option>
-            <option>Loan नहीं मिल रहा</option>
-            <option>दूसरे projects देख रहे</option>
-            <option>कोई issue नहीं बताया</option>
-          </select>
-        </div>
-        <button class="btn-ai" onclick="aiNextAction()" id="aiActionBtn">⚡ AI Next Action बताए</button>
-        <div class="ai-result" id="aiActionResult"></div>
-        <button class="ai-copy-btn" id="aiActionCopy" style="display:none" onclick="aiCopy('aiActionResult','aiActionCopy')">📋 Copy करें</button>
-      </div>
-    </div>
-
-    <!-- 4. Objection Handler -->
-    <div class="ai-section" id="ai-obj">
-      <div class="ai-card">
-        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead की objection → AI counter script तैयार करेगा</div>
-        <div class="form-group">
-          <label class="form-label">🏗️ Project</label>
-          <select class="form-select" id="aiObjProject">
-            <option>Imperial Estate</option>
-            <option>Imperial Galaxy</option>
-            <option>Solitair Home</option>
-            <option>Dream Town</option>
-            <option>Govind Vihar</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">💬 Lead की Objection लिखें</label>
-          <textarea class="form-textarea" id="aiObjText" placeholder="जैसे: Price बहुत ज्यादा है, दूसरी जगह सस्ता मिल रहा है..."></textarea>
-        </div>
-        <button class="btn-ai" onclick="aiHandleObj()" id="aiObjBtn">🛡️ AI Objection Handle करे</button>
-        <div class="ai-result" id="aiObjResult"></div>
-        <button class="ai-copy-btn" id="aiObjCopy" style="display:none" onclick="aiCopy('aiObjResult','aiObjCopy')">📋 Copy करें</button>
-      </div>
-    </div>
-
-  </div>
-  <!-- END AI TAB -->
-
 </div>
 
 <button class="fab" onclick="openAddModal()">+</button>
@@ -1278,10 +1061,7 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
     <span class="bottom-nav-icon">📊</span>
     <span class="bottom-nav-label">Summary</span>
   </button>
-  <button class="bottom-nav-item ai" id="bn-ai" onclick="switchTab('ai',this);updateBottomNav('ai')">
-    <span class="bottom-nav-icon">🤖</span>
-    <span class="bottom-nav-label">AI</span>
-  </button>
+
 </div>
 
 <!-- LEAD MODAL -->
@@ -1574,6 +1354,25 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
     </div>
     <div id="callHistoryList"></div>
     <button class="btn-secondary" onclick="closeCallHistoryModal()">Wapas Jayen</button>
+  </div>
+</div>
+
+
+<!-- LEAD HISTORY MODAL -->
+<div class="modal-overlay" id="leadHistoryModal">
+  <div class="modal" style="display:flex;flex-direction:column;max-height:88vh;padding-bottom:0">
+    <div class="modal-handle"></div>
+    <div class="modal-title" style="color:var(--accent-gold-light);flex-shrink:0">📖 Lead History</div>
+    <div class="info-box" style="flex-shrink:0">
+      <div class="info-box-name" id="lhName">—</div>
+      <div class="info-box-sub" id="lhSub">—</div>
+    </div>
+    <div class="lh-modal-body" id="leadHistoryContent">
+      <div class="lh-empty"><div class="lh-empty-icon">📋</div>Loading...</div>
+    </div>
+    <div style="flex-shrink:0;padding:12px 0 20px;border-top:1px solid var(--border)">
+      <button class="btn-secondary" onclick="document.getElementById('leadHistoryModal').classList.remove('active')">Wapas Jayen</button>
+    </div>
   </div>
 </div>
 
@@ -2077,8 +1876,7 @@ function renderLeads(){
         <button class="action-btn whatsapp" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
         <button class="action-btn savecon" onclick="openContactModal('${l.id}')">📱 Save</button>
         <button class="action-btn visitbtn" onclick="openVisitModal('${l.id}')">🏠 Visit</button>
-        <button class="action-btn aibtn" onclick="openAiForLead('${l.id}')">🤖 AI</button>
-        ${l.nextDate?`<button class="action-btn calendar" onclick="addToCalendar('${l.id}')">📅 Cal</button>`:''}
+        <button class="action-btn" style="border-color:rgba(245,210,118,.3);color:#f5d276" onclick="event.stopPropagation();showLeadHistory('${l.id}')">📖 History</button>
         <button class="action-btn edit" onclick="editLead('${l.id}')">✏️</button>
       </div>
     </div>`;
@@ -2114,7 +1912,6 @@ function renderVisits(){
         <button class="action-btn call" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
         <button class="action-btn whatsapp" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
         <button class="action-btn savecon" onclick="openContactModal('${l.id}')">📱 Save</button>
-        <button class="action-btn aibtn" onclick="openAiForLead('${l.id}')">🤖 AI</button>
         <button class="action-btn edit" onclick="editLead('${l.id}')">✏️ Edit</button>
         <button class="action-btn" style="border-color:rgba(255,77,109,.3);color:var(--accent-red)" onclick="removeVisit('${l.id}')">❌ Remove</button>
       </div>
@@ -2140,12 +1937,10 @@ function renderFollowups(){
           <div class="followup-time">⏰ ${l.nextTime||'Time nahi'} | 🏗️ ${l.project||'—'}</div>
           <div class="followup-note">${l.nextNote||l.lastTalk||'—'}</div>
         </div>
-        <button class="add-cal-btn" onclick="addToCalendar('${l.id}')">📅 Cal</button>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="action-btn call" style="flex:1;min-width:60px" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
         <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
-        <button class="action-btn aibtn" style="flex:1;min-width:60px" onclick="openAiForLead('${l.id}')">🤖 AI</button>
         <button class="action-btn edit" style="flex:1;min-width:60px" onclick="editLead('${l.id}')">✏️ Edit</button>
       </div>
     </div>`;
@@ -2167,7 +1962,6 @@ function renderFollowups(){
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="action-btn call" style="flex:1;min-width:60px" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
         <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
-        <button class="action-btn aibtn" style="flex:1;min-width:60px" onclick="openAiForLead('${l.id}')">🤖 AI</button>
         <button class="action-btn edit" style="flex:1;min-width:60px" onclick="editLead('${l.id}')">✏️ Edit</button>
       </div>
     </div>`;
@@ -2262,25 +2056,36 @@ function openVisitModal(id){
   document.getElementById('visitModal').classList.add('active');
 }
 async function saveVisit(){
-  if(!visitingId)return;
-  const idx=leads.findIndex(l=>l.id===visitingId);if(idx===-1)return;
-  leads[idx].visited=true;
-  leads[idx].visitDate=document.getElementById('vDate').value;
-  leads[idx].visitTime=document.getElementById('vTime').value;
-  leads[idx].visitNotes=document.getElementById('vNotes').value.trim();
-  leads[idx].status=document.getElementById('vStatus').value;
-  leads[idx].lastUpdated=new Date().toISOString();
-  if(selectedPhotos.length){leads[idx].visitPhotosLocal=selectedPhotos.map(p=>({dataUrl:p.dataUrl,name:p.name}));}
-  saveData();renderLeads();renderVisits();updateStats();closeVisitModal();
-  // ✅ Visits tab pe wapas jao
-  switchTabByName('visits');updateBottomNav('visits');
-  showToast('🏠 Site Visit save ho gayi!','success'); setTimeout(()=>showConfetti(50,50),200);
-  if(selectedPhotos.length && typeof driveAccessToken !== 'undefined' && driveAccessToken){
-    const leadName=leads[idx].name.replace(/\s+/g,'_');
-    try{
-      const driveLinks=await uploadPhotosToDrive(visitingId,leadName);
-      if(driveLinks.length){const i=leads.findIndex(l=>l.id===visitingId);if(i!==-1){leads[i].visitPhotos=driveLinks;leads[i].visitPhotosLocal=null;saveData();}}
-    }catch(e){console.log('Photo upload skip:',e);}
+  if(!visitingId){showToast('⚠️ Error! Dobara try karein');return;}
+  const idx=leads.findIndex(l=>l.id===visitingId);
+  if(idx===-1){showToast('⚠️ Lead nahi mila!');return;}
+  const saveBtn=document.querySelector('#visitModal .btn-purple');
+  if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='⏳ Save ho raha hai...';}
+  try{
+    leads[idx].visited=true;
+    leads[idx].visitDate=document.getElementById('vDate').value||new Date().toISOString().split('T')[0];
+    leads[idx].visitTime=document.getElementById('vTime').value||new Date().toTimeString().slice(0,5);
+    leads[idx].visitNotes=document.getElementById('vNotes').value.trim();
+    leads[idx].status=document.getElementById('vStatus').value;
+    leads[idx].lastUpdated=new Date().toISOString();
+    if(selectedPhotos.length){leads[idx].visitPhotosLocal=selectedPhotos.map(p=>({dataUrl:p.dataUrl,name:p.name}));}
+    saveData();renderLeads();renderVisits();updateStats();
+    closeVisitModal();
+    switchTabByName('visits');updateBottomNav('visits');
+    showToast('🏠 Site Visit save ho gayi!','success');
+    setTimeout(()=>showConfetti(50,50),200);
+    if(window._fbUser){setTimeout(()=>syncToFirestore(),1500);}
+    if(selectedPhotos.length&&typeof driveAccessToken!=='undefined'&&driveAccessToken){
+      const leadName=leads[idx].name.replace(/\s+/g,'_');
+      try{
+        const driveLinks=await uploadPhotosToDrive(visitingId,leadName);
+        if(driveLinks.length){const i=leads.findIndex(l=>l.id===visitingId);if(i!==-1){leads[i].visitPhotos=driveLinks;leads[i].visitPhotosLocal=null;saveData();}}
+      }catch(e){console.log('Photo upload skip:',e);}
+    }
+  }catch(err){
+    console.error('saveVisit error:',err);
+    showToast('❌ Save mein error, dobara try karein');
+    if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='🏠 Visit Save करें';}
   }
   selectedPhotos=[];
 }
@@ -2297,7 +2102,21 @@ function openContactModal(id){
   contactId=id;
   document.getElementById('cName').textContent=l.name;
   document.getElementById('cPhone').textContent='📱 '+l.phone;
-  document.getElementById('cProject').textContent='🏗️ '+(l.project||'—')+' | RE Diary';
+  document.getElementById('cProject').textContent='🏗️ '+(l.project||'—')+' | Leado';
+  // Firebase se already logged in hai? Auto Google Contacts connect karo
+  const fbUser=window._fbUser;
+  if(fbUser){
+    const isGoogle=fbUser.providerData&&fbUser.providerData.some(p=>p.providerId==='google.com');
+    if(isGoogle){
+      document.getElementById('googleUserName').textContent=fbUser.displayName||'Google User';
+      document.getElementById('googleUserEmail').textContent=fbUser.email||'—';
+      if(fbUser.photoURL){document.getElementById('googleAvatar').innerHTML='<img src="'+fbUser.photoURL+'" style="width:32px;height:32px;border-radius:50%;object-fit:cover">';}
+      document.getElementById('googleNotLoggedIn').style.display='none';
+      document.getElementById('googleLoggedIn').style.display='block';
+      if(!tokenClient){initGoogleAuth();}
+      if(!googleAccessToken&&tokenClient){try{tokenClient.requestAccessToken({prompt:''});}catch(e){console.log('token silent req:',e);}}
+    }
+  }
   document.getElementById('contactModal').classList.add('active');
 }
 function doSaveContact(){
@@ -2371,20 +2190,17 @@ function saveLead(){
   switchTabByName('leads');updateBottomNav('leads');
   renderHomeDashboard();
   // Refresh AI lead selects
-  populateAiLeadSelects();
   // ✅ Notification schedule karo — app band ho tab bhi aayegi!
   const savedLead = editingId ? leads.find(l=>l.id===editingId) : leads[0];
   if(savedLead && savedLead.nextDate && savedLead.nextTime){
     scheduleFollowupNotification(savedLead);
   }
-  if(hnd){const sid=editingId||leads[0].id;setTimeout(()=>{if(confirm('📅 Google Calendar mein Follow-Up add karen?'))addToCalendar(sid);},500);}
 }
 function deleteLead(){
   if(!editingId)return;
   if(!confirm('क्या आप इस lead को delete करना चाहते हैं?'))return;
   leads=leads.filter(l=>l.id!==editingId);
   saveData();renderLeads();renderFollowups();renderVisits();updateStats();closeModal();
-  populateAiLeadSelects();
   switchTabByName('leads');updateBottomNav('leads');
   showToast('🗑️ Lead delete ho gaya');
 }
@@ -2448,10 +2264,75 @@ function saveCallRecord(){
   let msg=`📞 Call record ho gayi — ${resultLabels[selectedCallResult]}`;
   if(addedFollowup)msg+=` | 📅 Follow-up set!`;
   showToast(msg,'success');
-  if(addedFollowup){setTimeout(()=>{if(confirm('📅 Google Calendar mein Follow-Up add karein?'))addToCalendar(callingId);},500);}
 }
 function closeCallModal(){document.getElementById('callModal').classList.remove('active');callingId=null;}
 function closeCallHistoryModal(){document.getElementById('callHistoryModal').classList.remove('active');}
+
+// ===== LEAD HISTORY =====
+function showLeadHistory(id){
+  var l=leads.find(function(x){return x.id===id;});
+  if(!l){showToast('⚠️ Lead nahi mila');return;}
+  var slabel={hot:'🔥 Ready to Buy',warm:'⭐ Interested',cold:'❄️ Thinking',converted:'✅ Converted'};
+  document.getElementById('lhName').textContent=l.name+' — '+l.phone;
+  document.getElementById('lhSub').textContent=(slabel[l.status]||l.status)+' | 🏗️ '+(l.project||'—');
+  var events=[];
+  // Lead created
+  if(l.createdAt){
+    events.push({cls:'lh-created',date:new Date(l.createdAt),label:'✨ Lead Add Kiya',
+      text:'Source: '+(l.source||'—')+' | Project: '+(l.project||'—')+(l.area?' | Area: '+l.area:'')});
+  }
+  // Calls
+  var rLabel={connected:'✅ Baat hui',not_answered:'❌ Nahi utha',busy:'🔴 Busy',call_later:'⏰ Baad mein'};
+  if(l.callHistory&&l.callHistory.length){
+    l.callHistory.forEach(function(call){
+      var txt='';
+      if(call.duration)txt+='⏱️ '+call.duration;
+      if(call.notes)txt+=(txt?' | ':'')+' 💬 '+call.notes;
+      if(call.statusUpdate)txt+=(txt?' | ':'')+'→ '+(slabel[call.statusUpdate]||call.statusUpdate);
+      events.push({cls:'lh-call',date:new Date(call.date),label:'📞 Call — '+(rLabel[call.result]||call.result),text:txt});
+    });
+  }
+  // Site visit
+  if(l.visited&&l.visitDate){
+    var vtxt=l.visitNotes?'💬 '+l.visitNotes:'Visit complete hua';
+    if(l.visitTime)vtxt+=' | ⏰ '+l.visitTime;
+    events.push({cls:'lh-visit',date:new Date(l.visitDate),label:'🏠 Site Visit Hua',text:vtxt});
+  }
+  // Follow-up
+  if(l.nextDate){
+    var isOD=new Date(l.nextDate)<new Date()&&l.status!=='converted';
+    var fd=new Date(l.nextDate);
+    var ftxt='📅 '+fd.toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'});
+    if(l.nextTime)ftxt+=' ⏰ '+l.nextTime;
+    if(l.nextNote)ftxt+=' | 📝 '+l.nextNote;
+    events.push({cls:'lh-followup',date:fd,label:'📅 Follow-Up'+(isOD?' ⚠️ Overdue!':''),text:ftxt});
+  }
+  // Last talk
+  if(l.lastTalk){
+    events.push({cls:'lh-note',date:l.lastUpdated?new Date(l.lastUpdated):new Date(),label:'💬 Last Baat',text:l.lastTalk});
+  }
+  // Sort latest first
+  events.sort(function(a,b){return b.date-a.date;});
+  var totalCalls=l.callHistory?l.callHistory.length:0;
+  var html='<div class="lh-stats">📊 Events: '+events.length+' &nbsp;|&nbsp; 📞 Calls: '+totalCalls+' &nbsp;|&nbsp; 🏠 Visits: '+(l.visited?'1':'0')+'</div>';
+  if(!events.length){
+    html='<div class="lh-empty"><div class="lh-empty-icon">📋</div><div>Abhi koi history nahi</div><div style="font-size:11px;margin-top:4px">Calls, visits aur notes yahan dikhenge</div></div>';
+  }else{
+    html+='<div class="lh-timeline">';
+    events.forEach(function(ev){
+      var dateStr=ev.date.toLocaleDateString('hi-IN',{day:'numeric',month:'short'});
+      html+='<div class="lh-item '+ev.cls+'">';
+      html+='<div class="lh-row"><span class="lh-label">'+ev.label+'</span><span class="lh-date">'+dateStr+'</span></div>';
+      if(ev.text)html+='<div class="lh-text">'+ev.text+'</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+  }
+  document.getElementById('leadHistoryContent').innerHTML=html;
+  document.getElementById('leadHistoryModal').classList.add('active');
+}
+// ===== END LEAD HISTORY =====
+
 function showCallHistory(id){
   const l=leads.find(x=>x.id===id);if(!l)return;
   document.getElementById('chName').textContent=l.name+' — '+l.phone;
@@ -2531,18 +2412,18 @@ function exportViaWhatsApp(){
 }
 
 function switchTab(tab,btn){
+  if(tab==='ai')tab='leads';
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
+  const _tc=document.getElementById('tab-'+tab);if(_tc)_tc.classList.add('active');
   if(btn)btn.classList.add('active');
   else{const b=document.getElementById('tabBtn-'+tab);if(b)b.classList.add('active');}
   if(tab==='followup')renderFollowups();
   if(tab==='summary')updateStats();
   if(tab==='visits')renderVisits();
-  if(tab==='ai')populateAiLeadSelects();
   updateBottomNav(tab);
 }
-function switchTabByName(tab){switchTab(tab,document.getElementById('tabBtn-'+tab));}
+function switchTabByName(tab){if(tab==='ai')tab='leads';switchTab(tab,document.getElementById('tabBtn-'+tab));}
 function updateBottomNav(tab){
   document.querySelectorAll('.bottom-nav-item').forEach(b=>b.classList.remove('active'));
   const bn=document.getElementById('bn-'+tab);if(bn)bn.classList.add('active');
@@ -2558,407 +2439,19 @@ function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.
 // ===== AI FEATURES =====
 const AI_API_KEY = 'AIzaSyBfPXdpEVdak9sw07PBXG_-3F0oEcCsVIQ';
 
-function switchAiSection(id, btn) {
-  document.querySelectorAll('.ai-section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.ai-feature-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('ai-' + id).classList.add('active');
-  if (btn) btn.classList.add('active');
-}
 
-function populateAiLeadSelects() {
-  const selects = ['aiMsgLeadSelect', 'aiScoreLeadSelect', 'aiActionLeadSelect'];
-  selects.forEach(selectId => {
-    const el = document.getElementById(selectId);
-    if (!el) return;
-    const current = el.value;
-    el.innerHTML = '<option value="">-- Lead चुनें या नीचे manually भरें --</option>';
-    leads.forEach(l => {
-      const opt = document.createElement('option');
-      opt.value = l.id;
-      const statusEmoji = {hot:'🔥',warm:'⭐',cold:'❄️',converted:'✅'}[l.status]||'';
-      opt.textContent = `${statusEmoji} ${l.name} — ${l.project||'—'}`;
-      el.appendChild(opt);
-    });
-    if (current) el.value = current;
-  });
-}
 
-function fillAiMsgFromLead() {
-  const id = document.getElementById('aiMsgLeadSelect').value;
-  if (!id) return;
-  const l = leads.find(x => x.id === id);
-  if (!l) return;
-  document.getElementById('aiMsgName').value = l.name || '';
-  if (l.project) document.getElementById('aiMsgProject').value = l.project;
-  document.getElementById('aiMsgStatus').value = l.status || 'warm';
-  document.getElementById('aiMsgLast').value = l.lastTalk || '';
-}
 
-function fillAiScoreFromLead() {
-  const id = document.getElementById('aiScoreLeadSelect').value;
-  if (!id) return;
-  const l = leads.find(x => x.id === id);
-  if (!l) return;
-  if (l.source) {
-    const srcMap = {'Meta Ads':'Meta Ads','WhatsApp':'WhatsApp','Referral':'Referral','Cold Call':'Cold Call','Site Visit':'Site Visit'};
-    if (srcMap[l.source]) document.getElementById('aiScoreSource').value = srcMap[l.source];
-  }
-  document.getElementById('aiScoreVisit').value = l.visited ? 'हाँ, visit हो चुकी' : 'नहीं, अभी नहीं';
-  if (l.createdAt) {
-    const days = Math.floor((new Date() - new Date(l.createdAt)) / (1000*60*60*24));
-    if (days === 0) document.getElementById('aiScoreDays').value = 'आज पहली बात';
-    else if (days <= 3) document.getElementById('aiScoreDays').value = '1-3 दिन';
-    else if (days <= 7) document.getElementById('aiScoreDays').value = '1 हफ्ता';
-    else document.getElementById('aiScoreDays').value = '1 महीने से ज्यादा';
-  }
-  const callHistory = l.callHistory || [];
-  if (callHistory.length) {
-    const connected = callHistory.filter(c => c.result === 'connected').length;
-    const ratio = connected / callHistory.length;
-    if (ratio >= 0.7) document.getElementById('aiScoreResp').value = 'बहुत अच्छा — खुद call करता है';
-    else if (ratio >= 0.4) document.getElementById('aiScoreResp').value = 'ठीक है — उठाता है';
-    else if (ratio > 0) document.getElementById('aiScoreResp').value = 'कभी-कभी उठाता है';
-    else document.getElementById('aiScoreResp').value = 'नहीं उठाता';
-  }
-}
 
-function fillAiActionFromLead() {
-  const id = document.getElementById('aiActionLeadSelect').value;
-  if (!id) return;
-  const l = leads.find(x => x.id === id);
-  if (!l) return;
-  document.getElementById('aiActionName').value = l.name || '';
-  document.getElementById('aiActionStatus').value = l.status || 'warm';
-  if (l.lastUpdated) {
-    const days = Math.floor((new Date() - new Date(l.lastUpdated)) / (1000*60*60*24));
-    if (days === 0) document.getElementById('aiActionWhen').value = 'आज';
-    else if (days <= 3) document.getElementById('aiActionWhen').value = '2-3 दिन पहले';
-    else if (days <= 7) document.getElementById('aiActionWhen').value = '1 हफ्ते पहले';
-    else document.getElementById('aiActionWhen').value = '2+ हफ्ते पहले';
-  }
-}
-
-// Open AI tab with lead pre-filled
-function openAiForLead(id) {
-  switchTabByName('ai');
-  updateBottomNav('ai');
-  document.getElementById('aiMsgLeadSelect').value = id;
-  fillAiMsgFromLead();
-  populateAiLeadSelects();
-  // Pre-fill other sections too
-  document.getElementById('aiScoreLeadSelect').value = id;
-  fillAiScoreFromLead();
-  document.getElementById('aiActionLeadSelect').value = id;
-  fillAiActionFromLead();
-  showToast('🤖 AI tab mein lead load ho gaya!', 'success');
-}
 
 const _aiH=[];
 
-async function callClaudeAPI(prompt){
-  // Smart demo mode — bilkul free, koi API key nahi chahiye
-  await new Promise(r=>setTimeout(r,1200));
-  
-  const p = prompt.toLowerCase();
-  
-  // WhatsApp Message
-  if(p.includes('whatsapp') || p.includes('message')){
-    const nameM = prompt.match(/naam[:\s]+([^\n,]+)/i)||prompt.match(/lead[:\s]+([^\n,]+)/i);
-    const name = nameM?nameM[1].trim():'Client ji';
-    const projM = prompt.match(/project[:\s]+([^\n,]+)/i);
-    const proj = projM?projM[1].trim():'hamara project';
-    if(p.includes('hot')||p.includes('ready')){
-      return `नमस्ते ${name}! 🙏\n\nआपसे ${proj} के बारे में बात करके बहुत अच्छा लगा। आप plot लेने के लिए तैयार हैं — तो चलिए इस weekend site visit confirm करते हैं!\n\n✅ Limited plots बचे हैं\n✅ Easy payment plan available\n\nCall करें: [your number]\n\nइंतज़ार कर रहा हूँ! 😊`;
-    } else if(p.includes('cold')||p.includes('thinking')){
-      return `नमस्ते ${name} जी! 😊\n\n${proj} में कुछ नए offers आए हैं जो शायद आपको पसंद आएं।\n\n🏠 Prime location — Army Area के पास\n💰 Flexible payment plan\n📈 Investment के लिए बेहतरीन\n\nजब भी time मिले, एक बार जरूर बात करें!\n\nCall: [your number]`;
-    } else {
-      return `नमस्ते ${name} जी! 🏠\n\n${proj} में आपकी interest के लिए शुक्रिया। आज plots की availability limited है।\n\n✅ RERA Approved\n✅ Bank Loan Available  \n✅ Prime Location\n\nक्या हम कल एक छोटी site visit schedule कर सकते हैं?\n\nCall करें: [your number] 📞`;
-    }
-  }
-  
-  // Lead Score
-  if(p.includes('score')||p.includes('analyze')||p.includes('analysis')){
-    let score=50;
-    if(p.includes('referral'))score+=20;
-    if(p.includes('site visit')||p.includes('visit हो'))score+=25;
-    if(p.includes('ready')||p.includes('hot'))score+=20;
-    if(p.includes('नहीं उठाता')||p.includes('cold'))score-=20;
-    if(p.includes('महीने'))score-=15;
-    score=Math.min(92,Math.max(15,score));
-    const lbl=score>=70?'🔥 Hot':score>=40?'⭐ Warm':'❄️ Cold';
-    return `SCORE: ${score}\nLABEL: ${score>=70?'Hot':score>=40?'Warm':'Cold'}\nANALYSIS: यह lead ${lbl} category में है। ${score>=70?'जल्दी से follow-up करें और deal close करने की कोशिश करें। Site visit हो चुकी है तो closing के लिए अच्छा मौका है।':score>=40?'थोड़ी और nurturing की जरूरत है। Budget clear करें और site visit schedule करें। Regular follow-up जारी रखें।':'अभी यह lead warm नहीं है। हफ्ते में एक बार follow-up करते रहें। जब situation बदले तो actively engage करें।'}`;
-  }
-  
-  // Next Action
-  if(p.includes('action')||p.includes('aaj')||p.includes('kya karein')||p.includes('next')){
-    const nameA=prompt.match(/lead[:\s]+([^\n,]+)/i)||prompt.match(/naam[:\s]+([^\n,]+)/i);
-    const nm=nameA?nameA[1].trim():'Lead';
-    if(p.includes('family')||p.includes('approval')){
-      return `🎯 Aaj Ka Action:\n${nm} ji ko call karein aur family meeting ke liye invite karein — site par aakar khud dekhen.\n\n💬 Kya Bolna Hai:\n• "Sir, aap akele kyun tension lein — ek baar ghar waalon ko saath lekar aayein"\n• "Hum sab ko personally tour deenge aur saari details clear karenge"\n• "Koi pressure nahi — bas ek informal visit"\n\n⏰ Follow-up Timing:\n2 din baad — agar response nahi aaya toh WhatsApp message bhejein\n\n📊 Conversion Probability:\n60% — Family involvement se deal close hone ke chances badh jaate hain`;
-    } else if(p.includes('budget')||p.includes('price')){
-      return `🎯 Aaj Ka Action:\n${nm} ji ko payment plan ki details bhejein WhatsApp par — EMI options clearly samjhaayein.\n\n💬 Kya Bolna Hai:\n• "Sir, sirf 20% down payment mein booking ho jaati hai"\n• "Baaki amount easy installments mein — bank loan bhi available hai"\n• "Ek baar calculate karke dekhein — monthly burden bahut kam hai"\n\n⏰ Follow-up Timing:\nAaj shaam tak WhatsApp karo, kal subah call karo\n\n📊 Conversion Probability:\n65% — Budget objection handle hone ke baad deal close ho sakti hai`;
-    } else {
-      return `🎯 Aaj Ka Action:\n${nm} ji ko call karein aur site visit schedule karein — personally dekhna sabse bada converting factor hai.\n\n💬 Kya Bolna Hai:\n• "Sir, sirf ek baar plot dekhne aayein — koi commitment nahi"\n• "Location dekh ke aap khud decide kar lenge"\n• "Is weekend free hain? Main personally tour dunga"\n\n⏰ Follow-up Timing:\nAaj call karo — kal tak visit confirm karein\n\n📊 Conversion Probability:\n70% — Site visit ke baad conversion rate bahut badh jaati hai`;
-    }
-  }
-  
-  // Objection Handler
-  if(p.includes('objection')||p.includes('महंगा')||p.includes('price')||p.includes('sasta')||p.includes('loan')){
-    const projO=prompt.match(/project[:\s]+([^\n,]+)/i);
-    const pr=projO?projO[1].trim():'hamara project';
-    if(p.includes('महंगा')||p.includes('price')||p.includes('sasta')){
-      return `"Sir, main aapki baat bilkul samajhta hoon — budget sab ka important hota hai. 😊\n\nLekin sir, ek baat sochiye:\n\n✅ ${pr} ka location premium hai — Jaipur ki sabse fast-growing zone mein\n✅ Abhi jo price hai woh next 6 months mein 15-20% badhne wala hai\n✅ Hamara flexible payment plan hai — 20% down payment mein booking ho jaati hai\n✅ Bank loan bhi available hai — EMI bilkul affordable hai\n\nSir, investment soch kar dekhiye — yeh expense nahi, asset hai jo har saal badhega.\n\nEk baar site dekhne aayiye — koi commitment nahi. Main personally dikhaunga!\nCall karein: [your number]"`;
-    } else {
-      return `"Sir, aapki baat sunkar achha laga — honest feedback hamesha helpful hoti hai. 😊\n\n${pr} ke baare mein aapka jo bhi concern hai, hum personally address kar sakte hain:\n\n✅ RERA Approved — 100% legal aur safe\n✅ Hamara track record strong hai\n✅ Satisfied customers referral dete hain\n✅ Koi hidden charges nahi\n\nSir, ek baar personally aayiye — aapko khud hi sab clear ho jayega.\n\nCall karein ya WhatsApp karein: [your number]"`;
-    }
-  }
-  
-  // Generic response
-  return `Krishan ji, yeh lead ke liye meri suggestion:\n\n✅ Aaj hi follow-up karein — jitna jaldi utna better\n✅ Site visit schedule karne ki koshish karein\n✅ Payment plan clearly samjhaayein\n✅ Family ko saath laane ke liye encourage karein\n\nJaipur market mein Army Area ke paas properties ka demand bahut badh raha hai — yeh selling point use karein!\n\nKoi specific sawaal ho toh poochhen! 🏠`;
-}
 
-function setAiLoading(btnId, resultId, loading) {
-  const btn = document.getElementById(btnId);
-  const result = document.getElementById(resultId);
-  if (loading) {
-    btn.disabled = true;
-    btn.innerHTML = '<span style="animation:pulse 1s infinite">⏳</span> AI सोच रहा है...';
-    result.style.display = 'block';
-    result.innerHTML = '<div class="ai-loading"><span>🤖 AI processing...</span></div>';
-  } else {
-    btn.disabled = false;
-    btn.innerHTML = btn.getAttribute('data-original') || btn.textContent;
-  }
-}
 
-async function aiGenerateMsg() {
-  const name = document.getElementById('aiMsgName').value.trim() || 'Client';
-  const project = document.getElementById('aiMsgProject').value;
-  const status = document.getElementById('aiMsgStatus').value;
-  const last = document.getElementById('aiMsgLast').value.trim() || 'पहली बात हो रही है';
-  const btn = document.getElementById('aiMsgBtn');
-  const result = document.getElementById('aiMsgResult');
-  const copyBtn = document.getElementById('aiMsgCopy');
-  const origText = '🤖 AI से WhatsApp Message बनाएं';
-  btn.disabled = true;
-  btn.innerHTML = '⏳ AI message बना रहा है...';
-  result.style.display = 'block';
-  result.innerHTML = '<div class="ai-loading"><span>🤖 WhatsApp message तैयार हो रहा है...</span></div>';
-  copyBtn.style.display = 'none';
-  const statusLabel = {hot:'🔥 Ready to Buy',warm:'⭐ Interested',cold:'❄️ Thinking',converted:'✅ Converted'}[status]||status;
-  const prompt = `Tu ek experienced real estate sales agent hai Jaipur, Rajasthan mein. Ek professional aur friendly WhatsApp follow-up message likho Hindi mein ek lead ke liye.
 
-Lead ka naam: ${name}
-Project: ${project}, Jaipur
-Status: ${statusLabel}
-Last baat: ${last}
 
-Instructions:
-- Pure Hindi mein likho (Roman script bilkul nahi)
-- 3-4 lines ka short message
-- Friendly aur professional tone
-- Ek clear call-to-action ho (call ya visit ke liye)
-- Sirf message text likho, koi explanation nahi`;
 
-  try {
-    const res = await callClaudeAPI(prompt);
-    if (res === null) {
-      // Demo mode
-      const demos = {
-        hot: `नमस्ते ${name} जी! 🙏\n\nआपसे ${project} के बारे में बात करके बहुत अच्छा लगा। आप ready to buy हैं — तो चलिए इस weekend site visit confirm करते हैं!\n\nCall करें: [your number]`,
-        warm: `नमस्ते ${name} जी! 🏠\n\n${project} में आपकी interest के लिए धन्यवाद। आज plots की availability limited है — क्या हम कल एक छोटी सी बात कर सकते हैं?\n\nCall करें: [your number]`,
-        cold: `नमस्ते ${name} जी! 😊\n\nआशा है आप अच्छे हैं। ${project} में कुछ नए offers आए हैं जो शायद आपको पसंद आएं। जब भी समय हो, एक बार जरूर देखें!\n\nCall: [your number]`
-      };
-      result.textContent = demos[status] || demos.warm;
-    } else {
-      result.textContent = res;
-    }
-    copyBtn.style.display = 'inline-block';
-  } catch(e) {
-    result.textContent = '❌ Error: ' + (e.message || 'Unknown error');
-  }
-  btn.disabled = false;
-  btn.innerHTML = origText;
-}
 
-async function aiLeadScore() {
-  const source = document.getElementById('aiScoreSource').value;
-  const budget = document.getElementById('aiScoreBudget').value;
-  const days = document.getElementById('aiScoreDays').value;
-  const visit = document.getElementById('aiScoreVisit').value;
-  const resp = document.getElementById('aiScoreResp').value;
-  const btn = document.getElementById('aiScoreBtn');
-  const result = document.getElementById('aiScoreResult');
-  const origText = '🎯 AI Lead Score निकालें';
-  btn.disabled = true;
-  btn.innerHTML = '⏳ Score calculate हो रहा है...';
-  result.style.display = 'block';
-  document.getElementById('aiScoreDisplay').style.display = 'none';
-  result.innerHTML = '<div class="ai-loading"><span>🎯 Lead analyze हो रही है...</span></div>';
-
-  const prompt = `Tu ek real estate sales expert hai. Neeche diye lead details ke basis par ek score do 0 se 100 ke beech aur analysis karo.
-
-Source: ${source}
-Budget: ${budget}
-Follow-up kitne din se: ${days}
-Site visit: ${visit}
-Response quality: ${resp}
-
-Response format EXACTLY aisa ho (koi extra text nahi):
-SCORE: [number 0-100]
-LABEL: [Hot/Warm/Cold]
-ANALYSIS: [2-3 lines Hindi mein kyun yeh score diya, kya improve karna chahiye]`;
-
-  try {
-    const res = await callClaudeAPI(prompt);
-    let score, label, analysis;
-    if (res === null) {
-      // Demo scoring
-      let s = 50;
-      if (source === 'Referral') s += 15; else if (source === 'Site Visit') s += 20; else if (source === 'Meta Ads') s += 5;
-      if (budget === '₹30-50 लाख' || budget === '₹50 लाख+') s += 15;
-      if (visit === 'हाँ, visit हो चुकी') s += 20;
-      if (days === 'आज पहली बात') s += 10; else if (days === '1 महीने से ज्यादा') s -= 15;
-      if (resp === 'बहुत अच्छा — खुद call करता है') s += 15; else if (resp === 'नहीं उठाता') s -= 20;
-      score = Math.min(95, Math.max(10, s));
-      label = score >= 70 ? 'Hot' : score >= 40 ? 'Warm' : 'Cold';
-      analysis = score >= 70 ? 'यह lead बहुत promising है! Site visit हो चुकी है और response बढ़िया है। जल्दी से follow-up karein aur deal close karein।' : score >= 40 ? 'यह lead average है। थोड़ी और nurturing की जरूरत है। Budget clear करें और site visit schedule करें।' : 'यह lead अभी cold है। Regular follow-up जारी रखें लेकिन hot leads पर ज्यादा focus करें।';
-    } else {
-      const scoreMatch = res.match(/SCORE:\s*(\d+)/);
-      const labelMatch = res.match(/LABEL:\s*(\w+)/);
-      const analysisMatch = res.match(/ANALYSIS:\s*([\s\S]+)/);
-      score = scoreMatch ? parseInt(scoreMatch[1]) : 50;
-      label = labelMatch ? labelMatch[1] : 'Warm';
-      analysis = analysisMatch ? analysisMatch[1].trim() : res;
-    }
-    result.innerHTML = '';
-    const display = document.getElementById('aiScoreDisplay');
-    display.style.display = 'block';
-    document.getElementById('aiScoreNum').textContent = score;
-    const bar = document.getElementById('aiScoreBar');
-    bar.style.width = score + '%';
-    bar.style.background = score >= 70 ? '#ff4d6d' : score >= 40 ? '#d4a843' : '#4d9fff';
-    const scoreLabel = document.getElementById('aiScoreLabel');
-    scoreLabel.textContent = label === 'Hot' ? '🔥 Hot Lead' : label === 'Warm' ? '⭐ Warm Lead' : '❄️ Cold Lead';
-    scoreLabel.style.color = score >= 70 ? '#ff4d6d' : score >= 40 ? '#d4a843' : '#4d9fff';
-    document.getElementById('aiScoreText').textContent = analysis;
-  } catch(e) {
-    result.innerHTML = '<div style="color:var(--accent-red);padding:10px">❌ Error: ' + (e.message||'Unknown') + '</div>';
-  }
-  btn.disabled = false;
-  btn.innerHTML = origText;
-}
-
-async function aiNextAction() {
-  const name = document.getElementById('aiActionName').value.trim() || 'Lead';
-  const status = document.getElementById('aiActionStatus').value;
-  const when = document.getElementById('aiActionWhen').value;
-  const concern = document.getElementById('aiActionConcern').value;
-  const btn = document.getElementById('aiActionBtn');
-  const result = document.getElementById('aiActionResult');
-  const copyBtn = document.getElementById('aiActionCopy');
-  const origText = '⚡ AI Next Action बताए';
-  btn.disabled = true;
-  btn.innerHTML = '⏳ AI सोच रहा है...';
-  result.style.display = 'block';
-  result.innerHTML = '<div class="ai-loading"><span>⚡ Best action plan बन रहा है...</span></div>';
-  copyBtn.style.display = 'none';
-
-  const prompt = `Tu ek real estate sales coach hai Jaipur mein. Ek real estate agent ko next best action suggest karo Hindi mein.
-
-Lead: ${name}
-Current status: ${status}
-Last contact: ${when}
-Main concern: ${concern}
-
-Suggest karo (Hindi mein, practical aur specific):
-1. 🎯 Aaj ka action (ek specific step)
-2. 💬 Kya bolna hai (2-3 key points)
-3. ⏰ Follow-up timing
-4. 📊 Conversion probability estimate
-
-150 words se kam mein likho. Headings include karo.`;
-
-  try {
-    const res = await callClaudeAPI(prompt);
-    if (res === null) {
-      const demos = {
-        hot: `🎯 **आज का Action:** तुरंत call करें और booking amount confirm करें। Site visit already हो चुकी है।\n\n💬 **Key Points:**\n• "Sir, plot ki availability कम हो रही है — आज hi booking करें"\n• Payment plan flexible है — EMI option भी available है\n• Documents ready रखें\n\n⏰ **Follow-up:** आज शाम 5-7 बजे call करें\n\n📊 **Conversion:** 75-85%`,
-        warm: `🎯 **आज का Action:** Call karke site visit schedule करें।\n\n💬 **Key Points:**\n• "Sir, weekend pe एक बार plot देखने आइए — कोई commitment नहीं"\n• Location benefits बताएं — army area proximity\n• 2-3 similar clients जिन्होंने recently invest किया\n\n⏰ **Follow-up:** 2 दिन में अगर response नहीं आया तो WhatsApp\n\n📊 **Conversion:** 40-55%`,
-        cold: `🎯 **आज का Action:** Value-add message भेजें — pushy mat hona।\n\n💬 **Key Points:**\n• Market update share करें — Jaipur property prices बढ़ रहे हैं\n• कोई pressure नहीं — "जब ready हों तब"\n• Referral program mention करें\n\n⏰ **Follow-up:** 1 हफ्ते बाद\n\n📊 **Conversion:** 15-25%`
-      };
-      result.textContent = demos[status] || demos.warm;
-    } else {
-      result.textContent = res;
-    }
-    copyBtn.style.display = 'inline-block';
-  } catch(e) {
-    result.textContent = '❌ Error: ' + (e.message||'Unknown error');
-  }
-  btn.disabled = false;
-  btn.innerHTML = origText;
-}
-
-async function aiHandleObj() {
-  const project = document.getElementById('aiObjProject').value;
-  const objection = document.getElementById('aiObjText').value.trim();
-  const btn = document.getElementById('aiObjBtn');
-  const result = document.getElementById('aiObjResult');
-  const copyBtn = document.getElementById('aiObjCopy');
-  const origText = '🛡️ AI Objection Handle करे';
-  if (!objection) { showToast('⚠️ Pehle objection likho!'); return; }
-  btn.disabled = true;
-  btn.innerHTML = '⏳ Counter script बन रहा है...';
-  result.style.display = 'block';
-  result.innerHTML = '<div class="ai-loading"><span>🛡️ Objection handle karne ki strategy बन रही है...</span></div>';
-  copyBtn.style.display = 'none';
-
-  const prompt = `Tu ek senior real estate sales expert hai Jaipur mein jo ${project} project bechta hai.
-
-Lead ne yeh objection di: "${objection}"
-
-Ek effective response script likho Hindi mein jo:
-1. 😊 Empathy se objection acknowledge kare (1-2 lines)
-2. 💡 Smart counter-argument de with logic/facts (2-3 points)  
-3. 🏠 ${project} ki specific value highlight kare
-4. 📞 Clear call-to-action de
-
-Direct speech mein likho jaise agent bol raha ho. 150 words mein raho.`;
-
-  try {
-    const res = await callClaudeAPI(prompt);
-    if (res === null) {
-      if (objection.toLowerCase().includes('price') || objection.toLowerCase().includes('महंगा') || objection.toLowerCase().includes('सस्ता')) {
-        result.textContent = `"Sir, मैं आपकी बात बिल्कुल समझता हूँ — budget सबका important होता है। 😊\n\nलेकिन sir, एक बात सोचिए:\n\n✅ ${project} का location premium है — Army Area के पास, Jaipur की सबसे fast-growing zone में\n✅ अभी जो price है वो next 6 months में 15-20% बढ़ने वाला है\n✅ हमारा flexible payment plan है — 20% down payment में booking हो जाती है\n\nSir, investment सोच कर देखिए — यह expense नहीं, asset है जो हर साल बढ़ेगा।\n\nएक बार site देखने आइए — कोई commitment नहीं। Call करें: [your number]"`;
-      } else {
-        result.textContent = `"Sir, आपकी बात सुनकर अच्छा लगा — honest feedback हमेशा helpful होती है। 😊\n\nMere hisab se:\n\n✅ ${project} mein jo concern hai woh hum personally address kar sakte hain\n✅ Hamara track record strong hai — satisfied customers referral dete hain\n✅ Ek site visit mein saari doubts clear ho jayengi\n\nSir, aap ek baar personally dekhein — aapko khud hi sab clear ho jayega.\n\nCall karein ya WhatsApp karein: [your number]"`;
-      }
-    } else {
-      result.textContent = res;
-    }
-    copyBtn.style.display = 'inline-block';
-  } catch(e) {
-    result.textContent = '❌ Error: ' + (e.message||'Unknown error');
-  }
-  btn.disabled = false;
-  btn.innerHTML = origText;
-}
-
-function aiCopy(resultId, copyBtnId) {
-  const text = document.getElementById(resultId).innerText || document.getElementById(resultId).textContent;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => showToast('📋 Message copy ho gaya!', 'success')).catch(() => showToast('⚠️ Copy karne mein error'));
-  } else {
-    const el = document.createElement('textarea');
-    el.value = text;
-    document.body.appendChild(el);
-    el.select();
-    document.execCommand('copy');
-    document.body.removeChild(el);
-    showToast('📋 Message copy ho gaya!', 'success');
-  }
-}
-// ===== END AI FEATURES =====
 
 // GOOGLE AUTH
 const GOOGLE_CLIENT_ID='340057596820-su1s5i6i54vp9cvhdqo319ugl678ep1t.apps.googleusercontent.com';
@@ -3071,7 +2564,7 @@ async function performDriveRestore(){
 
 window.addEventListener('load',()=>{setTimeout(()=>{initGoogleAuth();initDriveAuth();},800);});
 
-['leadModal','contactModal','visitModal','exportModal','callModal','callHistoryModal'].forEach(id=>{document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});});
+['leadModal','contactModal','visitModal','exportModal','callModal','callHistoryModal','leadHistoryModal'].forEach(id=>{document.getElementById(id).addEventListener('click',function(e){if(e.target===this)this.classList.remove('active');});});
 
 if('serviceWorker' in navigator){
   window.addEventListener('load', function(){
@@ -3298,129 +2791,8 @@ function sendBrowserNotif(title, body) {
   }
 }
 
-// ===== AI UPGRADE — Instagram Caption =====
-// AI section mein naya button add hoga via JS
-function addInstagramAiBtn() {
-  const nav = document.querySelector('.ai-tab-nav');
-  if (!nav || document.getElementById('ai-insta')) return;
-  const btn = document.createElement('button');
-  btn.className = 'ai-feature-btn';
-  btn.textContent = '📸 Insta Caption';
-  btn.onclick = function() { switchAiSection('insta', this); };
-  nav.appendChild(btn);
-
-  const section = document.createElement('div');
-  section.className = 'ai-section';
-  section.id = 'ai-insta';
-  section.innerHTML = `
-    <div class="ai-card">
-      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Project details → AI Instagram caption + hashtags banayega</div>
-      <div class="form-group">
-        <label class="form-label">🏗️ Project</label>
-        <select class="form-select" id="aiInstaProject">
-          <option>Imperial Estate</option><option>Imperial Galaxy</option>
-          <option>Solitair Home</option><option>Dream Town</option><option>Govind Vihar</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">📸 Post Type</label>
-        <select class="form-select" id="aiInstaType">
-          <option>Plot Launch</option><option>Site Visit</option>
-          <option>Customer Testimonial</option><option>Investment Tips</option><option>Jaipur Market Update</option>
-        </select>
-      </div>
-      <button class="btn-ai" onclick="aiInstaCaption()" id="aiInstaBtn">📸 Caption + Hashtags Banao</button>
-      <div class="ai-result" id="aiInstaResult"></div>
-      <button class="ai-copy-btn" id="aiInstaCopy" style="display:none" onclick="aiCopy('aiInstaResult','aiInstaCopy')">📋 Copy करें</button>
-    </div>`;
-  document.querySelector('.main-content').querySelector('#tab-ai').appendChild(section);
-}
-
-async function aiInstaCaption() {
-  const proj = document.getElementById('aiInstaProject').value;
-  const type = document.getElementById('aiInstaType').value;
-  const btn = document.getElementById('aiInstaBtn');
-  const result = document.getElementById('aiInstaResult');
-  const copyBtn = document.getElementById('aiInstaCopy');
-  btn.disabled = true; btn.innerHTML = '⏳ Caption ban raha hai...';
-  result.style.display = 'block'; copyBtn.style.display = 'none';
-  result.innerHTML = '<div class="ai-loading"><span>📸 Instagram caption taiyaar ho raha hai...</span></div>';
-  await new Promise(r => setTimeout(r, 1000));
-  const captions = {
-    'Plot Launch': `🏠 Dream Plot Available Now!\n\n✨ ${proj} — Jaipur ka naya residential hub!\n\n📍 Prime Location | Army Area ke paas\n💰 Affordable Price | Easy Payment Plan\n✅ RERA Approved | Bank Loan Available\n\nApna sapna ghar banao — aaj hi call karo!\n📞 [your number]\n\n#${proj.replace(' ','')} #JaipurRealEstate #PlotForSale #JaipurProperty #InvestInJaipur #RealEstate #PropertyJaipur #HomeBuying #PlotBooking #KrishanRealEstate`,
-    'Site Visit': `🎉 Site Visit Successful!\n\n${proj} mein aaj ek aur khush customer ne apna future plot dekha! 🏡\n\nHamari property dekhne aaye aur impressed hue:\n✅ Location — ekdum perfect\n✅ Infrastructure — top class\n✅ Pricing — market se better\n\nAap bhi ek visit karein — change your life!\n📞 [your number]\n\n#SiteVisit #${proj.replace(' ','')} #JaipurProperty #HappyCustomer #RealEstateJaipur #PlotBooking`,
-    'Investment Tips': `💡 Real Estate Investment Tip!\n\nJaipurمیں property kharidna chahte ho? Yeh 3 cheezein hamesha check karo:\n\n1️⃣ RERA Approval — scam se bachao\n2️⃣ Location Growth — future value\n3️⃣ Payment Plan — affordable ho\n\n${proj} — teeno mein pass! ✅\n\n📞 Investment ke liye: [your number]\n\n#PropertyTips #JaipurInvestment #RealEstateTips #PlotInvestment #JaipurRealEstate #KrishanRealEstate`
-  };
-  result.textContent = captions[type] || captions['Plot Launch'];
-  copyBtn.style.display = 'inline-block';
-  btn.disabled = false; btn.innerHTML = '📸 Caption + Hashtags Banao';
-}
-
-// ===== CALLING SCRIPT AI =====
-function addCallingScriptBtn() {
-  const nav = document.querySelector('.ai-tab-nav');
-  if (!nav || document.getElementById('ai-call')) return;
-  const btn = document.createElement('button');
-  btn.className = 'ai-feature-btn';
-  btn.textContent = '📞 Call Script';
-  btn.onclick = function() { switchAiSection('call', this); };
-  nav.appendChild(btn);
-
-  const section = document.createElement('div');
-  section.className = 'ai-section';
-  section.id = 'ai-call';
-  section.innerHTML = `
-    <div class="ai-card">
-      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Lead ki details → AI calling script banayega</div>
-      <div class="form-group">
-        <label class="form-label">👤 Lead ka Naam</label>
-        <input class="form-input" id="aiCallName" type="text" placeholder="Jaise: Ramesh ji">
-      </div>
-      <div class="form-group">
-        <label class="form-label">🏗️ Project</label>
-        <select class="form-select" id="aiCallProject">
-          <option>Imperial Estate</option><option>Imperial Galaxy</option>
-          <option>Solitair Home</option><option>Dream Town</option><option>Govind Vihar</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">📞 Call Type</label>
-        <select class="form-select" id="aiCallType">
-          <option>Pehli baar call</option><option>Follow-up call</option>
-          <option>Site visit ke baad</option><option>Price negotiation</option>
-        </select>
-      </div>
-      <button class="btn-ai" onclick="aiCallScript()" id="aiCallBtn">📞 Calling Script Banao</button>
-      <div class="ai-result" id="aiCallResult"></div>
-      <button class="ai-copy-btn" id="aiCallCopy" style="display:none" onclick="aiCopy('aiCallResult','aiCallCopy')">📋 Copy करें</button>
-    </div>`;
-  document.querySelector('.main-content').querySelector('#tab-ai').appendChild(section);
-}
-
-async function aiCallScript() {
-  const name = document.getElementById('aiCallName').value.trim() || 'Sir';
-  const proj = document.getElementById('aiCallProject').value;
-  const type = document.getElementById('aiCallType').value;
-  const btn = document.getElementById('aiCallBtn');
-  const result = document.getElementById('aiCallResult');
-  const copyBtn = document.getElementById('aiCallCopy');
-  btn.disabled = true; btn.innerHTML = '⏳ Script ban rahi hai...';
-  result.style.display = 'block'; copyBtn.style.display = 'none';
-  result.innerHTML = '<div class="ai-loading"><span>📞 Calling script taiyaar ho rahi hai...</span></div>';
-  await new Promise(r => setTimeout(r, 1000));
-
-  const scripts = {
-    'Pehli baar call': `📞 CALLING SCRIPT — Pehli Baar\n\n"Namaskar! ${name} ji se baat ho rahi hai?\n\nMain "+getUserFirstName()+" bol raha hoon — "+getUserCity()+" mein — Jaipur mein ${proj} ka agent hoon.\n\nSir, aapne recently hamare project ke baare mein enquiry ki thi — toh socha ek baar personally connect karoon.\n\n${proj} mein abhi kuch limited plots available hain — Army Area ke ekdum paas, RERA approved, aur payment plan bhi bahut flexible hai.\n\nSir, kya aap kabhi Jaipur mein property le ne ke baare mein socha hai?\n\n[PAUSE — unka jawab suno]\n\nBilkul sir! Kya main aapko ek baar site dikha sakta hoon — koi commitment nahi, bas ek informal visit? Is weekend free hain aap?"`,
-    'Follow-up call': `📞 FOLLOW-UP SCRIPT\n\n"Namaskar ${name} ji! Main Krishan — ${proj} se.\n\nSir, pichli baar baat hui thi — kaisa chal raha hai?\n\n[PAUSE]\n\nSir, main isliye call kar raha tha — hamare ${proj} mein 2-3 plots jo aapke budget mein the, woh ab almost book ho rahe hain.\n\nAapka interest tha toh socha pehle aapko inform karoon.\n\nSir, kya aap kal ya parson ek baar site dekhne aa sakte hain? Main personally available rahoon ga — aapko poori detail dunga.\n\n[Agar hesitation ho]: Sir, koi bhi final decision nahi karna — bas ek baar physically dekh lena. Kaafi cheezein clear ho jaati hain visit ke baad."`,
-    'Price negotiation': `📞 NEGOTIATION SCRIPT\n\n"${name} ji, main samajhta hoon price ko lekar aapki concern hai.\n\nSir, honestly bolunga — market mein ${proj} se better value kahi nahi milegi is price range mein.\n\nDekhiye:\n✅ Location — Army Area, fastest growing zone\n✅ RERA Approved — 100% safe investment  \n✅ Appreciation — next 2 years mein 25-30% value badhegi\n\nSir, agar aap abhi book karte ho toh main personally ensure karoonga ki best deal mile.\n\nEk kaam karo — kal site aao, baith ke sab discuss karte hain. Deal hogi ya nahi, yeh baad mein — pehle property dekhte hain.\n\nKab aa sakte ho?"`
-  };
-  result.textContent = scripts[type] || scripts['Pehli baar call'];
-  copyBtn.style.display = 'inline-block';
-  btn.disabled = false; btn.innerHTML = '📞 Calling Script Banao';
-}
 
 // Init new AI buttons
-setTimeout(() => { addInstagramAiBtn(); addCallingScriptBtn(); }, 500);
 
 // ===== HOME DASHBOARD =====
 function renderHomeDashboard() {
