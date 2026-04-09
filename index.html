@@ -1273,7 +1273,7 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
     
     <!-- STICKY BOTTOM BUTTONS — hamesha visible! -->
     <div style="padding:12px 0 20px;border-top:1px solid var(--border);background:var(--bg-card);flex-shrink:0">
-      <button class="btn-purple" onclick="saveVisit()" style="margin-bottom:8px">🏠 Visit Save करें</button>
+      <button class="btn-purple" id="visitSaveBtn" onclick="saveVisit()" style="margin-bottom:8px">🏠 Visit Save करें</button>
       <button class="btn-secondary" onclick="closeVisitModal()">रद्द करें</button>
     </div>
   </div>
@@ -2042,6 +2042,11 @@ async function uploadPhotosToDrive(leadId,leadName){
 function openVisitModal(id){
   const l=leads.find(x=>x.id===id);if(!l)return;
   visitingId=id;
+  // Button state reset - pichli baar disabled tha toh bhi theek ho
+  window._visitSaving=false;
+  const saveBtn=document.getElementById('visitSaveBtn');
+  if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='🏠 Visit Save करें';}
+  // Form fill karo
   document.getElementById('vName').textContent=l.name;
   document.getElementById('vPhone').textContent='📱 '+l.phone;
   document.getElementById('vProject').textContent='🏗️ '+(l.project||'—');
@@ -2056,12 +2061,21 @@ function openVisitModal(id){
   document.getElementById('visitModal').classList.add('active');
 }
 async function saveVisit(){
-  if(!visitingId){showToast('⚠️ Error! Dobara try karein');return;}
-  const idx=leads.findIndex(l=>l.id===visitingId);
+  // Guard: already saving? ruko
+  if(window._visitSaving){return;}
+  // visitingId check
+  if(!visitingId){showToast('⚠️ Visit open karein pehle');return;}
+  const currentId=visitingId; // save karo - async mein change ho sakta hai
+  const idx=leads.findIndex(l=>l.id===currentId);
   if(idx===-1){showToast('⚠️ Lead nahi mila!');return;}
-  const saveBtn=document.querySelector('#visitModal .btn-purple');
+
+  // Button disable - UI feedback
+  const saveBtn=document.getElementById('visitSaveBtn');
   if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='⏳ Save ho raha hai...';}
+  window._visitSaving=true;
+
   try{
+    // Data save karo
     leads[idx].visited=true;
     leads[idx].visitDate=document.getElementById('vDate').value||new Date().toISOString().split('T')[0];
     leads[idx].visitTime=document.getElementById('vTime').value||new Date().toTimeString().slice(0,5);
@@ -2069,25 +2083,42 @@ async function saveVisit(){
     leads[idx].status=document.getElementById('vStatus').value;
     leads[idx].lastUpdated=new Date().toISOString();
     if(selectedPhotos.length){leads[idx].visitPhotosLocal=selectedPhotos.map(p=>({dataUrl:p.dataUrl,name:p.name}));}
-    saveData();renderLeads();renderVisits();updateStats();
+    
+    // localStorage mein save
+    saveData();
+    
+    // Modal band karo PEHLE - phir render
     closeVisitModal();
+    
+    // UI update
+    renderLeads();renderVisits();updateStats();renderHomeDashboard();
     switchTabByName('visits');updateBottomNav('visits');
     showToast('🏠 Site Visit save ho gayi!','success');
     setTimeout(()=>showConfetti(50,50),200);
-    if(window._fbUser){setTimeout(()=>syncToFirestore(),1500);}
+    
+    // Firebase sync background mein
+    if(window._fbUser){setTimeout(()=>syncToFirestore(),2000);}
+    
+    // Drive upload background mein (currentId use karo - visitingId null ho chuka hai)
     if(selectedPhotos.length&&typeof driveAccessToken!=='undefined'&&driveAccessToken){
-      const leadName=leads[idx].name.replace(/\s+/g,'_');
+      const photosToUpload=[...selectedPhotos];
+      const leadName=leads[idx].name.replace(/[^a-zA-Z0-9]/g,'_');
       try{
-        const driveLinks=await uploadPhotosToDrive(visitingId,leadName);
-        if(driveLinks.length){const i=leads.findIndex(l=>l.id===visitingId);if(i!==-1){leads[i].visitPhotos=driveLinks;leads[i].visitPhotosLocal=null;saveData();}}
+        const driveLinks=await uploadPhotosToDrive(currentId,leadName);
+        if(driveLinks.length){
+          const i2=leads.findIndex(l=>l.id===currentId);
+          if(i2!==-1){leads[i2].visitPhotos=driveLinks;leads[i2].visitPhotosLocal=null;saveData();}
+        }
       }catch(e){console.log('Photo upload skip:',e);}
     }
   }catch(err){
     console.error('saveVisit error:',err);
-    showToast('❌ Save mein error, dobara try karein');
+    showToast('❌ Save mein error hua, dobara try karein');
+  }finally{
+    // Hamesha reset karo - chahe error aaye ya na aaye
+    window._visitSaving=false;
     if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='🏠 Visit Save करें';}
   }
-  selectedPhotos=[];
 }
 function closeVisitModal(){document.getElementById('visitModal').classList.remove('active');visitingId=null;selectedPhotos=[];}
 function removeVisit(id){
