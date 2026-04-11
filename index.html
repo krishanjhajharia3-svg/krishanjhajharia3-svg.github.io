@@ -12,14 +12,17 @@
 <title>Leado — Real Estate CRM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Noto+Sans+Devanagari:wght@400;500&display=swap" rel="stylesheet">
+<!-- ✅ Font non-blocking load — App pehle dikhegi, font baad mein apply hoga -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Noto+Sans+Devanagari:wght@400;500&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Noto+Sans+Devanagari:wght@400;500&display=swap" rel="stylesheet"></noscript>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <!-- Firebase SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-  import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+  // ✅ Messaging lazy load — sirf notification permission milne par load hoga
+  // import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDUd4baHAJqsgjzod7wviM0TgLRR2ugNmg",
@@ -33,8 +36,9 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getFirestore(app);
-  const messaging = getMessaging(app);
-  window._fbMessaging = messaging;
+  // ✅ Messaging lazy init — app load par nahi, sirf notification time par
+  // const messaging = getMessaging(app);
+  window._fbMessaging = null; // Baad mein lazy load hoga
   const provider = new GoogleAuthProvider();
 
   // Global mein expose karo
@@ -43,7 +47,7 @@
   window._fbProvider = provider;
   window._fbFunctions = { signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut, doc, setDoc, getDoc, collection, getDocs, deleteDoc };
 
-  // ===== FCM TOKEN SAVE — App band ho tab bhi notification! =====
+  // ===== FCM TOKEN SAVE — Lazy load with dynamic import =====
   async function initFCMandSaveToken(userId) {
     try {
       if (!('Notification' in window)) return;
@@ -58,10 +62,11 @@
         return;
       }
 
-      // FCM Token lo
-      // SW ready hone ka wait karo phir token lo
+      // ✅ FCM Token — lazy dynamic import
       const swReg = await navigator.serviceWorker.ready;
-      const token = await getToken(messaging, {
+      const { getMessaging, getToken } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js");
+      if(!window._fbMessaging) window._fbMessaging = getMessaging(app);
+      const token = await getToken(window._fbMessaging, {
         vapidKey: 'BIWp7MB4UU6R-OLHn16Tq2Uld8M3fAkNeMzGMaR07YVPMbVgNY8iPHpNoDIxdfEPjDfWXCdbX8Wd3gtraB809S8',
         serviceWorkerRegistration: swReg
       });
@@ -283,7 +288,7 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 .install-text strong{color:var(--accent-gold);display:block;font-size:13px}
 .install-btn{padding:8px 14px;background:var(--accent-gold);border:none;border-radius:8px;color:#0a0f1a;font-weight:700;font-size:12px;cursor:pointer}
 .overdue-badge{display:inline-block;background:rgba(255,77,109,.15);color:var(--accent-red);border:1px solid rgba(255,77,109,.3);border-radius:4px;font-size:9px;padding:1px 6px;margin-left:6px}
-.tab-content{display:none}
+.tab-content{display:none;content-visibility:auto}
 .tab-content.active{display:block}
 .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
 .summary-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.2);transition:all .2s var(--smooth)}
@@ -1432,6 +1437,12 @@ body{font-family:'Noto Sans Devanagari','Rajdhani',sans-serif;background:var(--b
 let leads=JSON.parse(localStorage.getItem('re_leads')||'[]');
 let editingId=null,visitingId=null,contactId=null,currentFilter='all',deferredPrompt=null;
 
+// ✅ LAZY LOADING SYSTEM — Tab sirf tabhi render ho jab zaroorat ho
+// Dirty Flags: data change hone par true hote hain → tab switch par render trigger hoga
+window._leado_dirty = { leads:true, home:true, stats:true, followup:true, visits:true };
+// Tab Init Flags: har tab sirf pehli baar poora setup kare — baad mein sirf data refresh
+window._tabInit = { leads:false, home:false, stats:false, followup:false, visits:false };
+
 
 // ===== ONBOARDING =====
 function getUserName(){
@@ -1542,6 +1553,12 @@ function saveData(){
     clearTimeout(window._fbSyncTimer);
     window._fbSyncTimer = setTimeout(()=>{ syncToFirestore(); }, 2000);
   }
+  // ✅ DIRTY FLAGS — data change hone par sabko re-render ke liye mark karo
+  window._leado_dirty.leads = true;
+  window._leado_dirty.home = true;
+  window._leado_dirty.stats = true;
+  window._leado_dirty.followup = true;
+  window._leado_dirty.visits = true;
 }
 
 
@@ -1823,6 +1840,7 @@ function updateStats(){
       <div class="followup-date-box"><div class="followup-day">${v}</div><div class="followup-month">Leads</div></div>
       <div class="followup-info"><div class="followup-name">${k}</div><div class="followup-note">${t?Math.round(v/t*100):0}% of total - Tap to filter</div></div>
     </div>`).join('')||'<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-sub">कोई lead नहीं</div></div>';
+  if(window._leado_dirty) window._leado_dirty.stats = false; // ✅ dirty reset
 }
 
 function setFilter(f,el){
@@ -1841,46 +1859,69 @@ function setFilterByName(f){
 }
 
 function renderLeads(){
-  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const q=(document.getElementById('searchInput')||{}).value||'';
+  const qL=q.toLowerCase();
   let filtered=leads.filter(l=>{
     const mf=currentFilter==='all'?true:l.status===currentFilter||l.project===currentFilter;
-    const ms=!q||l.name.toLowerCase().includes(q)||l.phone.includes(q)||(l.project||'').toLowerCase().includes(q)||(l.area||'').toLowerCase().includes(q);
+    const ms=!qL||l.name.toLowerCase().includes(qL)||l.phone.includes(qL)||(l.project||'').toLowerCase().includes(qL)||(l.area||'').toLowerCase().includes(qL);
     return mf&&ms;
   }).sort((a,b)=>{const o={hot:0,warm:1,cold:2,converted:3};return(o[a.status]||2)-(o[b.status]||2)});
-  // Speed: Pehle 10 render karo, baad mein baaki
-  window._filteredLeads = filtered;
+
+  window._filteredLeads=filtered;
   const c=document.getElementById('leadsContainer');
-  if(!filtered.length){c.innerHTML=`<div class="empty-state" style="animation:fadeInUp 0.3s var(--fast)"><div class="empty-icon">📋</div><div class="empty-title">कोई Lead नहीं मिला</div><div class="empty-sub">+ button से नया lead जोड़ें</div></div>`;return;}
+  if(!c) return;
+
+  if(!filtered.length){
+    c.innerHTML='<div class="empty-state" style="animation:fadeInUp 0.3s var(--fast)"><div class="empty-icon">📋</div><div class="empty-title">कोई Lead नहीं मिला</div><div class="empty-sub">+ button से नया lead जोड़ें</div></div>';
+    window._leado_dirty.leads=false; return;
+  }
+
   const slabel={hot:'🔥 Ready to Buy',warm:'⭐ Interested',cold:'❄️ Thinking',converted:'✅ Deal Done'};
-  c.innerHTML=filtered.map(l=>{
+
+  // ✅ Lead card builder — reusable function
+  function buildCard(l){
     const isOD=l.nextDate&&new Date(l.nextDate)<new Date()&&l.status!=='converted';
     const ld=l.lastUpdated?new Date(l.lastUpdated).toLocaleDateString('hi-IN'):'—';
-    return `<div class="lead-card status-${l.status}" onclick="editLead('${l.id}')">
-      <div class="lead-top">
-        <div><div class="lead-name">${l.name}</div><div class="lead-phone">📱 ${l.phone}</div></div>
-        <span class="status-badge badge-${l.status}">${slabel[l.status]||l.status}</span>
-      </div>
-      ${l.nextDate?`<div class="lead-project" style="background:rgba(212,168,67,.15);border-color:rgba(212,168,67,.3);color:var(--accent-gold-light)">📅 Next Follow-Up: ${formatDate(l.nextDate)}${l.nextTime?' '+l.nextTime:''}${isOD?' <span class="overdue-badge">Overdue!</span>':''}</div>`:''}
-      ${l.visited?`<div class="visit-tag">🏠 Site Visit किया — ${l.visitDate?formatDate(l.visitDate):''}</div>`:''}
-      ${l.project?`<div class="lead-project">🏗️ ${l.project}</div>`:''}
-      <div class="lead-meta">
-        <div class="meta-item">📍 ${l.area||'—'}</div>
-        <div class="meta-item">📣 ${l.source||'—'}</div>
-        <div class="meta-item">📅 Last: ${ld}</div>
-        <div class="meta-item">⏰ Next: ${l.nextDate?formatDate(l.nextDate):'—'}${isOD?'<span class="overdue-badge">Overdue!</span>':''}</div>
-      </div>
-      ${l.lastTalk?`<div class="lead-notes">💬 ${l.lastTalk}</div>`:''}
-      ${l.callHistory&&l.callHistory.length?`<div class="lead-notes" style="color:var(--accent-teal);cursor:pointer" onclick="event.stopPropagation();showCallHistory('${l.id}')">📞 Calls: ${l.callHistory.length} | Last: ${l.callHistory[l.callHistory.length-1].result==='connected'?'✅ Baat hui':'❌ Nahi utha'} — History dekhen →</div>`:''}
-      <div class="lead-actions" onclick="event.stopPropagation()">
-        <button class="action-btn call" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
-        <button class="action-btn whatsapp" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
-        <button class="action-btn savecon" onclick="openContactModal('${l.id}')">📱 Save</button>
-        <button class="action-btn visitbtn" onclick="openVisitModal('${l.id}')">🏠 Visit</button>
-        <button class="action-btn" style="border-color:rgba(245,210,118,.3);color:#f5d276" onclick="event.stopPropagation();showLeadHistory('${l.id}')">📖 History</button>
-        <button class="action-btn edit" onclick="editLead('${l.id}')">✏️</button>
-      </div>
-    </div>`;
-  }).join('');
+    return '<div class="lead-card status-'+l.status+'" onclick="editLead(\''+ l.id +'\')">'+
+      '<div class="lead-top">'+
+        '<div><div class="lead-name">'+l.name+'</div><div class="lead-phone">📱 '+l.phone+'</div></div>'+
+        '<span class="status-badge badge-'+l.status+'">'+( slabel[l.status]||l.status )+'</span>'+
+      '</div>'+
+      (l.nextDate?'<div class="lead-project" style="background:rgba(212,168,67,.15);border-color:rgba(212,168,67,.3);color:var(--accent-gold-light)">📅 Next Follow-Up: '+formatDate(l.nextDate)+(l.nextTime?' '+l.nextTime:'')+(isOD?' <span class="overdue-badge">Overdue!</span>':'')+'</div>':'')+
+      (l.visited?'<div class="visit-tag">🏠 Site Visit किया — '+(l.visitDate?formatDate(l.visitDate):'')+'</div>':'')+
+      (l.project?'<div class="lead-project">🏗️ '+l.project+'</div>':'')+
+      '<div class="lead-meta">'+
+        '<div class="meta-item">📍 '+(l.area||'—')+'</div>'+
+        '<div class="meta-item">📣 '+(l.source||'—')+'</div>'+
+        '<div class="meta-item">📅 Last: '+ld+'</div>'+
+        '<div class="meta-item">⏰ Next: '+(l.nextDate?formatDate(l.nextDate):'—')+(isOD?'<span class="overdue-badge">Overdue!</span>':'')+'</div>'+
+      '</div>'+
+      (l.lastTalk?'<div class="lead-notes">💬 '+l.lastTalk+'</div>':'')+
+      (l.callHistory&&l.callHistory.length?'<div class="lead-notes" style="color:var(--accent-teal);cursor:pointer" onclick="event.stopPropagation();showCallHistory(\''+ l.id +'\')" >📞 Calls: '+l.callHistory.length+' | Last: '+(l.callHistory[l.callHistory.length-1].result==='connected'?'✅ Baat hui':'❌ Nahi utha')+' — History dekhen →</div>':'')+
+      '<div class="lead-actions" onclick="event.stopPropagation()">'+
+        '<button class="action-btn call" onclick="callLead(\''+ l.id +'\',\''+ l.phone +'\')">📞 Call</button>'+
+        '<button class="action-btn whatsapp" onclick="waLead(\''+ l.phone +'\',\''+ (l.project||''). replace(/'/g,'`') +'\')">💬 WA</button>'+
+        '<button class="action-btn savecon" onclick="openContactModal(\''+ l.id +'\')">📱 Save</button>'+
+        '<button class="action-btn visitbtn" onclick="openVisitModal(\''+ l.id +'\')">🏠 Visit</button>'+
+        '<button class="action-btn" style="border-color:rgba(245,210,118,.3);color:#f5d276" onclick="event.stopPropagation();showLeadHistory(\''+ l.id +'\')">📖 History</button>'+
+        '<button class="action-btn edit" onclick="editLead(\''+ l.id +'\')">✏️</button>'+
+      '</div>'+
+    '</div>';
+  }
+
+  // ✅ PROGRESSIVE RENDERING — Pehle 12 leads turant, baaki next frame mein
+  const BATCH = 12;
+  if(filtered.length <= BATCH){
+    c.innerHTML = filtered.map(buildCard).join('');
+  } else {
+    c.innerHTML = filtered.slice(0, BATCH).map(buildCard).join('');
+    requestAnimationFrame(function(){
+      if(document.getElementById('tab-leads').classList.contains('active')){
+        c.innerHTML += filtered.slice(BATCH).map(buildCard).join('');
+      }
+    });
+  }
+  window._leado_dirty.leads = false; // ✅ Render complete — dirty flag reset
 }
 
 function renderVisits(){
@@ -1916,6 +1957,7 @@ function renderVisits(){
         <button class="action-btn" style="border-color:rgba(255,77,109,.3);color:var(--accent-red)" onclick="removeVisit('${l.id}')">❌ Remove</button>
       </div>
     </div>`).join('');
+  if(window._leado_dirty) window._leado_dirty.visits = false; // ✅ dirty reset
 }
 
 function renderFollowups(){
@@ -1966,6 +2008,7 @@ function renderFollowups(){
       </div>
     </div>`;
   }).join(''):`<p style="font-size:12px;color:var(--text-muted);text-align:center;padding:16px">✅ कोई overdue नहीं!</p>`;
+  if(window._leado_dirty) window._leado_dirty.followup = false;
 }
 
 function addToCalendar(id){
@@ -2449,9 +2492,8 @@ function switchTab(tab,btn){
   const _tc=document.getElementById('tab-'+tab);if(_tc)_tc.classList.add('active');
   if(btn)btn.classList.add('active');
   else{const b=document.getElementById('tabBtn-'+tab);if(b)b.classList.add('active');}
-  if(tab==='followup')renderFollowups();
-  if(tab==='summary')updateStats();
-  if(tab==='visits')renderVisits();
+  // ✅ Render calls HATA DIYE — ab smart switchTab override handle karta hai
+  // (dirty flag check karta hai — sirf zaroorat par render hoga)
   updateBottomNav(tab);
 }
 function switchTabByName(tab){if(tab==='ai')tab='leads';switchTab(tab,document.getElementById('tabBtn-'+tab));}
@@ -2726,8 +2768,32 @@ function checkPin() {
 }
 
 function showMainApp() {
+  // ✅ PIN unlock ke BAAD hi sab kuch chale — ek ek step se
+
+  // Step 1: Notifications check (fast)
   checkNotifications();
-  showTodayFollowupPopup();
+
+  // Step 2: Home dashboard render karo (user pehle yahi dekhega)
+  renderHomeDashboard();
+  window._leado_dirty.home = false;
+  window._tabInit.home = true;
+
+  // Step 3: Stats bar numbers — thoda defer karo
+  setTimeout(function(){ 
+    updateStats();
+    window._leado_dirty.stats = false;
+  }, 150);
+
+  // Step 4: Leads data background mein ready karo (sirf agar leads tab open hua tab render hoga)
+  setTimeout(function(){
+    // Leads render nahi karo abhi — sirf dirty flag true hai, tab click par khud render hoga
+    // Lekin agar leads 0 hain to koi baat nahi
+  }, 300);
+
+  // Step 5: Follow-up popup — user ko settle hone do pehle
+  setTimeout(function() {
+    showTodayFollowupPopup();
+  }, 1000);
 }
 
 function pinForgot() {
@@ -2937,6 +3003,7 @@ function renderHomeDashboard() {
   document.getElementById('homeProgLeadsBar').style.width = leadPct + '%';
   document.getElementById('homeProgDealsBar').style.width = dealPct + '%';
   document.getElementById('homeProgVisitsBar').style.width = visitPct + '%';
+  if(window._leado_dirty) window._leado_dirty.home = false; // ✅ dirty reset
 }
 
 // Call button: phone dial + CALL RECORD modal open
@@ -2955,17 +3022,50 @@ function homeDone(id) {
   showToast('✅ Status aur next follow-up date update karein!', 'success');
 }
 
-// switchTab mein home refresh add karo
+// ✅ SMART SWITCHtab — Sirf tab bhi render karo jab data dirty ho ya pehli baar khul raha ho
 const _origSwitchTab = switchTab;
 switchTab = function(tab, btn) {
   _origSwitchTab(tab, btn);
-  if (tab === 'home') renderHomeDashboard();
+
+  if(tab === 'home'){
+    if(window._leado_dirty.home || !window._tabInit.home){
+      renderHomeDashboard();
+      window._leado_dirty.home = false;
+      window._tabInit.home = true;
+    }
+  }
+  if(tab === 'leads'){
+    if(window._leado_dirty.leads || !window._tabInit.leads){
+      renderLeads();
+      // dirty flag renderLeads ke andar reset hota hai
+      window._tabInit.leads = true;
+    }
+  }
+  if(tab === 'followup'){
+    if(window._leado_dirty.followup || !window._tabInit.followup){
+      renderFollowups();
+      window._leado_dirty.followup = false;
+      window._tabInit.followup = true;
+    }
+  }
+  if(tab === 'visits'){
+    if(window._leado_dirty.visits || !window._tabInit.visits){
+      renderVisits();
+      window._leado_dirty.visits = false;
+      window._tabInit.visits = true;
+    }
+  }
+  if(tab === 'summary'){
+    if(window._leado_dirty.stats || !window._tabInit.stats){
+      updateStats();
+      window._leado_dirty.stats = false;
+      window._tabInit.stats = true;
+    }
+  }
 };
 
-checkNotifications();
-renderLeads();
-updateStats();
-renderHomeDashboard();
+// NOTE: renderLeads, updateStats, renderHomeDashboard — ab showMainApp() mein chalte hain
+// Tab switch hone par bhi render hota hai — startup par nahi
 </script>
 
 <!-- ✅ WebIntoApp External Link Fix: WhatsApp, Google Drive, Phone sab bahar khulenge -->
@@ -3048,11 +3148,19 @@ function addRipple(e){
 }
 
 // Sab buttons pe ripple add karo
-document.addEventListener('DOMContentLoaded', function(){
-  document.querySelectorAll('.btn-primary,.btn-purple,.action-btn,.bottom-nav-item,.icon-btn').forEach(btn=>{
-    btn.addEventListener('click', addRipple);
-  });
-});
+// ✅ Ripple effects — idle time mein lagao, startup block na ho
+(function attachRipples(){
+  function doAttach(){
+    document.querySelectorAll('.btn-primary,.btn-purple,.action-btn,.bottom-nav-item,.icon-btn').forEach(btn=>{
+      if(!btn._rippleAttached){ btn.addEventListener('click', addRipple); btn._rippleAttached=true; }
+    });
+  }
+  if('requestIdleCallback' in window){
+    requestIdleCallback(doAttach, {timeout:2000});
+  } else {
+    setTimeout(doAttach, 500);
+  }
+})();
 
 // Confetti — lead save hone pe
 function showConfetti(x, y){
@@ -3104,8 +3212,8 @@ function animateCounter(el, target){
   requestAnimationFrame(update);
 }
 
-// Premium updateStats — animated counters
-const _origUpdateStats = window.updateStats;
+// Premium updateStats — animated counters (override existing)
+// NOTE: _origUpdateStats stub hata diya — ab direct updateStats mein dirty flag hai
 
 // Skeleton loader
 function showSkeletonLoading(){
@@ -3121,8 +3229,7 @@ function showSkeletonLoading(){
     </div>`).join('');
 }
 
-// Lead save hone pe confetti
-const _origSaveLead = window.saveLead;
+// Lead save hone pe confetti — _origSaveLead stub hata diya (saveLead already called directly)
 
 
 
