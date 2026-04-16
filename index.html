@@ -3238,26 +3238,43 @@ switchTab = function(tab, btn) {
   };
 
   window.openBulkWA = function(){
+    // Safety: check modal exists first
+    const modal = document.getElementById('bulkWAModal');
+    if(!modal){ showToast('⚠️ Bulk WA load nahi hua, reload karein'); return; }
+
     bwaExcluded.clear();
     bwaSendIndex = 0;
     bwaStatusFilter = 'all';
     bwaProjVal      = 'all';
-    // Reset filter chips
-    document.querySelectorAll('#bwaStatusFilters .bwa-chip').forEach(c=>c.classList.remove('sel'));
-    document.getElementById('bwaStatusFilters').querySelector('[data-val="all"]').classList.add('sel');
-    document.querySelectorAll('#bwaProjFilters .bwa-chip').forEach(c=>c.classList.remove('sel'));
-    document.getElementById('bwaProjFilters').querySelector('[data-val="all"]').classList.add('sel');
+
+    // Reset filter chips safely
+    document.querySelectorAll('#bwaStatusFilters .bwa-chip').forEach(el=>el.classList.remove('sel'));
+    const allStatus = document.querySelector('#bwaStatusFilters [data-val="all"]');
+    if(allStatus) allStatus.classList.add('sel');
+    document.querySelectorAll('#bwaProjFilters .bwa-chip').forEach(el=>el.classList.remove('sel'));
+    const allProj = document.querySelector('#bwaProjFilters [data-val="all"]');
+    if(allProj) allProj.classList.add('sel');
+
     // Reset templates
     document.querySelectorAll('.bwa-tpl').forEach(t=>t.classList.remove('sel'));
-    document.getElementById('tpl-intro').classList.add('sel');
+    const introTpl = document.getElementById('tpl-intro');
+    if(introTpl) introTpl.classList.add('sel');
     bwaCurrentTpl = 'intro';
-    document.getElementById('bwaMessageText').value = TEMPLATES.intro;
-    document.getElementById('bwaProgress').style.display = 'none';
-    document.getElementById('bwaSendBtn').disabled = false;
+
+    const msgBox = document.getElementById('bwaMessageText');
+    if(msgBox) msgBox.value = TEMPLATES.intro;
+
+    const sendBtn = document.getElementById('bwaSendBtn');
+    if(sendBtn) sendBtn.disabled = false;
+
     bwaRefresh();
-    document.getElementById('bwaMainPanel').style.display = '';
-    document.getElementById('bwaStepPanel').style.display = 'none';
-    document.getElementById('bulkWAModal').classList.add('active');
+
+    const mainPanel = document.getElementById('bwaMainPanel');
+    if(mainPanel) mainPanel.style.display = '';
+    const stepPanel = document.getElementById('bwaStepPanel');
+    if(stepPanel) stepPanel.style.display = 'none';
+
+    modal.classList.add('active');
   };
 
   window.closeBulkWA = function(){
@@ -3447,10 +3464,10 @@ switchTab = function(tab, btn) {
     bwaSendList  = [];
     const box = document.getElementById('bwaStepBox');
     if(box) box.innerHTML = '';
-    // Show main panel again
     const mainPanel = document.getElementById('bwaMainPanel');
     if(mainPanel) mainPanel.style.display = '';
-    document.getElementById('bwaStepPanel').style.display = 'none';
+    const stepPanel = document.getElementById('bwaStepPanel');
+    if(stepPanel) stepPanel.style.display = 'none';
   };
 
   // Add event listener for modal close on backdrop click
