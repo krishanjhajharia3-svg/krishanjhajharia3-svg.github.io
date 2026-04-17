@@ -1,83 +1,10 @@
+// ===== LEADO CRM SW v5 =====
 importScripts('https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.sw.js');
-
-// ===== LEADO CRM Service Worker =====
-let scheduledNotifs = {};
-
-self.addEventListener('install', e => {
-  console.log('[SW] Install');
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', e => {
-  console.log('[SW] Activate');
-  e.waitUntil(self.clients.claim());
-});
-
-// App se message
-self.addEventListener('message', e => {
-  if(!e.data) return;
-  
-  if(e.data.type === 'SCHEDULE_NOTIFICATION'){
-    const { leadId, title, body, scheduledTime } = e.data.data;
-    const delay = scheduledTime - Date.now();
-    
-    console.log('[SW] Schedule karo:', leadId, 'delay:', Math.round(delay/1000)+'s');
-    
-    if(delay <= 0){
-      // Abhi dikhao
-      self.registration.showNotification(title, {
-        body: body,
-        icon: '/icon-192.png',
-        tag: 'lead-'+leadId,
-        requireInteraction: true,
-        vibrate: [300, 100, 300],
-        data: { leadId }
-      });
-      return;
-    }
-    
-    // Cancel purana
-    if(scheduledNotifs[leadId]) clearTimeout(scheduledNotifs[leadId]);
-    
-    // Schedule naya
-    scheduledNotifs[leadId] = setTimeout(() => {
-      self.registration.showNotification(title, {
-        body: body,
-        icon: '/icon-192.png',
-        tag: 'lead-'+leadId,
-        requireInteraction: true,
-        vibrate: [300, 100, 300],
-        data: { leadId }
-      });
-      delete scheduledNotifs[leadId];
-      console.log('[SW] Notification shown:', leadId);
-    }, delay);
-  }
-  
-  if(e.data.type === 'CANCEL_NOTIFICATION'){
-    if(scheduledNotifs[e.data.leadId]){
-      clearTimeout(scheduledNotifs[e.data.leadId]);
-      delete scheduledNotifs[e.data.leadId];
-    }
-  }
-});
-
-// Notification click
-self.addEventListener('notificationclick', e => {
-  e.notification.close();
-  const leadId = e.notification.data?.leadId;
-  
-  e.waitUntil(
-    self.clients.matchAll({type:'window', includeUncontrolled:true})
-      .then(clients => {
-        for(let c of clients){
-          if(c.url.includes('krishanjhajharia3-svg.github.io')){
-            c.focus();
-            if(leadId) c.postMessage({type:'OPEN_LEAD', leadId});
-            return;
-          }
-        }
-        return self.clients.openWindow('https://krishanjhajharia3-svg.github.io/');
-      })
-  );
-});
+const CACHE='leado-v5';
+self.addEventListener('install',function(e){console.log('[SW] Install v5');self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(['/','./index.html','./manifest.json']).catch(function(){});}));});
+self.addEventListener('activate',function(e){console.log('[SW] Activate v5');e.waitUntil(caches.keys().then(function(keys){return Promise.all(keys.filter(function(k){return k!==CACHE;}).map(function(k){return caches.delete(k);}));}).then(function(){return self.clients.claim();}));});
+self.addEventListener('fetch',function(e){if(e.request.method!=='GET'||!e.request.url.startsWith('http'))return;e.respondWith(fetch(e.request).catch(function(){return caches.match(e.request);}));});
+var sn={};
+self.addEventListener('message',function(e){if(!e.data)return;if(e.data.type==='SKIP_WAITING'){self.skipWaiting();return;}if(e.data.type==='SCHEDULE_NOTIFICATION'){var d=e.data.data;if(!d||!d.scheduledTime)return;var delay=d.scheduledTime-Date.now();if(sn[d.leadId])clearTimeout(sn[d.leadId]);var opts={body:d.body||'Aaj call karna hai!',icon:'/icon-192.png',badge:'/icon-192.png',tag:'followup-'+(d.leadId||'x'),requireInteraction:true,vibrate:[200,100,200],data:{leadId:d.leadId}};if(delay<=0){self.registration.showNotification(d.title||'Follow-up',opts);return;}console.log('[SW] Scheduled:',d.title,'in',Math.round(delay/60000),'min');sn[d.leadId]=setTimeout(function(){self.registration.showNotification(d.title||'Follow-up',opts);delete sn[d.leadId];},delay);}if(e.data.type==='CANCEL_NOTIFICATION'&&e.data.leadId&&sn[e.data.leadId]){clearTimeout(sn[e.data.leadId]);delete sn[e.data.leadId];}});
+self.addEventListener('push',function(e){var title='Leado Follow-up',body='Pending!',leadId=null;try{if(e.data){var d=e.data.json();title=d.title||(d.notification&&d.notification.title)||title;body=d.body||(d.notification&&d.notification.body)||body;leadId=d.leadId||(d.data&&d.data.leadId)||null;}}catch(err){if(e.data)body=e.data.text();}e.waitUntil(self.registration.showNotification(title,{body:body,icon:'/icon-192.png',badge:'/icon-192.png',tag:leadId?'followup-'+leadId:'leado-push',requireInteraction:true,vibrate:[200,100,200],data:{leadId:leadId}}));});
+self.addEventListener('notificationclick',function(e){e.notification.close();var leadId=e.notification.data&&e.notification.data.leadId;e.waitUntil(self.clients.matchAll({type:'window',includeUncontrolled:true}).then(function(list){for(var c of list){if(c.url.includes('krishanjhajharia3-svg.github.io')&&'focus' in c){c.focus();if(leadId)c.postMessage({type:'OPEN_LEAD',leadId:leadId});return;}}return self.clients.openWindow('https://krishanjhajharia3-svg.github.io/');}));});
