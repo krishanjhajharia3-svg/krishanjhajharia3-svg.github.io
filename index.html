@@ -788,32 +788,52 @@ body{font-family:'Inter','Noto Sans Devanagari',sans-serif;background:var(--bg-p
 .lh-empty{text-align:center;padding:32px 16px;color:var(--text-muted)}
 .lh-empty-icon{font-size:32px;margin-bottom:8px}
 
-/* ===== BULK WHATSAPP MODAL ===== */
-.bwa-section{margin-bottom:14px}
-.bwa-label{font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
-.bwa-filter-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.bwa-chip{padding:5px 11px;border-radius:20px;font-size:11px;border:1px solid var(--border);color:var(--text-secondary);cursor:pointer;transition:all .15s;font-weight:500;display:flex;align-items:center;gap:4px}
-.bwa-chip.sel{background:var(--accent-primary-dim);color:var(--accent-primary);border-color:var(--accent-primary)}
-.bwa-preview{background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;padding:10px;font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:4px;max-height:100px;overflow-y:auto;white-space:pre-wrap;word-break:break-word}
-.bwa-template-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
-.bwa-tpl{padding:8px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-secondary);font-size:11px;cursor:pointer;transition:all .15s;text-align:left;line-height:1.4}
-.bwa-tpl.sel{border-color:var(--accent-green,#25d366);background:rgba(37,211,102,.08);color:#25d366}
-.bwa-tpl-name{font-weight:600;margin-bottom:2px}
-.bwa-count-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(37,211,102,.1);border:1px solid rgba(37,211,102,.2);color:#25d366;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:10px}
-.bwa-lead-list{max-height:160px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;margin-bottom:10px}
-.bwa-lead-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);cursor:pointer}
-.bwa-lead-item:last-child{border-bottom:none}
-.bwa-lead-item.excluded{opacity:.45}
-.bwa-lead-check{width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border-light);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px}
-.bwa-lead-check.on{background:var(--accent-primary);border-color:var(--accent-primary);color:#fff}
-.bwa-lead-name{font-size:12px;font-weight:500;color:var(--text-primary);flex:1;min-width:0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;text-transform:capitalize}
-.bwa-lead-proj{font-size:10px;color:var(--text-muted)}
-.bwa-send-btn{width:100%;padding:13px;border-radius:12px;border:none;background:#25d366;color:#fff;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Inter','Noto Sans Devanagari',sans-serif;transition:background .15s}
-.bwa-send-btn:hover{background:#1ead55}
-.bwa-send-btn:disabled{background:var(--text-muted);cursor:not-allowed}
-.bwa-textarea{width:100%;background:var(--bg-card2);border:1px solid var(--border);border-radius:8px;padding:9px;color:var(--text-primary);font-size:12px;font-family:'Noto Sans Devanagari','Inter',sans-serif;resize:vertical;min-height:80px;line-height:1.6;margin-top:6px}
-.bwa-textarea:focus{outline:none;border-color:var(--accent-primary)}
-.bwa-progress{text-align:center;padding:10px;font-size:13px;color:var(--text-secondary);display:none}
+
+/* ===== PLOT CALCULATOR ===== */
+.calc-sec{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.calc-sec-title{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px}
+.calc-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.calc-row:last-child{margin-bottom:0}
+.calc-lbl{font-size:12px;color:var(--text-secondary);min-width:140px;flex-shrink:0;line-height:1.4}
+.calc-inp-wrap{flex:1;display:flex;align-items:center;gap:6px}
+.calc-inp{width:100%;font-size:14px;padding:8px 10px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-card2);color:var(--text-primary);font-family:'Inter','Noto Sans Devanagari',sans-serif}
+.calc-inp:focus{outline:none;border-color:var(--accent-primary)}
+.calc-select{font-size:12px;padding:8px;border-radius:10px;border:1px solid var(--border-light);background:var(--bg-card2);color:var(--text-primary)}
+.calc-unit{font-size:11px;color:var(--text-muted);white-space:nowrap}
+.calc-slider-val{font-size:13px;font-weight:600;color:var(--text-primary);min-width:52px;text-align:right}
+.calc-results{margin-top:4px}
+.calc-formula-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--bg-card2);border-radius:8px;border:1px solid var(--border);margin-bottom:6px}
+.calc-f-label{font-size:12px;color:var(--text-secondary)}
+.calc-f-val{font-size:13px;font-weight:600;color:var(--text-primary)}
+.calc-badge{display:inline-block;font-size:9px;padding:2px 6px;border-radius:6px;font-weight:600;margin-left:4px;background:var(--accent-primary-dim);color:var(--accent-primary)}
+.calc-res-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.calc-card{background:var(--bg-card2);border-radius:12px;padding:12px;border:1px solid var(--border)}
+.calc-card-label{font-size:10px;color:var(--text-muted);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.3px}
+.calc-card-val{font-size:18px;font-weight:700;color:var(--text-primary);letter-spacing:-.5px}
+.calc-card-sub{font-size:10px;color:var(--text-muted);margin-top:3px}
+.calc-card.cc-green{border-color:rgba(46,213,115,.3)}.calc-card.cc-green .calc-card-val{color:#2ed573}
+.calc-card.cc-red{border-color:rgba(255,71,87,.3)}.calc-card.cc-red .calc-card-val{color:#ff4757}
+.calc-card.cc-blue{border-color:rgba(79,124,255,.3)}.calc-card.cc-blue .calc-card-val{color:var(--accent-primary)}
+.calc-card.cc-warn{border-color:rgba(255,165,2,.3)}.calc-card.cc-warn .calc-card-val{color:#ffa502}
+.calc-breakdown{background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px}
+.calc-br-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.calc-br-row:last-child{border-bottom:none;padding-top:8px;margin-top:2px}
+.calc-br-label{color:var(--text-secondary)}
+.calc-br-val{font-weight:600;color:var(--text-primary)}
+.calc-br-total .calc-br-label{font-weight:600;color:var(--text-primary);font-size:13px}
+.calc-br-total .calc-br-val{font-size:15px;color:#ff4757}
+.calc-divider{height:1px;background:var(--border);margin:10px 0}
+.calc-btn-row{display:flex;gap:8px;margin-top:10px}
+.calc-wa-btn{flex:1;padding:11px;border-radius:12px;border:1px solid rgba(37,211,102,.3);background:rgba(37,211,102,.08);color:#25d366;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Inter','Noto Sans Devanagari',sans-serif;transition:background .15s}
+.calc-wa-btn:hover{background:rgba(37,211,102,.14)}
+.calc-reset-btn{padding:11px 16px;border-radius:12px;border:1px solid rgba(255,71,87,.3);background:rgba(255,71,87,.08);color:#ff4757;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;font-family:'Inter','Noto Sans Devanagari',sans-serif;transition:background .15s;white-space:nowrap}
+.calc-reset-btn:hover{background:rgba(255,71,87,.14)}
+.calc-bar-wrap{margin-bottom:10px}
+.calc-bar-label{font-size:10px;color:var(--text-muted);margin-bottom:5px}
+.calc-bar{display:flex;height:7px;border-radius:4px;overflow:hidden}
+.calc-bar-p{background:var(--accent-primary);transition:flex .3s}
+.calc-bar-i{background:#ff4757;transition:flex .3s}
+.calc-bar-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted);margin-top:4px}
 
 </style>
 
@@ -972,9 +992,6 @@ body{font-family:'Inter','Noto Sans Devanagari',sans-serif;background:var(--bg-p
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
       <span id="notifBadge" style="display:none;position:absolute;top:-3px;right:-3px;background:var(--status-hot);color:white;font-size:9px;min-width:17px;height:17px;border-radius:50%;align-items:center;justify-content:center;font-weight:700;font-family:'Inter',sans-serif">0</span>
     </button>
-    <button class="icon-btn" onclick="openBulkWA()" title="Bulk WhatsApp" style="border-color:rgba(37,211,102,.3);color:#25d366">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-    </button>
     <button class="icon-btn" onclick="showExportOptions()" title="Export">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
     </button>
@@ -1004,6 +1021,9 @@ body{font-family:'Inter','Noto Sans Devanagari',sans-serif;background:var(--bg-p
   </button>
   <button class="tab-btn" id="tabBtn-summary" onclick="switchTab('summary',this)">
     <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Summary
+  </button>
+  <button class="tab-btn" id="tabBtn-calc" onclick="switchTab('calc',this)">
+    <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/></svg>Calculator
   </button>
 </div>
 
@@ -1072,13 +1092,7 @@ body{font-family:'Inter','Noto Sans Devanagari',sans-serif;background:var(--bg-p
 
   <!-- LEADS TAB -->
   <div class="tab-content" id="tab-leads">
-    <div style="display:flex;gap:8px;margin-bottom:10px">
-      <div class="search-bar" style="margin-bottom:0;flex:1"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="नाम, मोबाइल, प्रोजेक्ट खोजें..." oninput="renderLeads()"></div>
-      <button onclick="openBulkWA()" title="Bulk WhatsApp" style="padding:0 12px;border-radius:12px;border:1px solid rgba(37,211,102,.3);background:rgba(37,211,102,.08);color:#25d366;cursor:pointer;display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;white-space:nowrap;flex-shrink:0">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Bulk WA
-      </button>
-    </div>
+    <div class="search-bar"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="नाम, मोबाइल, प्रोजेक्ट खोजें..." oninput="renderLeads()"></div>
     <div class="filter-chips" id="filterChips">
       <div class="chip active" onclick="setFilter('all',this)">सभी</div>
       <div class="chip" onclick="setFilter('hot',this)">🔥 Ready to Buy</div>
@@ -1126,6 +1140,133 @@ body{font-family:'Inter','Noto Sans Devanagari',sans-serif;background:var(--bg-p
     <div id="projectSummary"></div>
   </div>
 
+  <!-- CALCULATOR TAB -->
+  <div class="tab-content" id="tab-calc">
+    <div class="calc-sec">
+      <div class="calc-sec-title">1. Plot Details</div>
+      <div class="calc-row">
+        <span class="calc-lbl">Plot Size</span>
+        <div class="calc-inp-wrap">
+          <input type="number" class="calc-inp" id="cPlotSize" placeholder="Size daalo" min="1" oninput="doCalc()">
+          <select class="calc-select" id="cUnit" onchange="doCalc()">
+            <option value="gaj">Gaj</option>
+            <option value="sqft">Sq Ft</option>
+            <option value="sqm">Sq M</option>
+          </select>
+        </div>
+      </div>
+      <div class="calc-row">
+        <span class="calc-lbl">Market Rate</span>
+        <div class="calc-inp-wrap">
+          <input type="number" class="calc-inp" id="cMarketRate" placeholder="Rate daalo" min="1" oninput="doCalc()">
+          <span class="calc-unit">₹/unit</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-sec">
+      <div class="calc-sec-title">2. Bank Loan</div>
+      <div class="calc-row">
+        <span class="calc-lbl">Bank Valuation Rate</span>
+        <div class="calc-inp-wrap">
+          <input type="number" class="calc-inp" id="cBankRate" placeholder="Bank rate daalo" min="1" oninput="doCalc()">
+          <span class="calc-unit">₹/unit</span>
+        </div>
+      </div>
+      <div class="calc-row">
+        <span class="calc-lbl">Loan %</span>
+        <div class="calc-inp-wrap">
+          <input type="range" id="cLoanPct" min="50" max="90" value="80" step="5"
+            oninput="doCalc();document.getElementById('cLoanPctVal').textContent=this.value+'%'">
+          <span class="calc-slider-val" id="cLoanPctVal">80%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="calc-sec">
+      <div class="calc-sec-title">3. EMI</div>
+      <div class="calc-row">
+        <span class="calc-lbl">Interest Rate (yearly)</span>
+        <div class="calc-inp-wrap">
+          <input type="range" id="cIR" min="6" max="15" value="8.5" step="0.25"
+            oninput="doCalc();document.getElementById('cIRVal').textContent=parseFloat(this.value).toFixed(2)+'%'">
+          <span class="calc-slider-val" id="cIRVal">8.50%</span>
+        </div>
+      </div>
+      <div class="calc-row">
+        <span class="calc-lbl">Loan Tenure</span>
+        <div class="calc-inp-wrap">
+          <input type="range" id="cTenure" min="5" max="30" value="20" step="1"
+            oninput="doCalc();document.getElementById('cTenureVal').textContent=this.value+' Saal'">
+          <span class="calc-slider-val" id="cTenureVal">20 Saal</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="calcResults" style="display:none">
+      <div class="calc-sec-title">Plot Value</div>
+      <div class="calc-formula-row">
+        <span class="calc-f-label">Market Value <span class="calc-badge">Size × Market Rate</span></span>
+        <span class="calc-f-val" id="cRMarket">—</span>
+      </div>
+      <div class="calc-formula-row">
+        <span class="calc-f-label">Bank Valuation <span class="calc-badge">Size × Bank Rate</span></span>
+        <span class="calc-f-val" id="cRBankVal">—</span>
+      </div>
+      <div class="calc-res-grid" style="margin-top:8px">
+        <div class="calc-card cc-green">
+          <div class="calc-card-label">Bank Loan</div>
+          <div class="calc-card-val" id="cRLoan">—</div>
+          <div class="calc-card-sub" id="cRLoanSub">—</div>
+        </div>
+        <div class="calc-card cc-red">
+          <div class="calc-card-label">Aapko Khud Dena</div>
+          <div class="calc-card-val" id="cRDiff">—</div>
+          <div class="calc-card-sub">Market - Loan</div>
+        </div>
+      </div>
+      <div class="calc-divider"></div>
+      <div class="calc-sec-title">EMI Breakdown</div>
+      <div class="calc-res-grid">
+        <div class="calc-card cc-blue">
+          <div class="calc-card-label">Monthly EMI</div>
+          <div class="calc-card-val" id="cREmi">—</div>
+          <div class="calc-card-sub" id="cREmiSub">—</div>
+        </div>
+        <div class="calc-card cc-warn">
+          <div class="calc-card-label">Kul Lagat (Loan + Khud)</div>
+          <div class="calc-card-val" id="cRTotalPay">—</div>
+          <div class="calc-card-sub" id="cRTotalPaySub">Loan + Aapko Dena</div>
+        </div>
+      </div>
+      <div class="calc-breakdown">
+        <div class="calc-br-row"><span class="calc-br-label">Loan Amount</span><span class="calc-br-val" id="cBrPrincipal">—</span></div>
+        <div class="calc-br-row"><span class="calc-br-label">Interest Rate</span><span class="calc-br-val" id="cBrRate">—</span></div>
+        <div class="calc-br-row"><span class="calc-br-label">Tenure</span><span class="calc-br-val" id="cBrTenure">—</span></div>
+        <div class="calc-br-row"><span class="calc-br-label">Monthly EMI</span><span class="calc-br-val" id="cBrEmi">—</span></div>
+        <div class="calc-br-row calc-br-total"><span class="calc-br-label">EMI Total Payment</span><span class="calc-br-val" id="cBrTotal">—</span></div>
+      </div>
+      <div class="calc-bar-wrap">
+        <div class="calc-bar-label">Principal vs Interest</div>
+        <div class="calc-bar"><div class="calc-bar-p" id="cBarP"></div><div class="calc-bar-i" id="cBarI"></div></div>
+        <div class="calc-bar-meta">
+          <span>Principal <span id="cBarPPct" style="font-weight:600;color:var(--accent-primary)">—</span></span>
+          <span>Interest <span id="cBarIPct" style="font-weight:600;color:#ff4757">—</span></span>
+        </div>
+      </div>
+      <div class="calc-btn-row">
+        <button class="calc-wa-btn" onclick="calcShare()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Client ko WhatsApp
+        </button>
+        <button class="calc-reset-btn" onclick="calcReset()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <button class="fab" onclick="openAddModal()">+</button>
@@ -1157,6 +1298,10 @@ body{font-family:'Inter','Noto Sans Devanagari',sans-serif;background:var(--bg-p
   <button class="bottom-nav-item summary" id="bn-summary" onclick="switchTab('summary',this);updateBottomNav('summary')">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
     <span class="bottom-nav-label">Summary</span>
+  </button>
+  <button class="bottom-nav-item" id="bn-calc" onclick="switchTab('calc',this);updateBottomNav('calc')">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="10" y2="18"/><line x1="14" y1="18" x2="16" y2="18"/></svg>
+    <span class="bottom-nav-label">Calculator</span>
   </button>
 </div>
 
@@ -3197,287 +3342,13 @@ switchTab = function(tab, btn) {
       window._tabInit.stats = true;
     }
   }
+  if(tab === 'calc'){
+    // Calculator is stateless — no init needed, just show tab
+  }
 };
 
 // NOTE: renderLeads, updateStats, renderHomeDashboard — ab showMainApp() mein chalte hain
 // Tab switch hone par bhi render hota hai — startup par nahi
-
-
-// ===== BULK WHATSAPP SYSTEM =====
-(function(){
-  // State
-  let bwaStatusFilter = 'all';
-  let bwaProjVal      = 'all';
-  let bwaExcluded     = new Set();
-  let bwaCurrentTpl   = 'intro';
-  let bwaSendIndex    = 0;
-  let bwaSendList     = [];
-
-  // Message templates
-  const TEMPLATES = {
-    intro:   'नमस्ते {naam} जी! 🙏\n\nमैं Krishan Ji, Real Estate Agent — Jaipur से बोल रहा हूँ।\n\n*{project}* में आपके लिए एक बेहतरीन opportunity है।\n\nक्या हम इसके बारे में बात कर सकते हैं? 😊',
-    followup:'नमस्ते {naam} जी! 🙏\n\nहमने पिछली बार *{project}* के बारे में बात की थी।\n\nक्या आपने कोई decision लिया? मैं आपकी help करने के लिए available हूँ। 📞',
-    visit:   'नमस्ते {naam} जी! 🏠\n\n*{project}* की site visit के लिए आपको invite करना चाहता हूँ।\n\nApni सुविधानुसार time बताएं — मैं personally दिखाऊंगा! ✨',
-    offer:   'नमस्ते {naam} जी! 🎯\n\n*{project}* में अभी *Special Offer* चल रहा है!\n\nसीमित समय — पहले आओ, पहले पाओ।\n\nजल्दी contact करें! 🏃',
-    festive: 'नमस्ते {naam} जी! 🎉\n\nआपको और आपके परिवार को हार्दिक शुभकामनाएं! 🙏\n\n— Krishan Ji, Leado Real Estate',
-    custom:  ''
-  };
-
-  // Open modal
-  window.bwaBeginSend = function(){
-    const filtered = getFiltered();
-    bwaSendList = filtered.filter(l=>!bwaExcluded.has(l.id));
-    if(!bwaSendList.length){ showToast('⚠️ Koi lead select nahi hai'); return; }
-    const msg = document.getElementById('bwaMessageText').value.trim();
-    if(!msg){ showToast('⚠️ Message likhein pehle'); return; }
-    bwaSendIndex = 0;
-    // Switch panels
-    document.getElementById('bwaMainPanel').style.display = 'none';
-    document.getElementById('bwaStepPanel').style.display = '';
-    bwaShowSendStep();
-  };
-
-  window.openBulkWA = function(){
-    // Safety: check modal exists first
-    const modal = document.getElementById('bulkWAModal');
-    if(!modal){ showToast('⚠️ Bulk WA load nahi hua, reload karein'); return; }
-
-    bwaExcluded.clear();
-    bwaSendIndex = 0;
-    bwaStatusFilter = 'all';
-    bwaProjVal      = 'all';
-
-    // Reset filter chips safely
-    document.querySelectorAll('#bwaStatusFilters .bwa-chip').forEach(el=>el.classList.remove('sel'));
-    const allStatus = document.querySelector('#bwaStatusFilters [data-val="all"]');
-    if(allStatus) allStatus.classList.add('sel');
-    document.querySelectorAll('#bwaProjFilters .bwa-chip').forEach(el=>el.classList.remove('sel'));
-    const allProj = document.querySelector('#bwaProjFilters [data-val="all"]');
-    if(allProj) allProj.classList.add('sel');
-
-    // Reset templates
-    document.querySelectorAll('.bwa-tpl').forEach(t=>t.classList.remove('sel'));
-    const introTpl = document.getElementById('tpl-intro');
-    if(introTpl) introTpl.classList.add('sel');
-    bwaCurrentTpl = 'intro';
-
-    const msgBox = document.getElementById('bwaMessageText');
-    if(msgBox) msgBox.value = TEMPLATES.intro;
-
-    const sendBtn = document.getElementById('bwaSendBtn');
-    if(sendBtn) sendBtn.disabled = false;
-
-    bwaRefresh();
-
-    const mainPanel = document.getElementById('bwaMainPanel');
-    if(mainPanel) mainPanel.style.display = '';
-    const stepPanel = document.getElementById('bwaStepPanel');
-    if(stepPanel) stepPanel.style.display = 'none';
-
-    modal.classList.add('active');
-  };
-
-  window.closeBulkWA = function(){
-    document.getElementById('bulkWAModal').classList.remove('active');
-  };
-
-  // Get filtered leads
-  function getFiltered(){
-    return leads.filter(l=>{
-      if(l.status === 'dead') return false;
-      if(bwaStatusFilter !== 'all' && l.status !== bwaStatusFilter) return false;
-      if(bwaProjVal      !== 'all' && l.project !== bwaProjVal)     return false;
-      return true;
-    });
-  }
-
-  // Refresh count + lead list
-  function bwaRefresh(){
-    const filtered = getFiltered();
-    const selected = filtered.filter(l=>!bwaExcluded.has(l.id));
-    document.getElementById('bwaCountText').textContent = selected.length + ' leads selected';
-    document.getElementById('bwaSendCount').textContent = selected.length;
-    document.getElementById('bwaSendBtn').disabled = selected.length === 0;
-
-    const sl = {hot:'🔥',warm:'⭐',cold:'❄️',converted:'✅'};
-    document.getElementById('bwaLeadList').innerHTML = filtered.length === 0
-      ? '<div style="padding:16px;text-align:center;font-size:12px;color:var(--text-muted)">Koi lead nahi mila</div>'
-      : filtered.map(l=>{
-          const excl = bwaExcluded.has(l.id);
-          return '<div class="bwa-lead-item'+(excl?' excluded':'')+'" onclick="bwaToggleLead(\''+l.id+'\')">'+
-            '<div class="bwa-lead-check'+(excl?'':' on')+'">'+(excl?'':'✓')+'</div>'+
-            '<div style="flex:1;min-width:0">'+
-              '<div class="bwa-lead-name">'+(sl[l.status]||'')+' '+l.name+'</div>'+
-              '<div class="bwa-lead-proj">'+l.phone+(l.project?' · '+l.project:'')+'</div>'+
-            '</div>'+
-          '</div>';
-        }).join('');
-
-    // Sel all / desel all toggle
-    const allSel = filtered.every(l=>!bwaExcluded.has(l.id));
-    document.getElementById('bwaSelAll').textContent = allSel ? 'Deselect All' : 'Select All';
-  }
-  window.bwaRefresh = bwaRefresh;
-
-  // Status filter chip
-  window.bwaToggleFilter = function(el){
-    const val = el.getAttribute('data-val');
-    bwaStatusFilter = val;
-    bwaExcluded.clear();
-    document.querySelectorAll('#bwaStatusFilters .bwa-chip').forEach(c=>c.classList.remove('sel'));
-    el.classList.add('sel');
-    bwaRefresh();
-  };
-
-  // Project filter chip
-  window.bwaProjFilter = function(el){
-    const val = el.getAttribute('data-val');
-    bwaProjVal = val;
-    bwaExcluded.clear();
-    document.querySelectorAll('#bwaProjFilters .bwa-chip').forEach(c=>c.classList.remove('sel'));
-    el.classList.add('sel');
-    bwaRefresh();
-  };
-
-  // Toggle single lead
-  window.bwaToggleLead = function(id){
-    if(bwaExcluded.has(id)) bwaExcluded.delete(id);
-    else bwaExcluded.add(id);
-    bwaRefresh();
-  };
-
-  // Toggle all
-  window.bwaToggleAll = function(){
-    const filtered = getFiltered();
-    const allSel = filtered.every(l=>!bwaExcluded.has(l.id));
-    if(allSel){
-      filtered.forEach(l=>bwaExcluded.add(l.id));
-    } else {
-      bwaExcluded.clear();
-    }
-    bwaRefresh();
-  };
-
-  // Select template
-  window.bwaSelectTemplate = function(name, btn){
-    bwaCurrentTpl = name;
-    document.querySelectorAll('.bwa-tpl').forEach(t=>t.classList.remove('sel'));
-    btn.classList.add('sel');
-    if(name !== 'custom'){
-      document.getElementById('bwaMessageText').value = TEMPLATES[name];
-    }
-    document.getElementById('bwaMessageText').disabled = false;
-    bwaRefresh();
-  };
-
-  window.bwaUpdatePreview = function(){};
-
-  // Build message for a lead
-  function buildMsg(lead){
-    const tpl = document.getElementById('bwaMessageText').value || TEMPLATES[bwaCurrentTpl] || '';
-    return tpl
-      .replace(/{naam}/g,   lead.name    || 'Ji')
-      .replace(/{project}/g, lead.project || 'hamare project')
-      .replace(/{phone}/g,  lead.phone   || '');
-  }
-
-  // ── STEP-BY-STEP sending — user manually taps Next after each WA send ──
-  // bwaStartSending → now handled by bwaBeginSend + bwaShowSendStep
-
-  function bwaShowSendStep(){
-    const total = bwaSendList.length;
-    // All done?
-    if(bwaSendIndex >= total){
-      document.getElementById('bwaStepBox').innerHTML =
-        '<div style="text-align:center;padding:20px 0">'
-        +'<div style="font-size:36px;margin-bottom:8px">🎉</div>'
-        +'<div style="font-size:16px;font-weight:700;color:#2ed573;margin-bottom:4px">Sab messages ho gaye!</div>'
-        +'<div style="font-size:13px;color:var(--text-secondary)">'+total+' leads ko WhatsApp bhej diya</div>'
-        +'<button onclick="closeBulkWA();bwaReset()" style="margin-top:16px;padding:10px 24px;border-radius:10px;background:var(--accent-primary);color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer">Done ✓</button>'
-        +'</div>';
-      showToast('✅ Sab '+total+' messages bhej diye!','success');
-      return;
-    }
-
-    const lead = bwaSendList[bwaSendIndex];
-    const text = buildMsg(lead);
-    const url  = 'whatsapp://send?phone=91'+lead.phone+'&text='+encodeURIComponent(text);
-    const pct  = Math.round((bwaSendIndex/total)*100);
-    const remaining = total - bwaSendIndex;
-
-    document.getElementById('bwaStepBox').innerHTML =
-      // Progress bar
-      '<div style="margin-bottom:12px">'
-        +'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-secondary);margin-bottom:5px">'
-          +'<span>'+( bwaSendIndex)+' done</span>'
-          +'<span style="font-weight:600;color:var(--text-primary)">'+(bwaSendIndex+1)+' / '+total+'</span>'
-          +'<span>'+remaining+' baki</span>'
-        +'</div>'
-        +'<div style="height:6px;background:var(--border);border-radius:4px;overflow:hidden">'
-          +'<div style="height:100%;width:'+pct+'%;background:#25d366;border-radius:4px;transition:width .3s"></div>'
-        +'</div>'
-      +'</div>'
-      // Lead info card
-      +'<div style="background:var(--bg-card2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:12px">'
-        +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">'
-          +'<div style="width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#4f7cff,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0">'
-            + (lead.name.trim().split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?')
-          +'</div>'
-          +'<div>'
-            +'<div style="font-size:14px;font-weight:600;color:var(--text-primary);text-transform:capitalize">'+lead.name+'</div>'
-            +'<div style="font-size:11px;color:var(--text-secondary)">📱 '+lead.phone+(lead.project?' · '+lead.project:'')+'</div>'
-          +'</div>'
-        +'</div>'
-        +'<div style="font-size:11px;color:var(--text-muted);background:var(--bg-card);border-radius:6px;padding:7px 9px;line-height:1.5;max-height:60px;overflow:hidden;white-space:pre-wrap;word-break:break-word">'
-          + text.replace(/</g,'&lt;').replace(/\n/g,'<br>')
-        +'</div>'
-      +'</div>'
-      // Buttons
-      +'<div style="display:flex;gap:8px">'
-        +'<button onclick="bwaOpenAndNext(\''+url+'\')" style="flex:2;padding:12px;border-radius:10px;border:none;background:#25d366;color:#fff;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px">'
-          +'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>'
-          +'WhatsApp Open Karo'
-        +'</button>'
-        +'<button onclick="bwaSkip()" style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-secondary);font-size:13px;cursor:pointer">Skip →</button>'
-      +'</div>'
-      +'<div style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:6px">WA pe message send karo → wapas aao → agla lead ↑</div>';
-  }
-
-  window.bwaOpenAndNext = function(url){
-    // Reliable: direct location change opens WA, user sends, comes back
-    window.location.href = url;
-    // Jab user wapas aaye — next step ready
-    bwaSendIndex++;
-    // Small delay — user wapas aane ke baad step update ho
-    setTimeout(function(){
-      if(document.getElementById('bwaStepBox')) bwaShowSendStep();
-    }, 1200);
-  };
-
-  window.bwaSkip = function(){
-    bwaSendIndex++;
-    bwaShowSendStep();
-  };
-
-  window.bwaReset = function(){
-    bwaSendIndex = 0;
-    bwaSendList  = [];
-    const box = document.getElementById('bwaStepBox');
-    if(box) box.innerHTML = '';
-    const mainPanel = document.getElementById('bwaMainPanel');
-    if(mainPanel) mainPanel.style.display = '';
-    const stepPanel = document.getElementById('bwaStepPanel');
-    if(stepPanel) stepPanel.style.display = 'none';
-  };
-
-  // Add event listener for modal close on backdrop click
-  document.addEventListener('DOMContentLoaded',function(){
-    const el = document.getElementById('bulkWAModal');
-    if(el) el.addEventListener('click',function(e){ if(e.target===this) closeBulkWA(); });
-  });
-
-})();
-// ===== END BULK WHATSAPP =====
 
 </script>
 
@@ -3649,7 +3520,7 @@ function showSkeletonLoading(){
 // ===== SWIPE GESTURE — Tab navigation =====
 (function(){
   // ✅ Swipe order matches bottom nav: Home → Leads → Visits → Follow-Up → Summary
-  const TAB_ORDER = ['home','leads','visits','followup','summary'];
+  const TAB_ORDER = ['home','leads','visits','followup','summary','calc'];
   let touchStartX = 0;
   let touchStartY = 0;
   let touchStartTime = 0;
@@ -3926,103 +3797,100 @@ window.addEventListener('load', function(){
   }, 3000); // 3 sec baad — splash screen ke baad
 });
 
+
+// ===== PLOT CALCULATOR =====
+(function(){
+  function fmtC(n){ return '₹'+Math.round(n).toLocaleString('en-IN'); }
+
+  function calcEMI(p,ar,ty){
+    var r=ar/100/12, n=ty*12;
+    if(r===0) return p/n;
+    return p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);
+  }
+
+  window.doCalc = function(){
+    var size    = parseFloat(document.getElementById('cPlotSize').value)||0;
+    var unit    = document.getElementById('cUnit').value;
+    var mRate   = parseFloat(document.getElementById('cMarketRate').value)||0;
+    var bRate   = parseFloat(document.getElementById('cBankRate').value)||0;
+    var lPct    = parseFloat(document.getElementById('cLoanPct').value)/100;
+    var ir      = parseFloat(document.getElementById('cIR').value);
+    var tenure  = parseFloat(document.getElementById('cTenure').value);
+
+    if(!size||!mRate||!bRate){
+      document.getElementById('calcResults').style.display='none'; return;
+    }
+    document.getElementById('calcResults').style.display='block';
+
+    var ul={'gaj':'Gaj','sqft':'Sq Ft','sqm':'Sq M'}[unit];
+    var mVal  = size*mRate;
+    var bVal  = size*bRate;
+    var loan  = bVal*lPct;
+    var self  = mVal-loan;
+    var emi   = calcEMI(loan,ir,tenure);
+    var tPay  = emi*tenure*12;
+    var pPct  = Math.round(loan/tPay*100);
+    var iPct  = 100-pPct;
+
+    document.getElementById('cRMarket').textContent    = fmtC(mVal);
+    document.getElementById('cRBankVal').textContent   = fmtC(bVal);
+    document.getElementById('cRLoan').textContent      = fmtC(loan);
+    document.getElementById('cRLoanSub').textContent   = 'Bank val × '+Math.round(lPct*100)+'%';
+    document.getElementById('cRDiff').textContent      = fmtC(self);
+    document.getElementById('cREmi').textContent       = fmtC(emi)+'/mo';
+    document.getElementById('cREmiSub').textContent    = tenure+' saal · '+ir.toFixed(2)+'%';
+    document.getElementById('cRTotalPay').textContent  = fmtC(loan+self);
+    document.getElementById('cRTotalPaySub').textContent= fmtC(loan)+' + '+fmtC(self);
+    document.getElementById('cBrPrincipal').textContent= fmtC(loan);
+    document.getElementById('cBrRate').textContent     = ir.toFixed(2)+'% per year';
+    document.getElementById('cBrTenure').textContent   = tenure+' Saal ('+tenure*12+' months)';
+    document.getElementById('cBrEmi').textContent      = fmtC(emi)+' / month';
+    document.getElementById('cBrTotal').textContent    = fmtC(tPay);
+    document.getElementById('cBarP').style.flex        = pPct+'';
+    document.getElementById('cBarI').style.flex        = iPct+'';
+    document.getElementById('cBarPPct').textContent    = pPct+'%';
+    document.getElementById('cBarIPct').textContent    = iPct+'%';
+
+    window._calcData = {size,ul,mRate,bRate,lPct,ir,tenure,mVal,bVal,loan,self,emi,tPay};
+  };
+
+  window.calcReset = function(){
+    ['cPlotSize','cMarketRate','cBankRate'].forEach(function(id){
+      document.getElementById(id).value='';
+    });
+    document.getElementById('cLoanPct').value='80';
+    document.getElementById('cLoanPctVal').textContent='80%';
+    document.getElementById('cIR').value='8.5';
+    document.getElementById('cIRVal').textContent='8.50%';
+    document.getElementById('cTenure').value='20';
+    document.getElementById('cTenureVal').textContent='20 Saal';
+    document.getElementById('cUnit').value='gaj';
+    document.getElementById('calcResults').style.display='none';
+    window._calcData=null;
+  };
+
+  window.calcShare = function(){
+    var r=window._calcData;
+    if(!r){showToast('⚠️ Pehle calculate karein');return;}
+    var msg='🏠 *Plot Calculation — Leado*\n\n'
+      +'📐 '+r.size+' '+r.ul+'\n'
+      +'Market Rate: ₹'+r.mRate.toLocaleString('en-IN')+'/'+r.ul+'\n'
+      +'Bank Rate: ₹'+r.bRate.toLocaleString('en-IN')+'/'+r.ul+'\n\n'
+      +'*Value:*\n'
+      +'Market Value: '+fmtC(r.mVal)+'\n'
+      +'Bank Valuation: '+fmtC(r.bVal)+'\n'
+      +'Bank Loan ('+Math.round(r.lPct*100)+'%): '+fmtC(r.loan)+'\n'
+      +'*Khud Dena Hoga: '+fmtC(r.self)+'*\n\n'
+      +'*EMI:*\n'
+      +r.ir.toFixed(2)+'% · '+r.tenure+' Saal\n'
+      +'Monthly EMI: '+fmtC(r.emi)+'\n'
+      +'Total Payment: '+fmtC(r.tPay);
+    openWhatsApp('whatsapp://send?text='+encodeURIComponent(msg));
+  };
+})();
+// ===== END PLOT CALCULATOR =====
+
 </script>
-
-<!-- ===== BULK WHATSAPP MODAL ===== -->
-<div class="modal-overlay" id="bulkWAModal">
-  <div class="modal" style="padding-bottom:24px;max-height:92vh;overflow-y:auto">
-  <div id="bwaMainPanel">
-    <div class="modal-handle"></div>
-    <div class="modal-title" style="display:flex;align-items:center;gap:8px">
-      <span style="font-size:20px">💬</span> WhatsApp Bulk Message
-    </div>
-
-    <!-- Step 1: Filter leads -->
-    <div class="bwa-section">
-      <div class="bwa-label">1. Leads Filter Karein</div>
-      <div class="bwa-filter-row" id="bwaStatusFilters">
-        <div class="bwa-chip sel" data-type="status" data-val="all" onclick="bwaToggleFilter(this)">🔘 Sabhi</div>
-        <div class="bwa-chip" data-type="status" data-val="hot" onclick="bwaToggleFilter(this)">🔥 Hot</div>
-        <div class="bwa-chip" data-type="status" data-val="warm" onclick="bwaToggleFilter(this)">⭐ Interested</div>
-        <div class="bwa-chip" data-type="status" data-val="cold" onclick="bwaToggleFilter(this)">❄️ Thinking</div>
-        <div class="bwa-chip" data-type="status" data-val="converted" onclick="bwaToggleFilter(this)">✅ Converted</div>
-      </div>
-      <div class="bwa-filter-row" id="bwaProjFilters">
-        <div class="bwa-chip sel" data-type="proj" data-val="all" onclick="bwaProjFilter(this)">🏗️ All Projects</div>
-        <div class="bwa-chip" data-type="proj" data-val="Imperial Estate" onclick="bwaProjFilter(this)">Imperial Estate</div>
-        <div class="bwa-chip" data-type="proj" data-val="Imperial Galaxy" onclick="bwaProjFilter(this)">Imperial Galaxy</div>
-        <div class="bwa-chip" data-type="proj" data-val="Solitair Home" onclick="bwaProjFilter(this)">Solitair Home</div>
-        <div class="bwa-chip" data-type="proj" data-val="Dream Town" onclick="bwaProjFilter(this)">Dream Town</div>
-        <div class="bwa-chip" data-type="proj" data-val="Govind Vihar" onclick="bwaProjFilter(this)">Govind Vihar</div>
-      </div>
-      <div class="bwa-count-badge" id="bwaCountBadge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-        <span id="bwaCountText">0 leads selected</span>
-      </div>
-    </div>
-
-    <!-- Step 2: Message Template -->
-    <div class="bwa-section">
-      <div class="bwa-label">2. Message Template Chunein</div>
-      <div class="bwa-template-row">
-        <button class="bwa-tpl sel" id="tpl-intro" onclick="bwaSelectTemplate('intro',this)">
-          <div class="bwa-tpl-name">👋 Introduction</div>
-          <div>Pehli baar contact</div>
-        </button>
-        <button class="bwa-tpl" id="tpl-followup" onclick="bwaSelectTemplate('followup',this)">
-          <div class="bwa-tpl-name">📞 Follow-Up</div>
-          <div>Baad mein contact</div>
-        </button>
-        <button class="bwa-tpl" id="tpl-visit" onclick="bwaSelectTemplate('visit',this)">
-          <div class="bwa-tpl-name">🏠 Site Visit</div>
-          <div>Visit ke liye invite</div>
-        </button>
-        <button class="bwa-tpl" id="tpl-offer" onclick="bwaSelectTemplate('offer',this)">
-          <div class="bwa-tpl-name">🎯 Special Offer</div>
-          <div>Deal / Discount</div>
-        </button>
-        <button class="bwa-tpl" id="tpl-festive" onclick="bwaSelectTemplate('festive',this)">
-          <div class="bwa-tpl-name">🎉 Festive Wish</div>
-          <div>Tyohar greeting</div>
-        </button>
-        <button class="bwa-tpl" id="tpl-custom" onclick="bwaSelectTemplate('custom',this)">
-          <div class="bwa-tpl-name">✏️ Custom</div>
-          <div>Apna message</div>
-        </button>
-      </div>
-      <textarea class="bwa-textarea" id="bwaMessageText" placeholder="Message yahan likhein..." oninput="bwaUpdatePreview()"></textarea>
-      <div style="font-size:10px;color:var(--text-muted);margin-top:4px">💡 {naam} likho → automatically lead ka naam aa jaayega. {project} → project naam</div>
-    </div>
-
-    <!-- Step 3: Lead list preview -->
-    <div class="bwa-section">
-      <div class="bwa-label" style="margin-bottom:6px;display:flex;justify-content:space-between">
-        <span>3. Leads List — Tap to Exclude</span>
-        <span id="bwaSelAll" onclick="bwaToggleAll()" style="color:var(--accent-primary);font-size:10px;cursor:pointer;text-transform:none;letter-spacing:0;font-weight:600">Deselect All</span>
-      </div>
-      <div class="bwa-lead-list" id="bwaLeadList"></div>
-    </div>
-
-    <!-- START button (main panel) -->
-    <button class="bwa-send-btn" id="bwaSendBtn" onclick="bwaBeginSend()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22,2 15,22 11,13 2,9"/></svg>
-      Start Sending — <span id="bwaSendCount">0</span> Leads
-    </button>
-    <div style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:6px">Har lead ka WA ek ek karke khulega — aap send karke wapas aana</div>
-    <button class="btn-secondary" onclick="closeBulkWA()" style="margin-top:8px">Bnd Karein</button>
-  </div><!-- end main panel -->
-
-  <!-- STEP PANEL — shown during sending -->
-  <div id="bwaStepPanel" style="display:none;padding:0 4px">
-    <div class="modal-handle"></div>
-    <div class="modal-title" style="display:flex;align-items:center;gap:8px">
-      <span>💬</span> WhatsApp Bhej Rahe Hain
-    </div>
-    <div id="bwaStepBox"></div>
-    <button class="btn-secondary" onclick="closeBulkWA()" style="margin-top:10px">Roko / Band Karein</button>
-  </div>
-  </div>
-</div>
 
 </body>
 </html>
