@@ -2332,7 +2332,7 @@ function renderLeads(){
       // ─── MORE ACTIONS (hidden by default) ───
       +'<div class="lc-more" id="more-'+l.id+'" onclick="event.stopPropagation()">'+
         '<button class="lc-more-btn" onclick="openVisitModal(\''+ l.id +'\')">🏠 Visit</button>'+
-        '<button class="lc-more-btn" onclick="openContactModal(\''+ l.id +'\')">📱 Save</button>'+
+        '<button class="lc-more-btn" onclick="directSaveContact(leads.find(function(x){return x.id===\''+ l.id +'\';}))">📱 Save</button>'+
         '<button class="lc-more-btn" onclick="showLeadHistory(\''+ l.id +'\')">📖 History</button>'+
         '<button class="lc-more-btn" onclick="editLead(\''+ l.id +'\')">✏️ Edit</button>'+
       '</div>'
@@ -2413,6 +2413,7 @@ function renderFollowups(){
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="action-btn call" style="flex:1;min-width:60px" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
         <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
+        <button class="action-btn" style="flex:1;min-width:60px;border-color:rgba(167,139,250,.3);color:var(--accent-purple)" onclick="openLeadHistory('${l.id}')">📋 History</button>
         <button class="action-btn edit" style="flex:1;min-width:60px" onclick="editLead('${l.id}')">✏️ Edit</button>
       </div>
     </div>`;
@@ -2434,6 +2435,7 @@ function renderFollowups(){
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="action-btn call" style="flex:1;min-width:60px" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
         <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
+        <button class="action-btn" style="flex:1;min-width:60px;border-color:rgba(167,139,250,.3);color:var(--accent-purple)" onclick="openLeadHistory('${l.id}')">📋 History</button>
         <button class="action-btn edit" style="flex:1;min-width:60px" onclick="editLead('${l.id}')">✏️ Edit</button>
       </div>
     </div>`;
@@ -2649,13 +2651,56 @@ function openContactModal(id){
 }
 function doSaveContact(){
   const l=leads.find(x=>x.id===contactId);if(!l)return;
-  const vc=`BEGIN:VCARD\nVERSION:3.0\nFN:${l.name}\nTEL;TYPE=CELL:+91${l.phone}\nORG:${l.project||'RE Lead'}\nNOTE:RE Diary | ${l.project||''} | ${l.area||''} | ${l.status}\nEND:VCARD`;
-  const blob=new Blob([vc],{type:'text/vcard'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`${l.name.replace(/\s+/g,'_')}.vcf`;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-  closeContactModal();showToast('📱 .vcf file download hui — Open karke Save karo!','success');
+  directSaveContact(l);
+  closeContactModal();
+}
+
+// Seedha phone ka native contact save dialog open karo
+function directSaveContact(l){
+  if(!l)return;
+  var parts = (l.name||'').trim().split(' ');
+  var firstName = parts[0]||'';
+  var lastName = parts.slice(1).join(' ')||'';
+  var statusLabel = l.status==='hot'?'Ready to Buy':l.status==='warm'?'Interested':l.status==='cold'?'Thinking':l.status==='converted'?'Converted':'Lead';
+
+  var vc = 'BEGIN:VCARD\r\n'+
+           'VERSION:3.0\r\n'+
+           'FN:'+l.name+'\r\n'+
+           'N:'+lastName+';'+firstName+';;;\r\n'+
+           'TEL;TYPE=CELL,VOICE:+91'+l.phone+'\r\n'+
+           (l.area?'ADR;TYPE=HOME:;;'+l.area+';Jaipur;Rajasthan;;India\r\n':'')+
+           'ORG:'+(l.project||'RE Lead')+'; Leado CRM\r\n'+
+           'TITLE:'+statusLabel+'\r\n'+
+           'NOTE:Project: '+(l.project||'-')+' | Area: '+(l.area||'-')+' | Status: '+statusLabel+' | Source: '+(l.source||'-')+'\r\n'+
+           'END:VCARD';
+
+  var fileName = (l.name||'contact').replace(/[^\w\s]/g,'').replace(/\s+/g,'_')+'.vcf';
+  var blob = new Blob([vc],{type:'text/vcard'});
+
+  // Android — Web Share API se seedha Contacts app mein
+  if(navigator.share){
+    try{
+      var file = new File([blob], fileName, {type:'text/vcard'});
+      var canShareFile = navigator.canShare && navigator.canShare({files:[file]});
+      if(canShareFile){
+        navigator.share({files:[file], title:l.name})
+          .then(function(){ showToast('✅ Contact save ho gaya!','success'); })
+          .catch(function(e){ if(e.name!=='AbortError') _vcfDownload(blob,fileName); });
+        return;
+      }
+    }catch(e){ /* fallback */ }
+  }
+  // Fallback — direct download, open karke save hoga
+  _vcfDownload(blob, fileName);
+}
+
+function _vcfDownload(blob, fileName){
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = fileName;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  showToast('📱 VCF download hui — Open karke Save karein!','success');
 }
 function closeContactModal(){document.getElementById('contactModal').classList.remove('active');contactId=null;}
 
@@ -2910,6 +2955,7 @@ function closeCallModal(){clearInterval(_callTimerInterval);_callStartTime=null;
 function closeCallHistoryModal(){document.getElementById('callHistoryModal').classList.remove('active');}
 
 // ===== LEAD HISTORY =====
+function openLeadHistory(id){ showLeadHistory(id); }
 function showLeadHistory(id){
   var l=leads.find(function(x){return x.id===id;});
   if(!l){showToast('⚠️ Lead nahi mila');return;}
