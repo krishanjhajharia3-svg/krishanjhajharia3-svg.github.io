@@ -409,7 +409,7 @@ body{font-family:'Inter','Noto Sans Devanagari',sans-serif;background:var(--bg-p
 
 /* ===== NOTIFICATION POPUP ===== */
 .notif-close{display:inline-block;margin-top:10px;padding:8px 16px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);border-radius:8px;color:#ffffff;font-size:12px;font-weight:600;cursor:pointer;text-align:center;width:100%}
-.notif-popup{position:fixed;top:70px;left:12px;right:12px;background:linear-gradient(135deg,#1a2235,#111827);border:1px solid rgba(212,168,67,.3);border-radius:16px;padding:14px 16px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.5);display:none;animation:slideDown .3s ease}
+.notif-popup{position:fixed;top:70px;left:12px;right:12px;background:var(--bg-card);border:1px solid rgba(212,168,67,.3);border-radius:16px;padding:14px 16px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.3);display:none;animation:slideDown .3s ease}
 .notif-popup.show{display:block}
 @keyframes slideDown{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
 .notif-title{font-family:'Inter',sans-serif;font-size:15px;font-weight:700;color:#f0c96a;margin-bottom:8px}
@@ -955,6 +955,12 @@ body.light-mode .home-today-item{color:#1a1a2e!important}
 body.light-mode .today-label{color:#546e7a!important}
 body.light-mode .today-count{color:#1a1a2e!important}
 
+body.light-mode .notif-popup{background:#ffffff!important;border-color:rgba(212,168,67,.4)!important;box-shadow:0 8px 32px rgba(0,0,0,.15)!important}
+body.light-mode .notif-name{color:#0f1923!important}
+body.light-mode .notif-item{border-color:#e2e8f0!important}
+body.light-mode .notif-title{color:#0f1923!important}
+body.light-mode .notif-time{color:#546e7a!important}
+body.light-mode .notif-close{background:rgba(0,0,0,.08)!important;border-color:rgba(0,0,0,.15)!important;color:#0f1923!important}
 </style>
 
 <!-- OneSignal Push Notifications -->
@@ -1574,77 +1580,6 @@ body.light-mode .today-count{color:#1a1a2e!important}
   </div>
 </div>
 
-
-
-    <div class="modal-title" style="color:var(--accent-primary)">📷 Card Scanner</div>
-    
-    <!-- Camera / Upload choice -->
-    <div id="scannerChoice" style="display:block">
-      <p style="font-size:12px;color:var(--text-secondary);text-align:center;margin-bottom:16px;line-height:1.6">Visiting card ka photo lo ya gallery se choose karo — AI naam, number, company automatic fill kar dega</p>
-      <input type="file" id="cardImageInput" accept="image/*" capture="environment" style="display:none" onchange="processCardImage(this)">
-      <button class="btn-primary" onclick="document.getElementById('cardImageInput').click()" style="margin-bottom:8px">
-        📸 Camera se Photo Lo
-      </button>
-      <input type="file" id="cardGalleryInput" accept="image/*" style="display:none" onchange="processCardImage(this)">
-      <button class="btn-secondary" onclick="document.getElementById('cardGalleryInput').click()" style="margin-bottom:8px">
-        🖼️ Gallery se Choose Karo
-      </button>
-      <button class="btn-secondary" onclick="closeCardScanner()">रद्द करें</button>
-    </div>
-    
-    <!-- Processing state -->
-    <div id="scannerProcessing" style="display:none;text-align:center;padding:20px 0">
-      <div style="font-size:32px;margin-bottom:12px">🤖</div>
-      <div style="font-size:14px;color:var(--text-primary);font-weight:600;margin-bottom:6px">Card Read हो रहा है...</div>
-      <div style="font-size:12px;color:var(--text-secondary)">Naam, number, company dhundh raha hai — thoda time lagega</div>
-      <div style="margin-top:16px;height:4px;background:var(--bg-card2);border-radius:4px;overflow:hidden">
-        <div id="scanProgressBar" style="height:100%;width:0%;background:var(--accent-primary);border-radius:4px;transition:width .3s"></div>
-      </div>
-    </div>
-    
-    <!-- Result state -->
-    <div id="scannerResult" style="display:none">
-      <div style="background:var(--bg-card2);border-radius:12px;padding:12px;margin-bottom:14px">
-        <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px;font-weight:600">📋 AI ne yeh information mili:</div>
-        <div id="cardImagePreview" style="margin-bottom:10px;border-radius:8px;overflow:hidden;max-height:120px;text-align:center">
-          <img id="cardPreviewImg" style="max-height:120px;border-radius:8px;object-fit:contain" src="" alt="card">
-        </div>
-        <div style="margin-bottom:8px" id="rawTextBox">
-          <label class="form-label" style="color:var(--text-muted)">📄 Card ka Text (edit kar sakte ho)</label>
-          <textarea class="form-input" id="scanRawText" rows="3" style="font-size:10px;resize:none;color:var(--text-muted)"></textarea>
-        </div>
-        <div class="form-group" style="margin-bottom:8px">
-          <label class="form-label">👤 Naam</label>
-          <input class="form-input" id="scanName" type="text" placeholder="naam...">
-        </div>
-        <div class="form-group" style="margin-bottom:8px">
-          <label class="form-label">📱 Phone</label>
-          <input class="form-input" id="scanPhone" type="tel" placeholder="number...">
-        </div>
-        <div class="form-group" style="margin-bottom:8px">
-          <label class="form-label">🏢 Company</label>
-          <input class="form-input" id="scanCompany" type="text" placeholder="company...">
-        </div>
-        <div class="form-group" style="margin-bottom:0">
-          <label class="form-label">📍 Area</label>
-          <input class="form-input" id="scanArea" type="text" placeholder="area/city...">
-        </div>
-      </div>
-      <button class="btn-primary" onclick="applyScannedCard()" style="margin-bottom:8px">✅ Lead Form mein Fill Karo</button>
-      <button class="btn-secondary" onclick="rescanCard()">🔄 Dobara Scan Karo</button>
-      <button class="btn-secondary" onclick="closeCardScanner()" style="margin-top:4px">रद्द करें</button>
-    </div>
-    
-    <!-- Error state -->
-    <div id="scannerError" style="display:none;text-align:center;padding:16px 0">
-      <div style="font-size:28px;margin-bottom:10px">😕</div>
-      <div style="font-size:13px;color:var(--text-primary);font-weight:600;margin-bottom:6px" id="scanErrorMsg">Card read nahi hua</div>
-      <div style="font-size:11px;color:var(--text-secondary);margin-bottom:16px">Clear photo lo — card seedha aur achhi roshni mein ho</div>
-      <button class="btn-primary" onclick="rescanCard()" style="margin-bottom:8px">🔄 Dobara Try Karo</button>
-      <button class="btn-secondary" onclick="closeCardScanner()">रद्द करें</button>
-    </div>
-  </div>
-</div>
 
 <!-- ONBOARDING SCREEN -->
 <div id="onboardScreen">
