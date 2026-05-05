@@ -3454,6 +3454,28 @@ function renderWeeklyChart(){
   }).join('');
 }
 // ===== END WEEKLY CHART =====
+
+// ===== FOLLOW-UP DONE =====
+function markFollowupDone(id){
+  var idx = leads.findIndex(function(l){ return l.id === id; });
+  if(idx < 0) return;
+  var l = leads[idx];
+  // Default followup days settings se lo
+  try{ loadSettings(); }catch(e){}
+  var days = getSetting('defaultFollowupDays', 3);
+  // Next date calculate karo
+  var nextDate = new Date();
+  nextDate.setDate(nextDate.getDate() + days);
+  var nextDateStr = nextDate.toISOString().split('T')[0];
+  leads[idx].nextDate = nextDateStr;
+  leads[idx].lastUpdated = new Date().toISOString();
+  saveData();
+  renderFollowups();
+  updateStats();
+  if(typeof syncToFirestore === 'function') setTimeout(syncToFirestore, 1000);
+  showToast('✅ Done! Next follow-up ' + days + ' din baad set ho gaya', 'success');
+}
+// ===== END FOLLOW-UP DONE =====
 // ===== LEAD HISTORY =====
 function openLeadHistory(id){ showLeadHistory(id); }
 function showLeadHistory(id){
@@ -5528,7 +5550,13 @@ function requestNotifPermission(){
 window.addEventListener('load', function(){
   setTimeout(function(){
     requestNotifPermission();
+    startNotifScheduler();
   }, 3000);
+  // Weekly chart aur funnel render karo
+  setTimeout(function(){
+    if(typeof renderWeeklyChart === 'function') renderWeeklyChart();
+    if(typeof updateStats === 'function') updateStats();
+  }, 2000);
 });
 
 // Notification test function — Settings mein use hoga
