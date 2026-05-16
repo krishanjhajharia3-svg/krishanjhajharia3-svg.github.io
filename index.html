@@ -2109,6 +2109,22 @@ body.light-mode .notif-close{background:rgba(0,0,0,.08)!important;border-color:r
 let leads=JSON.parse(localStorage.getItem('re_leads')||'[]');
 let editingId=null,visitingId=null,contactId=null,currentFilter='all',deferredPrompt=null;
 
+// ✅ ONE-TIME CLEANUP — App load par purana duplicate data hatao
+(function cleanupOldStorage(){
+  try{
+    // 1. re_leads_backup tha — ab nahi chahiye (duplicate tha, ~32KB free)
+    localStorage.removeItem('re_leads_backup');
+    // 2. Sirf aaj aur kal ke snaps rakhein — baaki 5 din ke hatao (~100KB free)
+    var today = new Date().getDay();
+    var yesterday = (today + 6) % 7;
+    for(var d = 0; d < 7; d++){
+      if(d !== today && d !== yesterday){
+        localStorage.removeItem('re_leads_snap_' + d);
+      }
+    }
+  }catch(e){}
+})();
+
 // ✅ LAZY LOADING SYSTEM — Tab sirf tabhi render ho jab zaroorat ho
 // Dirty Flags: data change hone par true hote hain → tab switch par render trigger hoga
 window._leado_dirty = { leads:true, home:true, stats:true, followup:true, visits:true };
@@ -2222,12 +2238,29 @@ function updateUserUI(){
 }
 
 
+// ✅ FIX: JSON.stringify sirf ek baar, debounce snap writes
+let _snapWriteTimeout = null;
 function saveData(){
-  localStorage.setItem('re_leads',JSON.stringify(leads));
-  localStorage.setItem('re_leads_backup',JSON.stringify(leads));
-  localStorage.setItem('re_leads_backup_time',new Date().toISOString());
-  const day=new Date().getDay();
-  localStorage.setItem('re_leads_snap_'+day,JSON.stringify(leads));
+  // ✅ FIX 1: JSON.stringify ek hi baar call karo — same string reuse
+  const json = JSON.stringify(leads);
+  localStorage.setItem('re_leads', json);
+  // ✅ FIX 2: re_leads_backup HATAYA — ye re_leads ka exact duplicate tha
+  //           Sirf time stamp rakhein (data nahi)
+  localStorage.setItem('re_leads_backup_time', new Date().toISOString());
+  // ✅ FIX 3: Snap write debounce — har save par nahi, sirf 5s baad ek baar
+  //           Aur purane snaps (3+ din ke) delete karo — max 2 snaps rakhein
+  clearTimeout(_snapWriteTimeout);
+  _snapWriteTimeout = setTimeout(function(){
+    const today = new Date().getDay();
+    const yesterday = (today + 6) % 7;
+    // Sirf aaj aur kal ka snap rakhein — baaki delete karo
+    for(var d = 0; d < 7; d++){
+      if(d !== today && d !== yesterday){
+        localStorage.removeItem('re_leads_snap_' + d);
+      }
+    }
+    localStorage.setItem('re_leads_snap_' + today, json);
+  }, 5000);
   if(driveAccessToken){clearTimeout(window._autoBackupTimer);window._autoBackupTimer=setTimeout(()=>{performDriveBackup(true);},3000);}
   // Firebase Firestore sync
   if(window._fbUser && window._fbDb && window._fbFunctions){
