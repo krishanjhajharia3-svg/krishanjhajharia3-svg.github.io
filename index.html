@@ -54,9 +54,6 @@
 
       // Permission maango
       let permission = Notification.permission;
-      if (permission === 'default') {
-        permission = await Notification.requestPermission();
-      }
       if (permission !== 'granted') {
         console.log('[FCM] Notification permission denied');
         return;
@@ -128,7 +125,7 @@
 --accent-purple:#a78bfa;--accent-green:#25d366;
 --text-primary:#f0f4ff;--text-secondary:#6b7fa3;--text-muted:#374155;
 --border:#172035;--border-light:#1f2f47;--border-glow:rgba(79,124,255,0.2);
---radius:14px;--smooth:cubic-bezier(0.4,0,0.2,1);--fast:cubic-bezier(0.25,0.46,0.45,0.94);
+--radius:14px;--ease:cubic-bezier(0.4,0,0.2,1);--smooth:cubic-bezier(0.4,0,0.2,1);--fast:cubic-bezier(0.25,0.46,0.45,0.94);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{overscroll-behavior:none;overscroll-behavior-y:none}
@@ -840,6 +837,7 @@ body{font-family:'Inter','Noto Sans Devanagari',sans-serif;background:var(--bg-p
 .call-auto-duration{font-size:12px;color:var(--accent-teal);font-weight:600;background:rgba(0,201,167,.08);border:1px solid rgba(0,201,167,.2);border-radius:8px;padding:6px 10px;margin-top:6px;display:none}
 
 /* ===== LIGHT MODE ===== */
+body.amoled-mode{--bg-primary:#000;--bg-card:#0a0a0a;--bg-card2:#121212;--border:#1c1c1c;--border-light:#262626;background:#000!important;background-image:none!important}
 body.light-mode{
   --bg-primary:#f0f4f8;
   --bg-card:#ffffff;
@@ -1022,10 +1020,7 @@ body.light-mode .notif-close{background:rgba(0,0,0,.08)!important;border-color:r
       const isSubscribed = OneSignal.User.PushSubscription.optedIn;
       console.log('Subscribed:', isSubscribed);
       
-      if(!isSubscribed) {
-        // Permission maango
-        await OneSignal.Notifications.requestPermission();
-      }
+      // ✅ v3: permission एक ही जगह से माँगी जाती है (नीचे requestNotifPermission)
       
       // Player ID save karo
       setTimeout(async function() {
@@ -1036,7 +1031,7 @@ body.light-mode .notif-close{background:rgba(0,0,0,.08)!important;border-color:r
           
           // FCM Token bhi save karo — window._fbMessaging use karo (module scope fix)
           try {
-            if(window._fbMessaging && window._fbFunctions) {
+            if(window._fbMessaging && window._fbFunctions && window._fbAuth && window._fbAuth.currentUser) {
               const { doc, setDoc } = window._fbFunctions;
               const db = window._fbDb;
               // Dynamic import for getToken
@@ -1273,11 +1268,6 @@ body.light-mode .notif-close{background:rgba(0,0,0,.08)!important;border-color:r
       <div class="chip" onclick="setFilter('converted',this)">✅ Converted</div>
       <div class="chip" onclick="setFilter('dead',this)">🚫 Not Interested</div>
       <div class="chip" id="chipNoDate" onclick="setFilter('nodate',this)" style="border-color:rgba(240,180,41,.4);color:var(--accent-gold-light)">📅 Unfollowed</div>
-      <div class="chip" onclick="setFilter('Imperial Estate',this)">Imperial Estate</div>
-      <div class="chip" onclick="setFilter('Imperial Galaxy',this)">Imperial Galaxy</div>
-      <div class="chip" onclick="setFilter('Solitair Home',this)">Solitair Home</div>
-      <div class="chip" onclick="setFilter('Dream Town',this)">Dream Town</div>
-      <div class="chip" onclick="setFilter('Govind Vihar',this)">Govind Vihar</div>
     </div>
     <div id="leadsContainer"></div>
   </div>
@@ -1834,7 +1824,7 @@ body.light-mode .notif-close{background:rgba(0,0,0,.08)!important;border-color:r
 
 
 
-    <div style="text-align:center;padding:8px;font-size:10px;color:var(--text-muted)">Leado CRM v2.0 · Made with ❤️ for Real Estate</div>
+    <div style="text-align:center;padding:8px;font-size:10px;color:var(--text-muted)">Leado CRM v3.0 · Made with ❤️ for Real Estate</div>
   </div>
 </div>
 <!-- ═══════ END SETTINGS MODAL ═══════ -->
@@ -2106,6 +2096,60 @@ body.light-mode .notif-close{background:rgba(0,0,0,.08)!important;border-color:r
 <div class="toast" id="toast"></div>
 
 <script>
+// ===== HELPERS (v3) =====
+function localDateStr(d){d=d||new Date();if(!(d instanceof Date))d=new Date(d);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function todayStr(){return localDateStr(new Date());}
+function isoToLocalDate(iso){if(!iso)return '';var d=new Date(iso);return isNaN(d)?'':localDateStr(d);}
+function parseLocalDate(ds){if(!ds)return new Date(NaN);var p=String(ds).split('-');return new Date(+p[0],(+p[1])-1,+p[2]);}
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function jsq(v){return String(v==null?'':v).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function waNumber(phone){var d=String(phone||'').replace(/\D/g,'');if(d.length>10)d=d.slice(-10);return '91'+d;}
+function getDeletedIds(){try{return JSON.parse(localStorage.getItem('re_deleted_ids')||'[]');}catch(e){return [];}}
+function addDeletedIds(ids){var s=getDeletedIds();ids.forEach(function(i){if(i&&s.indexOf(i)<0)s.push(i);});if(s.length>3000)s=s.slice(-3000);localStorage.setItem('re_deleted_ids',JSON.stringify(s));}
+function untombstoneCurrent(){var ids={};leads.forEach(function(l){ids[l.id]=1;});localStorage.setItem('re_deleted_ids',JSON.stringify(getDeletedIds().filter(function(i){return !ids[i];})));}
+function mergeLeadLists(local,cloud,deleted){
+  var del={};(deleted||[]).forEach(function(i){del[i]=1;});
+  var map={};
+  (local||[]).forEach(function(l){if(l&&l.id&&!del[l.id])map[l.id]=l;});
+  (cloud||[]).forEach(function(c){
+    if(!c||!c.id||del[c.id])return;
+    var l=map[c.id];
+    if(!l){map[c.id]=c;return;}
+    var lt=l.lastUpdated||l.createdAt||'',ct=c.lastUpdated||c.createdAt||'';
+    if(ct>lt){var m=Object.assign({},c);if(!m.visitPhotosLocal&&l.visitPhotosLocal)m.visitPhotosLocal=l.visitPhotosLocal;map[c.id]=m;}
+  });
+  return Object.keys(map).map(function(k){return map[k];}).sort(function(a,b){return (b.createdAt||'').localeCompare(a.createdAt||'');});
+}
+function refreshAll(){
+  try{renderLeads();}catch(e){}
+  try{renderFollowups();}catch(e){}
+  try{renderVisits();}catch(e){}
+  try{updateStats();}catch(e){}
+  try{renderHomeDashboard();}catch(e){}
+  try{renderProjectChips();}catch(e){}
+}
+// फ़ोटो छोटा करें (compress)
+function compressDataUrl(src,maxDim,quality){
+  return new Promise(function(res,rej){
+    var img=new Image();
+    img.onload=function(){
+      var sc=Math.min(1,maxDim/Math.max(img.width,img.height));
+      var c=document.createElement('canvas');
+      c.width=Math.max(1,Math.round(img.width*sc));c.height=Math.max(1,Math.round(img.height*sc));
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      res(c.toDataURL('image/jpeg',quality));
+    };
+    img.onerror=rej;img.src=src;
+  });
+}
+function compressImage(file,maxDim,quality){
+  return new Promise(function(res,rej){
+    var fr=new FileReader();
+    fr.onload=function(e){compressDataUrl(e.target.result,maxDim,quality).then(res,rej);};
+    fr.onerror=rej;fr.readAsDataURL(file);
+  });
+}
+// ===== END HELPERS =====
 let leads=JSON.parse(localStorage.getItem('re_leads')||'[]');
 let editingId=null,visitingId=null,contactId=null,currentFilter='all',deferredPrompt=null;
 
@@ -2200,7 +2244,8 @@ function updateUserUI(){
   if(headerName) headerName.textContent = fname ? fname+' Ji' : 'Leado';
   
   const headerSub = document.getElementById('headerSub');
-  if(headerSub) headerSub.textContent = fname ? 'Real Estate · '+(city||'Jaipur') : 'Real Estate CRM';
+  var _prof='Real Estate'; try{ _prof = getSetting('profession','Real Estate') || 'Real Estate'; }catch(e){}
+  if(headerSub) headerSub.textContent = fname ? _prof+' · '+(city||'Jaipur') : 'Real Estate CRM';
   
   // Header avatar — initials + blue gradient
   const headerAvatar = document.getElementById('headerAvatar');
@@ -2213,6 +2258,8 @@ function updateUserUI(){
     headerAvatar.style.fontSize = initials.length > 1 ? '14px' : '18px';
     headerAvatar.style.fontWeight = '700';
     headerAvatar.style.letterSpacing = '-.5px';
+    var _ph=''; try{ _ph = getSetting('profilePhoto',''); }catch(e){}
+    if(_ph) headerAvatar.innerHTML = '<img src="'+_ph+'" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">';
   }
   
   // Splash credit
@@ -2243,7 +2290,14 @@ let _snapWriteTimeout = null;
 function saveData(){
   // ✅ FIX 1: JSON.stringify ek hi baar call karo — same string reuse
   const json = JSON.stringify(leads);
-  localStorage.setItem('re_leads', json);
+  try{
+    localStorage.setItem('re_leads', json);
+  }catch(err){
+    // ✅ v3: memory भर गई — पुराने snapshots हटाकर दोबारा कोशिश
+    for(var _d=0;_d<7;_d++) localStorage.removeItem('re_leads_snap_'+_d);
+    try{ localStorage.setItem('re_leads', json); }
+    catch(err2){ showToast('⚠️ फ़ोन की memory भर गई! पुरानी visit फ़ोटो हटाएँ या Backup लें'); return; }
+  }
   // ✅ FIX 2: re_leads_backup HATAYA — ye re_leads ka exact duplicate tha
   //           Sirf time stamp rakhein (data nahi)
   localStorage.setItem('re_leads_backup_time', new Date().toISOString());
@@ -2391,16 +2445,20 @@ async function checkAndLoadUserProfile(){
 
 
 async function syncToFirestore(){
+  if(!window._fbUser || !window._fbDb || !window._fbFunctions) return;
   try{
     const { doc, setDoc } = window._fbFunctions;
     const uid = window._fbUser.uid;
     const ref = doc(window._fbDb, 'users', uid, 'data', 'leads');
-    await setDoc(ref, { leads: leads, updatedAt: new Date().toISOString(), totalLeads: leads.length });
+    // ✅ v3: फ़ोन वाली फ़ोटो cloud में नहीं जाती (1MB limit) + undefined values साफ़
+    const cloudLeads = JSON.parse(JSON.stringify(leads.map(function(l){ if(!l.visitPhotosLocal) return l; var c=Object.assign({},l); delete c.visitPhotosLocal; return c; })));
+    await setDoc(ref, { leads: cloudLeads, deletedIds: getDeletedIds(), updatedAt: new Date().toISOString(), totalLeads: leads.length });
     updateFirebaseSyncStatus('✅ Cloud sync ho gaya!', 'success');
   }catch(e){ updateFirebaseSyncStatus('⚠️ Sync fail: '+e.message); }
 }
 
 async function loadFromFirestore(){
+  if(!window._fbUser || !window._fbDb || !window._fbFunctions) return;
   try{
     const { doc, getDoc } = window._fbFunctions;
     const uid = window._fbUser.uid;
@@ -2408,29 +2466,21 @@ async function loadFromFirestore(){
     const snap = await getDoc(ref);
     if(snap.exists()){
       const data = snap.data();
-      if(data.leads && Array.isArray(data.leads)){
-        const localCount = leads.length;
-        const cloudCount = data.leads.length;
-        if(cloudCount > 0){
-          if(localCount === 0){
-            leads = data.leads;
-            saveData();
-            renderLeads(); renderFollowups(); renderVisits(); updateStats(); renderHomeDashboard();
-            showToast(`☁️ ${cloudCount} leads cloud se load ho gaye!`,'success');
-          } else if(cloudCount !== localCount){
-            if(confirm(`Cloud mein ${cloudCount} leads hain, device mein ${localCount} leads hain.\n\nCloud se restore karein?`)){
-              leads = data.leads;
-              saveData();
-              renderLeads(); renderFollowups(); renderVisits(); updateStats(); renderHomeDashboard();
-              showToast(`✅ ${cloudCount} leads restore ho gaye!`,'success');
-            }
-          } else {
-            showToast(`✅ Cloud sync active — ${cloudCount} leads synced`,'success');
-          }
-        }
+      const cloudLeads = Array.isArray(data.leads) ? data.leads : [];
+      // ✅ v3: गिनती नहीं, हर lead को उसके lastUpdated से मिलाकर merge करो
+      const deleted = Array.from(new Set(getDeletedIds().concat(data.deletedIds||[])));
+      localStorage.setItem('re_deleted_ids', JSON.stringify(deleted));
+      const before = JSON.stringify(leads);
+      leads = mergeLeadLists(leads, cloudLeads, deleted);
+      if(JSON.stringify(leads) !== before){
+        saveData();
+        refreshAll();
+        showToast('☁️ Cloud से sync हो गया — '+leads.length+' leads','success');
+      } else {
+        showToast('✅ Cloud sync active — '+leads.length+' leads','success');
       }
+      syncToFirestore();
     } else {
-      // Naya user — local data cloud mein sync karo
       if(leads.length > 0) syncToFirestore();
     }
   }catch(e){ showToast('⚠️ Cloud load fail: '+e.message); }
@@ -2594,7 +2644,7 @@ function renderLeads(){
       var bc=b.callHistory&&b.callHistory.length?b.callHistory[b.callHistory.length-1].date:'';
       return ac>bc?-1:1;
     }
-    const o={hot:0,warm:1,cold:2,converted:3};return(o[a.status]||2)-(o[b.status]||2);
+    const o={hot:0,warm:1,cold:2,converted:3,dead:4};const sa=(a.status in o)?o[a.status]:2,sb=(b.status in o)?o[b.status]:2;if(sa!==sb)return sa-sb;return (a.nextDate||'9999').localeCompare(b.nextDate||'9999');
   });
 
   window._filteredLeads=filtered;
@@ -2610,9 +2660,9 @@ function renderLeads(){
 
   // ✅ Lead card builder v4 — Professional redesign
   function buildCard(l){
-    const isOD=l.nextDate&&new Date(l.nextDate)<new Date()&&l.status!=='converted';
+    const isOD=l.nextDate&&l.nextDate<todayStr()&&l.status!=='converted'&&l.status!=='dead';
     // Avatar initials from name
-    const initials=l.name.trim().split(' ').slice(0,2).map(w=>w[0]||'?').join('').toUpperCase();
+    const initials=esc((l.name||'?').trim().split(' ').slice(0,2).map(w=>w[0]||'?').join('').toUpperCase());
     const proj=(l.project||''). replace(/'/g,'`');
     const hasNotes=l.lastTalk||(l.callHistory&&l.callHistory.length);
     // Last call time calculate karo
@@ -2632,26 +2682,26 @@ function renderLeads(){
       +'<div class="lc-head">'+
         '<div class="lc-avatar lc-av-'+l.status+'">'+initials+'</div>'+
         '<div class="lc-info">'+
-          '<div class="lc-name">'+l.name+'</div>'+
-          '<div class="lc-phone">📱 '+l.phone+'</div>'+
+          '<div class="lc-name">'+esc(l.name)+'</div>'+
+          '<div class="lc-phone">📱 '+esc(l.phone)+'</div>'+
         '</div>'+
         '<span class="lc-badge badge-'+l.status+'">'+( slabel[l.status]||l.status )+'</span>'+
       '</div>'
       // ─── TAGS: Project, Date, Visit ───
       +'<div class="lc-tags">'+
-        (l.project?'<span class="lc-tag lc-tag-proj">🏗 '+l.project+'</span>':'')+
+        (l.project?'<span class="lc-tag lc-tag-proj">🏗 '+esc(l.project)+'</span>':'')+
         (l.visited?'<span class="lc-tag lc-tag-visit">🏠 Visited '+(l.visitDate?formatDate(l.visitDate):'')+'</span>':'')+
         (isOD?'<span class="lc-tag lc-tag-overdue">⚠ Overdue: '+formatDate(l.nextDate)+'</span>':
          l.nextDate?'<span class="lc-tag lc-tag-date">📅 '+formatDate(l.nextDate)+'</span>':'')+
         (lastCallDays?'<span class="lc-tag" style="background:rgba('+( l.callHistory&&l.callHistory.length&&l.callHistory[l.callHistory.length-1].result==='connected'?'0,201,167,.1':'255,77,109,.08')+')";border:1px solid rgba('+( l.callHistory&&l.callHistory.length&&l.callHistory[l.callHistory.length-1].result==='connected'?'0,201,167,.25':'255,77,109,.25')+')";color:var(--text-secondary)">📞 '+lastCallDays+'</span>':'')+
-        (l.source?'<span class="lc-tag" style="background:rgba(107,127,163,.08);color:var(--text-secondary);border:1px solid var(--border)">'+l.source+'</span>':'')+
+        (l.source?'<span class="lc-tag" style="background:rgba(107,127,163,.08);color:var(--text-secondary);border:1px solid var(--border)">'+esc(l.source)+'</span>':'')+
       '</div>'
       // ─── NOTES ───
-      +(hasNotes?'<div class="lc-notes">'+(callInfo||'')+( callInfo&&l.lastTalk?' · ':'')+( l.lastTalk||'')+'</div>':''  )
+      +(hasNotes?'<div class="lc-notes">'+(callInfo||'')+( callInfo&&l.lastTalk?' · ':'')+esc( l.lastTalk||'')+'</div>':''  )
       // ─── PRIMARY ACTIONS ───
       +'<div class="lc-actions" onclick="event.stopPropagation()">'+
         '<button class="lc-btn-call" onclick="callLead(\''+ l.id +'\',\''+ l.phone +'\')">📞 Call</button>'+
-        '<button class="lc-btn-wa" onclick="waLead(\''+ l.phone +'\',\''+ proj+'\')">💬 WhatsApp</button>'+
+        '<button class="lc-btn-wa" onclick="waLeadById(\''+ l.id +'\')">💬 WhatsApp</button>'+
         '<button class="lc-btn-more" onclick="toggleLC(\'more-'+l.id+'\',this)" title="More actions">···</button>'+
       '</div>'
       // ─── MORE ACTIONS (hidden by default) ───
@@ -2683,19 +2733,19 @@ function renderVisits(){
   const visited=leads.filter(l=>l.visited).sort((a,b)=>new Date(b.visitDate||0)-new Date(a.visitDate||0));
   const c=document.getElementById('visitsContainer');
   if(!visited.length){c.innerHTML=`<div class="empty-state"><div class="empty-icon">🏠</div><div class="empty-title">अभी कोई Site Visit नहीं</div><div class="empty-sub">Lead card par 🏠 Visit dabao</div></div>`;return;}
-  const sl={hot:'🔥 Ready to Buy',warm:'⭐ Interested',cold:'❄️ Thinking',converted:'✅ Deal Done'};
+  const sl={hot:'🔥 Ready to Buy',warm:'⭐ Interested',cold:'❄️ Thinking',converted:'✅ Deal Done',dead:'🚫 Not Interested'};
   c.innerHTML=visited.map(l=>`
     <div class="visit-card">
       <div class="visit-header">
-        <div><div class="visit-name">${l.name}</div><div style="font-size:12px;color:var(--accent-teal)">📱 ${l.phone}</div></div>
+        <div><div class="visit-name">${esc(l.name)}</div><div style="font-size:12px;color:var(--accent-teal)">📱 ${l.phone}</div></div>
         <div class="visit-date-badge">${l.visitDate?formatDate(l.visitDate):'—'}</div>
       </div>
       <div class="visit-meta">
-        <span class="visit-meta-item">🏗️ ${l.project||'—'}</span>
-        <span class="visit-meta-item">📍 ${l.area||'—'}</span>
+        <span class="visit-meta-item">🏗️ ${esc(l.project||'—')}</span>
+        <span class="visit-meta-item">📍 ${esc(l.area||'—')}</span>
         <span class="status-badge badge-${l.status}" style="font-size:10px">${sl[l.status]||l.status}</span>
       </div>
-      ${l.visitNotes?`<div class="visit-notes">💬 ${l.visitNotes}</div>`:''}
+      ${l.visitNotes?`<div class="visit-notes">💬 ${esc(l.visitNotes)}</div>`:''}
       ${(l.visitPhotos&&l.visitPhotos.length)||(l.visitPhotosLocal&&l.visitPhotosLocal.length)?`
         <div style="margin-top:8px">
           <div style="font-size:11px;color:var(--accent-purple);margin-bottom:6px">📸 ${(l.visitPhotos||l.visitPhotosLocal||[]).length} Photos</div>
@@ -2706,7 +2756,7 @@ function renderVisits(){
       }
       <div class="visit-actions">
         <button class="action-btn call" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
-        <button class="action-btn whatsapp" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
+        <button class="action-btn whatsapp" onclick="waLeadById('${l.id}')">💬 WA</button>
         <button class="action-btn savecon" onclick="openContactModal('${l.id}')">📱 Save</button>
         <button class="action-btn edit" onclick="editLead('${l.id}')">✏️ Edit</button>
         <button class="action-btn" style="border-color:rgba(255,77,109,.3);color:var(--accent-red)" onclick="removeVisit('${l.id}')">❌ Remove</button>
@@ -2716,13 +2766,13 @@ function renderVisits(){
 }
 
 function renderFollowups(){
-  const today=new Date();today.setHours(0,0,0,0);
-  const up=leads.filter(l=>l.nextDate&&new Date(l.nextDate)>=today&&l.status!=='converted'&&l.status!=='dead').sort((a,b)=>new Date(a.nextDate)-new Date(b.nextDate));
-  const od=leads.filter(l=>l.nextDate&&new Date(l.nextDate)<today&&l.status!=='converted'&&l.status!=='dead').sort((a,b)=>new Date(b.nextDate)-new Date(a.nextDate));
+  const today=todayStr();
+  const up=leads.filter(l=>l.nextDate&&l.nextDate>=today&&l.status!=='converted'&&l.status!=='dead').sort((a,b)=>(a.nextDate+(a.nextTime||'')).localeCompare(b.nextDate+(b.nextTime||'')));
+  const od=leads.filter(l=>l.nextDate&&l.nextDate<today&&l.status!=='converted'&&l.status!=='dead').sort((a,b)=>b.nextDate.localeCompare(a.nextDate));
   const mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const slabel={hot:'🔥',warm:'⭐',cold:'❄️',dead:'🚫',converted:'✅'};
   document.getElementById('followupContainer').innerHTML=up.length?up.map(l=>{
-    const d=new Date(l.nextDate);
+    const d=parseLocalDate(l.nextDate);
     const isToday=d.toDateString()===new Date().toDateString();
     return `<div class="followup-item" style="flex-direction:column;align-items:stretch;padding:12px">
       <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
@@ -2730,21 +2780,21 @@ function renderFollowups(){
           ${isToday?`<div class="followup-day" style="font-size:13px">आज</div><div class="followup-month">TODAY</div>`:`<div class="followup-day">${d.getDate()}</div><div class="followup-month">${mo[d.getMonth()]}</div>`}
         </div>
         <div class="followup-info" style="flex:1">
-          <div class="followup-name">${l.name} ${slabel[l.status]||''} <span style="font-size:10px;color:var(--text-muted)">${l.phone}</span></div>
-          <div class="followup-time">⏰ ${l.nextTime||'Time nahi'} | 🏗️ ${l.project||'—'}</div>
-          <div class="followup-note">${l.nextNote||l.lastTalk||'—'}</div>
+          <div class="followup-name">${esc(l.name)} ${slabel[l.status]||''} <span style="font-size:10px;color:var(--text-muted)">${l.phone}</span></div>
+          <div class="followup-time">⏰ ${l.nextTime||'Time nahi'} | 🏗️ ${esc(l.project||'—')}</div>
+          <div class="followup-note">${esc(l.nextNote||l.lastTalk||'—')}</div>
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="action-btn call" style="flex:1;min-width:60px" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
-        <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
+        <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLeadById('${l.id}')">💬 WA</button>
         <button class="action-btn" style="flex:1;min-width:60px;border-color:rgba(167,139,250,.3);color:var(--accent-purple)" onclick="openLeadHistory('${l.id}')">📋 History</button>
         <button class="action-btn edit" style="flex:1;min-width:60px" onclick="editLead('${l.id}')">✏️ Edit</button>
       </div>
     </div>`;
   }).join(''):`<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">कोई Follow-Up नहीं</div><div class="empty-sub">Lead add karte waqt date set karo</div></div>`;
   document.getElementById('overdueContainer').innerHTML=od.length?od.map(l=>{
-    const d=new Date(l.nextDate);
+    const d=parseLocalDate(l.nextDate);
     return `<div class="followup-item" style="border-color:rgba(255,77,109,.3);flex-direction:column;align-items:stretch;padding:12px">
       <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
         <div class="followup-date-box" style="border-color:rgba(255,77,109,.3)">
@@ -2752,14 +2802,14 @@ function renderFollowups(){
           <div class="followup-month">${mo[d.getMonth()]}</div>
         </div>
         <div class="followup-info" style="flex:1">
-          <div class="followup-name">${l.name} ${slabel[l.status]||''}<span class="overdue-badge">Overdue!</span></div>
-          <div class="followup-time" style="color:var(--accent-red)">📞 ${l.phone} | 🏗️ ${l.project||'—'}</div>
-          <div class="followup-note">${l.nextNote||l.lastTalk||'—'}</div>
+          <div class="followup-name">${esc(l.name)} ${slabel[l.status]||''}<span class="overdue-badge">Overdue!</span></div>
+          <div class="followup-time" style="color:var(--accent-red)">📞 ${l.phone} | 🏗️ ${esc(l.project||'—')}</div>
+          <div class="followup-note">${esc(l.nextNote||l.lastTalk||'—')}</div>
         </div>
       </div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <button class="action-btn call" style="flex:1;min-width:60px" onclick="callLead('${l.id}','${l.phone}')">📞 Call</button>
-        <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLead('${l.phone}','${(l.project||'').replace(/'/g,'`')}')">💬 WA</button>
+        <button class="action-btn whatsapp" style="flex:1;min-width:60px" onclick="waLeadById('${l.id}')">💬 WA</button>
         <button class="action-btn" style="flex:1;min-width:60px;border-color:rgba(167,139,250,.3);color:var(--accent-purple)" onclick="openLeadHistory('${l.id}')">📋 History</button>
         <button class="action-btn edit" style="flex:1;min-width:60px" onclick="editLead('${l.id}')">✏️ Edit</button>
       </div>
@@ -2775,8 +2825,9 @@ function addToCalendar(id){
   const detail=encodeURIComponent(`Lead: ${l.name}\nPhone: ${l.phone}\nProject: ${l.project||'—'}\nStatus: ${l.status}\nNote: ${l.nextNote||l.lastTalk||'—'}\n\nRE Diary App`);
   const dp=l.nextDate.split('-'),tp=(l.nextTime||'10:00').split(':');
   const sdt=`${dp[0]}${dp[1]}${dp[2]}T${tp[0]}${tp[1]}00`;
-  const ed=new Date(l.nextDate+'T'+(l.nextTime||'10:00'));ed.setMinutes(ed.getMinutes()+30);
-  const edt=ed.toISOString().replace(/[-:]/g,'').split('.')[0];
+  const ed=new Date(+dp[0],(+dp[1])-1,+dp[2],+tp[0],(+tp[1])+30);
+  const _p=n=>String(n).padStart(2,'0');
+  const edt=`${ed.getFullYear()}${_p(ed.getMonth()+1)}${_p(ed.getDate())}T${_p(ed.getHours())}${_p(ed.getMinutes())}00`;
   window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${sdt}/${edt}&details=${detail}&location=${encodeURIComponent('Jaipur, Rajasthan')}`,'_blank');
   showToast('✅ Google Calendar khul raha hai!','success');
 }
@@ -2789,9 +2840,14 @@ function handlePhotoSelect(event){
   const toAdd=files.slice(0,remaining);
   if(files.length>remaining)showToast(`⚠️ Max 5 photos — sirf ${remaining} add ho sakti hain`);
   toAdd.forEach(file=>{
-    const reader=new FileReader();
-    reader.onload=(e)=>{selectedPhotos.push({name:file.name,type:file.type,dataUrl:e.target.result,size:file.size});updatePhotoPreview();};
-    reader.readAsDataURL(file);
+    // ✅ v3: फ़ोटो compress — Drive के लिए 1280px, फ़ोन में सिर्फ़ छोटा thumbnail (480px)
+    compressImage(file,1280,0.75).then(function(full){
+      return compressDataUrl(full,480,0.6).then(function(thumb){
+        if(selectedPhotos.length>=5)return;
+        selectedPhotos.push({name:file.name,type:'image/jpeg',dataUrl:full,thumb:thumb,size:full.length});
+        updatePhotoPreview();
+      });
+    }).catch(function(){showToast('⚠️ यह फ़ोटो खुल नहीं पाई');});
   });
   event.target.value='';
 }
@@ -2807,7 +2863,7 @@ function updatePhotoPreview(){
   else{driveStatus.style.display='block';driveStatus.innerHTML='💡 <strong style="color:var(--accent-gold)">Drive mein save karne ke liye</strong> Export → Google Drive Backup se pehle login karein<br><span style="color:var(--text-muted)">Ya photos sirf is device pe save hongi</span>';}
   grid.innerHTML=selectedPhotos.map((p,i)=>`
     <div style="position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:1px solid var(--border)">
-      <img src="${p.dataUrl}" style="width:100%;height:100%;object-fit:cover">
+      <img src="${p.thumb||p.dataUrl}" style="width:100%;height:100%;object-fit:cover">
       <button onclick="removePhoto(${i})" style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.7);border:none;color:white;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
     </div>`).join('');
 }
@@ -2830,7 +2886,7 @@ async function uploadPhotosToDrive(leadId,leadName){
       const uploadRes=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart',{method:'POST',headers:{Authorization:`Bearer ${driveAccessToken}`},body:form});
       if(uploadRes.ok){
         const file=await uploadRes.json();
-        await fetch(`https://www.googleapis.com/drive/v3/files/${file.id}/permissions`,{method:'POST',headers:{Authorization:`Bearer ${driveAccessToken}`,'Content-Type':'application/json'},body:JSON.stringify({role:'reader',type:'anyone'})});
+        // ✅ v3: फ़ोटो अब public नहीं होतीं — सिर्फ़ आपके Google account में दिखेंगी
         links.push({id:file.id,name:fileName,url:`https://drive.google.com/file/d/${file.id}/view`});
       }
     }
@@ -2850,7 +2906,7 @@ function openVisitModal(id){
   document.getElementById('vName').textContent=l.name;
   document.getElementById('vPhone').textContent='📱 '+l.phone;
   document.getElementById('vProject').textContent='🏗️ '+(l.project||'—');
-  document.getElementById('vDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('vDate').value=localDateStr(new Date());
   document.getElementById('vTime').value=new Date().toTimeString().slice(0,5);
   document.getElementById('vNotes').value='';
   document.getElementById('vStatus').value=l.status||'warm';
@@ -2882,12 +2938,12 @@ async function saveVisit(){
   try{
     // Data save karo
     leads[idx].visited=true;
-    leads[idx].visitDate=document.getElementById('vDate').value||new Date().toISOString().split('T')[0];
+    leads[idx].visitDate=document.getElementById('vDate').value||localDateStr(new Date());
     leads[idx].visitTime=document.getElementById('vTime').value||new Date().toTimeString().slice(0,5);
     leads[idx].visitNotes=document.getElementById('vNotes').value.trim();
     leads[idx].status=document.getElementById('vStatus').value;
     leads[idx].lastUpdated=new Date().toISOString();
-    if(selectedPhotos.length){leads[idx].visitPhotosLocal=selectedPhotos.map(p=>({dataUrl:p.dataUrl,name:p.name}));}
+    if(selectedPhotos.length){leads[idx].visitPhotosLocal=selectedPhotos.map(p=>({dataUrl:p.thumb||p.dataUrl,name:p.name}));}
     
     // localStorage mein save
     saveData();
@@ -2929,7 +2985,7 @@ function closeVisitModal(){document.getElementById('visitModal').classList.remov
 function removeVisit(id){
   if(confirm('क्या आप visit delete करना चाहते हैं?')){
     const idx=leads.findIndex(l=>l.id===id);
-    if(idx!==-1){leads[idx].visited=false;leads[idx].visitDate=null;leads[idx].visitNotes=null;leads[idx].visitPhotos=null;leads[idx].visitPhotosLocal=null;saveData();renderLeads();renderVisits();updateStats();showToast('Visit delete ho gaya!','success');}
+    if(idx!==-1){leads[idx].lastUpdated=new Date().toISOString();leads[idx].visited=false;leads[idx].visitDate=null;leads[idx].visitNotes=null;leads[idx].visitPhotos=null;leads[idx].visitPhotosLocal=null;saveData();renderLeads();renderVisits();updateStats();showToast('Visit delete ho gaya!','success');}
   }
 }
 
@@ -2992,7 +3048,7 @@ function directSaveContact(l){
            'VERSION:3.0\r\n'+
            'FN:'+l.name+'\r\n'+
            'N:'+lastName+';'+firstName+';;;\r\n'+
-           'TEL;TYPE=CELL,VOICE:+91'+l.phone+'\r\n'+
+           'TEL;TYPE=CELL,VOICE:+'+waNumber(l.phone)+'\r\n'+
            (l.area?'ADR;TYPE=HOME:;;'+l.area+';Jaipur;Rajasthan;;India\r\n':'')+
            'ORG:'+(l.project||'RE Lead')+'; Leado CRM\r\n'+
            'TITLE:'+statusLabel+'\r\n'+
@@ -3117,6 +3173,29 @@ function quickSaveFull(){
 }
 // ===== END QUICK ADD =====
 
+function renderProjectChips(){
+  var box=document.getElementById('filterChips');if(!box)return;
+  box.querySelectorAll('.proj-chip').forEach(function(c){c.remove();});
+  getProjects().forEach(function(p){
+    var d=document.createElement('div');
+    d.className='chip proj-chip'+(currentFilter===p?' active':'');
+    d.setAttribute('onclick',"setFilter('"+jsq(p)+"',this)");
+    d.textContent=p;
+    box.appendChild(d);
+  });
+}
+function refreshFormDropdowns(){
+  var projSel = document.getElementById('fProject');
+  if(projSel){
+    projSel.innerHTML = '<option value="">-- Project चुनें --</option>'
+      + getProjects().map(function(p){ return '<option value="'+esc(p)+'">'+esc(p)+'</option>'; }).join('')
+      + '<option value="Other">Other (अन्य Project)</option>';
+  }
+  var srcSel = document.getElementById('fSource');
+  if(srcSel){
+    srcSel.innerHTML = getSources().map(function(s){ return '<option value="'+esc(s)+'">'+esc(s)+'</option>'; }).join('');
+  }
+}
 function openAddModal(){
   // Projects dropdown dynamically update karo settings se
   var projSel = document.getElementById('fProject');
@@ -3141,7 +3220,7 @@ function openAddModal(){
   window._editFromTab = 'leads';
   clearForm();
   const t=new Date();t.setDate(t.getDate()+1);
-  document.getElementById('fNextDate').value=t.toISOString().split('T')[0];
+  document.getElementById('fNextDate').value=localDateStr(t);
   document.getElementById('fNextTime').value='10:00';
   document.getElementById('leadModal').classList.add('active');
 }
@@ -3156,7 +3235,8 @@ function editLead(id){
   document.getElementById('fName').value=l.name||'';
   document.getElementById('fPhone').value=l.phone||'';
   document.getElementById('fArea').value=l.area||'';
-  const kp=['Imperial Estate','Imperial Galaxy','Solitair Home','Dream Town','Govind Vihar'];
+  refreshFormDropdowns();
+  const kp=getProjects();
   if(kp.includes(l.project)){document.getElementById('fProject').value=l.project;document.getElementById('otherProjectGroup').style.display='none';document.getElementById('fProjectOther').value='';}
   else if(l.project){
     document.getElementById('fProject').value='Other';
@@ -3167,7 +3247,10 @@ function editLead(id){
   }
   else{document.getElementById('fProject').value='';document.getElementById('otherProjectGroup').style.display='none';}
   document.getElementById('fStatus').value=l.status||'warm';
-  document.getElementById('fSource').value=l.source||'Meta Ads';
+  // ✅ v3: पुराना source list में न हो तो भी मिटेगा नहीं
+  (function(){var ss=document.getElementById('fSource');var sv=l.source||getSources()[0]||'';
+    if(sv&&!Array.from(ss.options).some(function(o){return o.value===sv;})){var o=document.createElement('option');o.value=sv;o.textContent=sv;ss.appendChild(o);}
+    ss.value=sv;})();
   document.getElementById('fLastTalk').value=l.lastTalk||'';
   document.getElementById('fNextDate').value=l.nextDate||'';
   document.getElementById('fNextTime').value=l.nextTime||'';
@@ -3179,7 +3262,7 @@ function clearForm(){
   ['fName','fPhone','fArea','fLastTalk','fNextDate','fNextTime','fNextNote','fProjectOther'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('fProject').value='';
   document.getElementById('fStatus').value='warm';
-  document.getElementById('fSource').value='Meta Ads';
+  var _fs=document.getElementById('fSource'); if(_fs.options.length) _fs.selectedIndex=0;
   document.getElementById('otherProjectGroup').style.display='none';
 }
 function checkOtherProject(){
@@ -3242,6 +3325,7 @@ function saveLead(){
 function deleteLead(){
   if(!editingId)return;
   if(!confirm('क्या आप इस lead को delete करना चाहते हैं?'))return;
+  addDeletedIds([editingId]);
   leads=leads.filter(l=>l.id!==editingId);
   saveData();renderLeads();renderFollowups();renderVisits();updateStats();closeModal();
   const delReturnTab = window._editFromTab || 'leads';
@@ -3343,7 +3427,7 @@ function callLead(id,phone){
   _callStartTime = null;
   _callEndTime   = null;
 
-  window.location.href=`tel:${phone}`;
+  window.location.href='tel:+'+waNumber(l.phone);
 
   // Modal after 2.5 sec — call dialing time
   setTimeout(()=>{
@@ -3387,7 +3471,7 @@ function toggleCallFollowup(){
   const checked=document.getElementById('callFollowupCheck').checked;
   document.getElementById('callFollowupFields').style.display=checked?'block':'none';
   document.getElementById('callFollowupHint').style.display=checked?'none':'block';
-  if(checked){const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);document.getElementById('callFollowupDate').value=tomorrow.toISOString().split('T')[0];document.getElementById('callFollowupTime').value='10:00';}
+  if(checked){const tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);document.getElementById('callFollowupDate').value=localDateStr(tomorrow);document.getElementById('callFollowupTime').value='10:00';}
 }
 function saveCallRecord(){
   if(!callingId)return;const idx=leads.findIndex(l=>l.id===callingId);if(idx===-1)return;
@@ -3458,10 +3542,10 @@ function renderWeeklyChart(){
   for(var i=6; i>=0; i--){
     var d = new Date(today);
     d.setDate(today.getDate()-i);
-    var ds = d.toISOString().split('T')[0];
-    var dayLeads = leads.filter(function(l){ return (l.createdAt||'').startsWith(ds); }).length;
+    var ds = localDateStr(d);
+    var dayLeads = leads.filter(function(l){ return isoToLocalDate(l.createdAt)===ds; }).length;
     var dayCalls = leads.reduce(function(sum,l){
-      return sum + (l.callHistory||[]).filter(function(c){ return (c.date||'').startsWith(ds); }).length;
+      return sum + (l.callHistory||[]).filter(function(c){ return isoToLocalDate(c.date)===ds; }).length;
     },0);
     weekData.push({day: days[d.getDay()], leads: dayLeads, calls: dayCalls, isToday: i===0});
   }
@@ -3499,7 +3583,7 @@ function markFollowupDone(id){
   // Next date calculate karo
   var nextDate = new Date();
   nextDate.setDate(nextDate.getDate() + days);
-  var nextDateStr = nextDate.toISOString().split('T')[0];
+  var nextDateStr = localDateStr(nextDate);
   leads[idx].nextDate = nextDateStr;
   leads[idx].lastUpdated = new Date().toISOString();
   saveData();
@@ -3542,8 +3626,8 @@ function showLeadHistory(id){
   }
   // Follow-up
   if(l.nextDate){
-    var isOD=new Date(l.nextDate)<new Date()&&l.status!=='converted';
-    var fd=new Date(l.nextDate);
+    var isOD=l.nextDate<todayStr()&&l.status!=='converted'&&l.status!=='dead';
+    var fd=parseLocalDate(l.nextDate);
     var ftxt='📅 '+fd.toLocaleDateString('hi-IN',{day:'numeric',month:'short',year:'numeric'});
     if(l.nextTime)ftxt+=' ⏰ '+l.nextTime;
     if(l.nextNote)ftxt+=' | 📝 '+l.nextNote;
@@ -3619,18 +3703,19 @@ function openWhatsApp(scheme){
   }, 50);
 }
 
-function waLead(phone,project){
-  const msg=encodeURIComponent('नमस्ते! मैं '+(project||'RE')+' के बारे में आपसे बात करना चाहता था। क्या आप अभी available हैं?');
-  openWhatsApp('whatsapp://send?phone=91'+phone+'&text='+msg);
+function waSend(phone,name,project){
+  var tpl='';
+  try{loadSettings();tpl=getSetting('waTemplate','')||'';}catch(e){}
+  var msg=tpl
+    ? tpl.replace(/\{naam\}/g,name||'').replace(/\{project\}/g,project||'property')
+    : 'नमस्ते'+(name?' '+name+' जी':'')+'! मैं '+(project||'property')+' के बारे में आपसे बात करना चाहता था। क्या आप अभी available हैं?';
+  openWhatsApp('whatsapp://send?phone='+waNumber(phone)+'&text='+encodeURIComponent(msg));
 }
+function waLeadById(id){var l=leads.find(function(x){return x.id===id;});if(!l)return;waSend(l.phone,l.name,l.project);}
+function waLead(phone,project){var l=leads.find(function(x){return x.phone===phone;});waSend(phone,l?l.name:'',project);}
 
 function showExportOptions(){document.getElementById('exportModal').classList.add('active');}
 function closeExportModal(){document.getElementById('exportModal').classList.remove('active');}
-function clearAllData(){
-  if(confirm('क्या आप सभी leads delete करना चाहते हैं? यह वापस नहीं किया जा सकता!')){
-    leads=[];saveData();renderLeads();showToast('सारा data delete ho gaya!','success');
-  }
-}
 function exportData(){
   if(!leads.length){showToast('कोई lead नहीं है');return;}
   let csv='नाम,मोबाइल,एरिया,प्रोजेक्ट,Status,Source,Last Talk,Next Date,Next Time,Note,Site Visit,Visit Date,Visit Notes\n';
@@ -3680,7 +3765,7 @@ function updateBottomNav(tab){
   const bn=document.getElementById('bn-'+tab);if(bn)bn.classList.add('active');
 }
 
-function formatDate(ds){if(!ds)return'—';return new Date(ds).toLocaleDateString('hi-IN',{day:'numeric',month:'short'});}
+function formatDate(ds){if(!ds)return'—';var _d=/^\d{4}-\d{2}-\d{2}$/.test(ds)?parseLocalDate(ds):new Date(ds);return _d.toLocaleDateString('hi-IN',{day:'numeric',month:'short'});}
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast show ${type}`;setTimeout(()=>t.className='toast',3000);}
 function openSearch(){switchTabByName('leads');document.getElementById('searchInput').focus();}
 
@@ -3688,7 +3773,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
 function installApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(r=>{if(r.outcome==='accepted')showToast('🎉 App install ho gayi!','success');deferredPrompt=null;document.getElementById('installBanner').classList.remove('visible');});}}
 
 // ===== AI FEATURES =====
-const AI_API_KEY = 'AIzaSyBfPXdpEVdak9sw07PBXG_-3F0oEcCsVIQ';
+// (AI key हटाई गई — client code में secret key नहीं रखनी चाहिए)
 
 
 
@@ -3750,7 +3835,7 @@ async function saveToGoogleContacts(){
     return;
   }
   const btn=document.getElementById('saveToGoogleBtn');btn.disabled=true;btn.textContent='⏳ Saving...';
-  const contactBody={names:[{givenName:l.name.split(' ')[0],familyName:l.name.split(' ').slice(1).join(' ')||''}],phoneNumbers:[{value:`+91${l.phone}`,type:'mobile'}],organizations:[{name:l.project||'RE Lead',title:`${l.status} Lead`}],addresses:l.area?[{city:l.area,region:'Rajasthan',country:'India'}]:[],biographies:[{value:`RE Diary | Project: ${l.project||'—'} | Area: ${l.area||'—'} | Status: ${l.status} | Source: ${l.source||'—'}`,contentType:'TEXT_PLAIN'}]};
+  const contactBody={names:[{givenName:l.name.split(' ')[0],familyName:l.name.split(' ').slice(1).join(' ')||''}],phoneNumbers:[{value:`+${waNumber(l.phone)}`,type:'mobile'}],organizations:[{name:l.project||'RE Lead',title:`${l.status} Lead`}],addresses:l.area?[{city:l.area,region:'Rajasthan',country:'India'}]:[],biographies:[{value:`RE Diary | Project: ${l.project||'—'} | Area: ${l.area||'—'} | Status: ${l.status} | Source: ${l.source||'—'}`,contentType:'TEXT_PLAIN'}]};
   try{
     const res=await fetch('https://people.googleapis.com/v1/people:createContact',{method:'POST',headers:{'Authorization':`Bearer ${googleAccessToken}`,'Content-Type':'application/json'},body:JSON.stringify(contactBody)});
     if(res.status===401){googleSignOut();showToast('⚠️ Token expire hua — dobara login karein');btn.disabled=false;btn.innerHTML='🔵 Google Contacts में Save करें';return;}
@@ -3819,7 +3904,7 @@ async function performDriveRestore(){
     const backupData=await res.json();if(!backupData.leads||!Array.isArray(backupData.leads))throw new Error('Invalid backup file');
     const backupDate=backupData.backupDate?new Date(backupData.backupDate).toLocaleString('hi-IN'):'—';
     if(confirm(`📦 Backup mila!\n\n📅 Date: ${backupDate}\n👥 Leads: ${backupData.leads.length}\n\nKya restore karein? Maujuda data replace ho jayega.`)){
-      leads=backupData.leads;saveData();renderLeads();renderVisits();renderFollowups();updateStats();showToast(`✅ ${leads.length} leads restore ho gaye!`,'success');
+      leads=backupData.leads;untombstoneCurrent();saveData();refreshAll();showToast(`✅ ${leads.length} leads restore ho gaye!`,'success');
     }
   }catch(e){console.error('Drive restore error:',e);showToast('❌ Restore fail: '+(e.message||'Unknown error'));}
 }
@@ -3856,13 +3941,13 @@ if('serviceWorker' in navigator){
 
 
 function checkNotifications(){
-  const today=new Date().toISOString().split('T')[0];
-  const overdue=leads.filter(l=>l.nextDate&&l.nextDate<today&&l.status!=='converted');
+  const today=localDateStr(new Date());
+  const overdue=leads.filter(l=>l.nextDate&&l.nextDate<today&&l.status!=='converted'&&l.status!=='dead');
   if(overdue.length>0&&localStorage.getItem('re_notified')!==today){document.getElementById('notifBadge').textContent=overdue.length;document.getElementById('notifBadge').style.display='flex';}
 }
 function showOverdueAlert(){
-  const today=new Date().toISOString().split('T')[0];
-  const overdue=leads.filter(l=>l.nextDate&&l.nextDate<today&&l.status!=='converted');
+  const today=localDateStr(new Date());
+  const overdue=leads.filter(l=>l.nextDate&&l.nextDate<today&&l.status!=='converted'&&l.status!=='dead');
   if(overdue.length>0){let msg=`⚠️ ${overdue.length} Follow-ups overdue hain!\n\n`;overdue.slice(0,5).forEach(l=>msg+=`• ${l.name} - ${l.nextDate}\n`);if(overdue.length>5)msg+=`... aur ${overdue.length-5} more`;alert(msg);localStorage.setItem('re_notified',today);document.getElementById('notifBadge').style.display='none';}
 }
 
@@ -3937,7 +4022,7 @@ function checkPin() {
     sessionStorage.setItem('leado_unlocked','1');
     setTimeout(() => {
       document.getElementById('pinScreen').classList.remove('show');
-      showMainApp();
+      if(!window._appShown) showMainApp();
     }, 300);
   } else {
     updatePinDots('error');
@@ -3952,6 +4037,8 @@ function checkPin() {
 
 function showMainApp() {
   // ✅ PIN unlock ke BAAD hi sab kuch chale — ek ek step se
+  window._appShown = true;
+  try{ renderProjectChips(); }catch(e){}
 
   // Step 1: Notifications check (fast)
   checkNotifications();
@@ -3980,14 +4067,36 @@ function showMainApp() {
 }
 
 function pinForgot() {
-  if (confirm('PIN reset karein?\n\nNaya PIN "0000" ho jayega — phir change kar lena.')) {
-    localStorage.setItem('leado_pin', DEFAULT_PIN);
-    pinEntry = '';
-    updatePinDots();
-    document.getElementById('pinSubText').textContent = 'PIN reset ho gaya! "0000" enter karein';
-    document.getElementById('pinErrorMsg').textContent = '';
+  // ✅ v3: बिना जाँच के reset नहीं — registered mobile number पूछो
+  var mob = getUserMobile();
+  var ans = prompt('PIN reset करने के लिए अपना registered mobile number डालें:');
+  if(ans === null) return;
+  if(mob && String(ans).replace(/\D/g,'').slice(-10) !== String(mob).replace(/\D/g,'').slice(-10)){
+    document.getElementById('pinErrorMsg').textContent = '❌ Mobile number match नहीं हुआ';
+    return;
   }
+  localStorage.setItem('leado_pin', DEFAULT_PIN);
+  pinEntry = '';
+  updatePinDots();
+  document.getElementById('pinSubText').textContent = 'PIN reset हो गया! "0000" डालें, फिर Settings में बदल लें';
+  document.getElementById('pinErrorMsg').textContent = '';
 }
+
+// ✅ v3: PIN Lock Timer — ऐप इतनी देर background में रहे तो PIN फिर माँगो
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'hidden'){ window._hiddenAt = Date.now(); return; }
+  var hiddenAt = window._hiddenAt; window._hiddenAt = null;
+  if(!hiddenAt || !window._appShown) return;
+  if(typeof callingId !== 'undefined' && callingId) return; // call के दौरान lock नहीं
+  var mins = 5; try{ loadSettings(); mins = getSetting('pinTimer', 5); }catch(e){}
+  if(!mins) return;
+  if(Date.now() - hiddenAt > mins*60000 && localStorage.getItem('leado_pin')){
+    sessionStorage.removeItem('leado_unlocked');
+    pinEntry = ''; updatePinDots(); pinMode = 'check';
+    document.getElementById('pinSubText').textContent = 'PIN enter करें';
+    document.getElementById('pinScreen').classList.add('show');
+  }
+});
 
 // Settings mein PIN change
 function editProfile(){
@@ -4009,9 +4118,9 @@ function changePin() {
 
 // ===== TODAY FOLLOWUP POPUP =====
 function showTodayFollowupPopup() {
-  const today = new Date().toISOString().split('T')[0];
-  const todayLeads = leads.filter(l => l.nextDate === today && l.status !== 'converted');
-  const overdue = leads.filter(l => l.nextDate && l.nextDate < today && l.status !== 'converted');
+  const today = localDateStr(new Date());
+  const todayLeads = leads.filter(l => l.nextDate === today && l.status !== 'converted' && l.status !== 'dead');
+  const overdue = leads.filter(l => l.nextDate && l.nextDate < today && l.status !== 'converted' && l.status !== 'dead');
   const all = [...todayLeads, ...overdue.slice(0, 3)];
 
   if (!all.length) return;
@@ -4024,8 +4133,8 @@ function showTodayFollowupPopup() {
   list.innerHTML = all.map(l => `
     <div class="notif-item">
       <div>
-        <div class="notif-name">${l.name}</div>
-        <div class="notif-date">${l.nextDate === today ? '⏰ Aaj' : '⚠️ Overdue: ' + l.nextDate} — ${l.project || ''}</div>
+        <div class="notif-name">${esc(l.name)}</div>
+        <div class="notif-date">${l.nextDate === today ? '⏰ Aaj' : '⚠️ Overdue: ' + l.nextDate} — ${esc(l.project || '')}</div>
       </div>
       <a href="tel:${l.phone}" style="background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);color:#00d4aa;padding:5px 10px;border-radius:8px;font-size:11px;text-decoration:none">📞 Call</a>
     </div>
@@ -4076,7 +4185,7 @@ function sendBrowserNotif(title, body) {
 
 // ===== HOME DASHBOARD =====
 function renderHomeDashboard() {
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr(new Date());
   const now = new Date();
   const hour = now.getHours();
 
@@ -4101,7 +4210,7 @@ function renderHomeDashboard() {
   // Today stats
   const todayFollowups = leads.filter(l => l.nextDate === today && l.status !== 'converted' && l.status !== 'dead');
   const overdueLeads = leads.filter(l => l.nextDate && l.nextDate < today && l.status !== 'converted' && l.status !== 'dead');
-  const todayNew = leads.filter(l => l.createdAt && l.createdAt.startsWith(today));
+  const todayNew = leads.filter(l => isoToLocalDate(l.createdAt)===today);
   const todayVisits = leads.filter(l => l.visitDate === today);
   const allFollowups = [...todayFollowups, ...overdueLeads];
 
@@ -4136,8 +4245,8 @@ function renderHomeDashboard() {
         <div class="home-f-left">
           <div class="home-f-dot" style="background:${dotColor}"></div>
           <div style="min-width:0">
-            <div class="home-f-name">${l.name}</div>
-            <div class="home-f-proj">${l.project||'—'} · ${isOverdue ? '⚠️ Overdue: '+l.nextDate : '📅 Aaj'}</div>
+            <div class="home-f-name">${esc(l.name)}</div>
+            <div class="home-f-proj">${esc(l.project||'—')} · ${isOverdue ? '⚠️ Overdue: '+l.nextDate : '📅 Aaj'}</div>
           </div>
         </div>
         <div class="home-f-btns">
@@ -4159,8 +4268,8 @@ function renderHomeDashboard() {
     hotList.innerHTML = topLeads.map(l => `
       <div class="home-hot-item">
         <div style="min-width:0;flex:1">
-          <div class="home-f-name">${l.name}</div>
-          <div class="home-f-proj">${l.project||'—'} · ${l.area||''}</div>
+          <div class="home-f-name">${esc(l.name)}</div>
+          <div class="home-f-proj">${esc(l.project||'—')} · ${esc(l.area||'')}</div>
         </div>
         <div style="display:flex;gap:6px;align-items:center">
           <span class="home-hot-badge ${l.status==='hot'?'badge-hot-sm':'badge-warm-sm'}">${l.status==='hot'?'HOT':'WARM'}</span>
@@ -4170,9 +4279,9 @@ function renderHomeDashboard() {
   }
 
   // Monthly progress
-  const thisMonth = new Date().toISOString().slice(0, 7);
-  const monthLeads = leads.filter(l => l.createdAt && l.createdAt.startsWith(thisMonth)).length;
-  const monthDeals = leads.filter(l => l.status === 'converted' && l.lastUpdated && l.lastUpdated.startsWith(thisMonth)).length;
+  const thisMonth = todayStr().slice(0, 7);
+  const monthLeads = leads.filter(l => isoToLocalDate(l.createdAt).startsWith(thisMonth)).length;
+  const monthDeals = leads.filter(l => l.status === 'converted' && isoToLocalDate(l.lastUpdated).startsWith(thisMonth)).length;
   const monthVisits = leads.filter(l => l.visitDate && l.visitDate.startsWith(thisMonth)).length;
 
   document.getElementById('homeProgLeads').textContent = monthLeads + ' is mahine';
@@ -4535,7 +4644,7 @@ function showSkeletonLoading(){
 
 // ===== ONESIGNAL NOTIFICATIONS =====
 const OS_APP_ID = '4f8bda74-1bbd-4e7c-915f-94fcfd15795c';
-const OS_REST_API_KEY = 'os_v2_app_69f0132ef79944569a8298c255827e3d'; // Update this later
+// OneSignal REST API key यहाँ से हटाई गई — यह सिर्फ़ server पर रहनी चाहिए
 
 // Follow-up reminder schedule karo
 async function scheduleFollowupNotification(lead){
@@ -4645,10 +4754,9 @@ function showBrowserNotification(title, body, leadId){
 
 // Sab leads ke notifications schedule karo
 function scheduleAllNotifications(){
-  const today = new Date().toISOString().split('T')[0];
+  const today = localDateStr(new Date());
   const upcomingLeads = leads.filter(l => 
-    l.nextDate && l.nextDate >= today && 
-    l.status !== 'converted' && l.nextTime
+    l.nextDate && l.nextDate >= today && l.status !== 'converted' && l.status !== 'dead' && l.nextTime
   );
   upcomingLeads.forEach(l => scheduleFollowupNotification(l));
   if(upcomingLeads.length > 0){
@@ -4669,44 +4777,7 @@ function requestNotificationPermission(){
   }
 }
 
-// App load hone pe notifications check karo
-window.addEventListener('load', function(){
-  setTimeout(function(){
-    requestNotificationPermission();
-    scheduleAllNotifications();
-  }, 5000);
-});
-
-// TWA ke liye — splash screen ke baad seedha permission maango
-window.addEventListener('load', function(){
-  setTimeout(function(){
-    // TWA/Android detect karo
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    
-    if('Notification' in window){
-      if(Notification.permission === 'default'){
-        // PWA + Browser dono mein permission maango
-        Notification.requestPermission().then(function(permission){
-          if(permission === 'granted'){
-            showToast('🔔 Notifications ON!', 'success');
-            scheduleAllNotifications();
-            if(window.OneSignal) OneSignal.User.PushSubscription.optIn();
-          }
-        });
-      } else if(Notification.permission === 'granted'){
-        // Already allowed — notifications schedule karo
-        scheduleAllNotifications();
-        if(window.OneSignal) OneSignal.User.PushSubscription.optIn();
-      } else if(Notification.permission === 'denied'){
-        // Blocked hai — user ko guide karo
-        if(isStandalone){
-          console.log('[PWA] Notifications blocked — user ko manually allow karna hoga');
-        }
-      }
-    }
-  }, 3000);
-});
+// ✅ v3: duplicate permission requests हटाए — अब सिर्फ़ नीचे वाला load listener
 
 
 // ===== PLOT CALCULATOR =====
@@ -4802,29 +4873,26 @@ window.addEventListener('load', function(){
 // ===== END PLOT CALCULATOR =====
 
 
-// ===== LIGHT MODE =====
+// ===== THEME (v3 — एक ही सिस्टम: dark / amoled / light) =====
 (function(){
-  function applyTheme(mode){
-    if(mode === 'dark'){
-      document.body.classList.add('dark-mode');
-      document.body.classList.remove('light-mode');
-      const icon = document.getElementById('themeIcon');
-      if(icon) icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-    } else {
-      document.body.classList.remove('dark-mode');
-      document.body.classList.add('light-mode');
-      const icon = document.getElementById('themeIcon');
-      if(icon) icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-    }
-  }
-  // Load saved theme
-  var saved = localStorage.getItem('leado_theme') || 'dark';
-  applyTheme(saved);
-
+  var SUN='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  var MOON='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  window.applyTheme = function(mode, skipSave){
+    if(['dark','amoled','light'].indexOf(mode)<0) mode='dark';
+    document.body.classList.remove('light-mode','dark-mode','amoled-mode');
+    document.body.style.background='';
+    if(mode==='light') document.body.classList.add('light-mode');
+    else { document.body.classList.add('dark-mode'); if(mode==='amoled') document.body.classList.add('amoled-mode'); }
+    var icon=document.getElementById('themeIcon');
+    if(icon) icon.innerHTML = mode==='light' ? MOON : SUN;
+    var meta=document.querySelector('meta[name="theme-color"]');
+    if(meta) meta.setAttribute('content', mode==='light' ? '#ffffff' : (mode==='amoled' ? '#000000' : '#0f1923'));
+    if(!skipSave) localStorage.setItem('leado_theme', mode);
+  };
+  window.getTheme = function(){ return localStorage.getItem('leado_theme') || 'dark'; };
+  applyTheme(getTheme(), true);
   window.toggleTheme = function(){
-    var current = document.body.classList.contains('dark-mode') ? 'dark' : 'light';
-    var next = current === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('leado_theme', next);
+    var next = getTheme()==='light' ? 'dark' : 'light';
     applyTheme(next);
     showToast(next === 'light' ? '☀️ Light Mode ON' : '🌙 Dark Mode ON');
   };
@@ -4923,8 +4991,10 @@ window.addEventListener('load', function(){
   };
 
   // Close on backdrop
-  document.getElementById('fixerModal').addEventListener('click', function(e){
-    if(e.target === this) this.classList.remove('active');
+  // ✅ v3: पहले यहाँ crash होता था (modal HTML बाद में है) — इसलिए Unfollowed का Save बटन कभी चलता ही नहीं था
+  document.addEventListener('DOMContentLoaded', function(){
+    var fm = document.getElementById('fixerModal');
+    if(fm) fm.addEventListener('click', function(e){ if(e.target === this) this.classList.remove('active'); });
   });
 
   function renderFixerList(){
@@ -4943,20 +5013,20 @@ window.addEventListener('load', function(){
     // Today's date as default
     var today = new Date();
     today.setDate(today.getDate() + 1); // Default: kal
-    var defaultDate = today.toISOString().split('T')[0];
+    var defaultDate = localDateStr(today);
 
     el.innerHTML = noDate.map(function(l){
-      var initials = (l.name||'?').trim().charAt(0).toUpperCase();
+      var initials = esc((l.name||'?').trim().charAt(0).toUpperCase());
       var color = STATUS_COLORS[l.status] || '#6b7280';
       var statusLabel = {hot:'🔥 Hot',warm:'⭐ Interested',cold:'❄️ Thinking',dead:'🚫 No',converted:'✅ Done'}[l.status] || l.status;
       return [
         '<div class="fixer-lead-item" id="fli-'+l.id+'">',
           '<div class="fixer-lead-avatar" style="background:'+color+'">'+initials+'</div>',
           '<div class="fixer-lead-info">',
-            '<div class="fixer-lead-name">'+l.name+'</div>',
+            '<div class="fixer-lead-name">'+esc(l.name)+'</div>',
             '<div class="fixer-lead-meta">'+statusLabel+' &bull; '+(l.project||'—')+(l.phone?' &bull; '+l.phone:'')+'</div>',
           '</div>',
-          '<input type="date" class="fixer-date-inp" id="fd-'+l.id+'" value="'+defaultDate+'" min="'+new Date().toISOString().split('T')[0]+'">',
+          '<input type="date" class="fixer-date-inp" id="fd-'+l.id+'" value="'+defaultDate+'" min="'+localDateStr(new Date())+'">',
           '<button class="fixer-save-btn" data-id="'+l.id+'" onclick="fixerSave(this.dataset.id)">Save</button>',
           '<span class="fixer-saved" id="fs-'+l.id+'">✅ Done</span>',
         '</div>'
@@ -4978,11 +5048,9 @@ window.addEventListener('load', function(){
     // Update lead in local array and save
     var li = leads.findIndex(function(x){ return x.id===id; });
     if(li>=0) leads[li] = lead;
-    if(window._fbDb && window._fbUser && window._fbFunctions){
-      var _doc = window._fbFunctions.doc;
-      var _setDoc = window._fbFunctions.setDoc;
-      _setDoc(_doc(window._fbDb,'users',window._fbUser.uid,'leads',id), lead).catch(function(e){ console.log('Fixer save error:',e); });
-    }
+    // ✅ v3: पहले यहाँ save ही नहीं होता था — अब फ़ोन + cloud दोनों में save
+    saveData();
+    try{ renderFollowups(); renderHomeDashboard(); }catch(e){}
 
     // UI feedback
     var saveBtn = document.querySelector('[data-id="'+id+'"].fixer-save-btn');
@@ -5059,19 +5127,19 @@ function openSettings(){
   loadSettings();
   document.getElementById('settingsModal').classList.add('active');
   // Fill profile fields
-  document.getElementById('settName').value = getSetting('name', window._appProfile&&window._appProfile.name||'');
-  document.getElementById('settPhone').value = getSetting('phone', '');
-  document.getElementById('settCity').value = getSetting('city', 'Jaipur');
+  document.getElementById('settName').value = (localStorage.getItem('leado_fname')||'') + (localStorage.getItem('leado_lname') ? ' '+localStorage.getItem('leado_lname') : '');
+  document.getElementById('settPhone').value = getUserMobile();
+  document.getElementById('settCity').value = getUserCity();
   document.getElementById('settProfession').value = getSetting('profession', 'Real Estate');
   // Avatar
   var photo = getSetting('profilePhoto','');
   var av = document.getElementById('settingsAvatarPreview');
   if(av){
     if(photo){ av.innerHTML='<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover">'; }
-    else{ av.textContent = (getSetting('name','')||'K').charAt(0).toUpperCase(); }
+    else{ av.textContent = (getUserName()||'K').charAt(0).toUpperCase(); }
   }
   // Theme buttons
-  var theme = getSetting('theme','dark');
+  var theme = getTheme();
   ['dark','amoled','light'].forEach(function(t){
     var b = document.getElementById('theme-'+t);
     if(b) b.style.borderWidth = t===theme ? '2px' : '1px';
@@ -5124,22 +5192,20 @@ function saveProfileSettings(){
   var phone = document.getElementById('settPhone').value.trim();
   var city = document.getElementById('settCity').value.trim();
   var profession = document.getElementById('settProfession').value.trim();
-  saveSetting('name', name);
-  saveSetting('phone', phone);
-  saveSetting('city', city);
-  saveSetting('profession', profession);
-  // Update header
-  var hn = document.getElementById('headerName');
-  var hs = document.getElementById('headerSub');
-  var ha = document.getElementById('headerAvatar');
-  if(hn && name) hn.textContent = name + ' Ji';
-  if(hs) hs.textContent = (profession||'Real Estate') + ' · ' + (city||'Jaipur');
-  var photo = getSetting('profilePhoto','');
-  if(ha){
-    if(photo){ ha.innerHTML='<img src="'+photo+'" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">'; }
-    else if(name){ ha.textContent = name.charAt(0).toUpperCase(); ha.innerHTML=''; ha.textContent = name.charAt(0).toUpperCase(); }
+  if(!name){ showToast('⚠️ नाम ज़रूरी है!'); return; }
+  // ✅ v3: प्रोफ़ाइल अब एक ही जगह सेव होती है (Home, Header, Footer सब में दिखेगी)
+  var parts = name.split(/\s+/);
+  localStorage.setItem('leado_fname', parts[0]);
+  localStorage.setItem('leado_lname', parts.slice(1).join(' '));
+  if(phone) localStorage.setItem('leado_mobile', phone);
+  if(city) localStorage.setItem('leado_city', city);
+  saveSetting('profession', profession || 'Real Estate');
+  updateUserUI();
+  try{ renderHomeDashboard(); }catch(e){}
+  if(typeof saveUserProfileToFirestore === 'function'){
+    saveUserProfileToFirestore({ fname: parts[0], lname: parts.slice(1).join(' '), mobile: getUserMobile(), whatsapp: getUserWhatsApp(), city: getUserCity(), updatedAt: new Date().toISOString() });
   }
-  showToast('✅ Profile save ho gaya!','success');
+  showToast('✅ Profile save हो गई!','success');
 }
 
 function handleProfilePhoto(input){
@@ -5158,10 +5224,7 @@ function handleProfilePhoto(input){
 }
 
 function applyThemeSetting(theme){
-  saveSetting('theme', theme);
-  if(theme==='light'){ document.body.classList.add('light-mode'); document.body.style.background=''; }
-  else if(theme==='amoled'){ document.body.classList.remove('light-mode'); document.body.style.background='#000'; document.body.style.setProperty('--bg-dark','#000'); }
-  else{ document.body.classList.remove('light-mode'); document.body.style.background=''; }
+  applyTheme(theme);
   ['dark','amoled','light'].forEach(function(t){
     var b=document.getElementById('theme-'+t);
     if(b){b.style.borderWidth=t===theme?'2px':'1px';b.style.borderColor=t===theme?'var(--accent-primary)':'var(--border)';}
@@ -5172,7 +5235,7 @@ function applyThemeSetting(theme){
 function applyFontSize(size){
   saveSetting('fontSize', size);
   var scale = size==='small'?0.9:size==='large'?1.1:1;
-  document.documentElement.style.fontSize = (scale*16)+'px';
+  document.documentElement.style.zoom = scale; // ✅ v3: px वाले CSS पर भी असर
   ['small','normal','large'].forEach(function(f){
     var b=document.getElementById('font-'+f);
     if(b){b.style.borderWidth=f===size?'2px':'1px';b.style.borderColor=f===size?'var(--accent-primary)':'var(--border)';}
@@ -5184,7 +5247,7 @@ function changePinSetting(){
   var newPin = document.getElementById('settNewPin').value;
   var stored = localStorage.getItem('leado_pin')||'0000';
   if(oldPin !== stored){ showToast('❌ Purana PIN galat hai!'); return; }
-  if(newPin.length !== 4){ showToast('⚠️ Naya PIN 4 digit ka hona chahiye!'); return; }
+  if(!/^\d{4}$/.test(newPin)){ showToast('⚠️ नया PIN 4 अंकों (digits) का होना चाहिए!'); return; }
   localStorage.setItem('leado_pin', newPin);
   document.getElementById('settOldPin').value='';
   document.getElementById('settNewPin').value='';
@@ -5231,12 +5294,13 @@ function getProjects(){
 }
 function saveProjects(){
   localStorage.setItem('leado_projects', JSON.stringify(_customProjects));
+  try{ renderProjectChips(); }catch(e){}
   // Update lead form dropdown
   var sel = document.getElementById('fProject');
   if(sel){
     var curr = sel.value;
     sel.innerHTML = '<option value="">-- Project चुनें --</option>'
-      + _customProjects.map(function(p){ return '<option value="'+p+'">'+p+'</option>'; }).join('')
+      + _customProjects.map(function(p){ return '<option value="'+esc(p)+'">'+esc(p)+'</option>'; }).join('')
       + '<option value="Other">Other (अन्य Project)</option>';
     if(curr) sel.value = curr;
   }
@@ -5321,7 +5385,7 @@ function backupData(){
   var blob = new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
   var url = URL.createObjectURL(blob);
   var a = document.createElement('a');
-  a.href=url; a.download='leado_backup_'+new Date().toISOString().split('T')[0]+'.json';
+  a.href=url; a.download='leado_backup_'+localDateStr(new Date())+'.json';
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(function(){ URL.revokeObjectURL(url); },2000);
   showToast('✅ Backup download ho gaya!','success');
@@ -5333,7 +5397,7 @@ function restoreData(input){
     try{
       var data = JSON.parse(e.target.result);
       if(!confirm('Restore karoge? Current data replace ho jaayega!')) return;
-      if(data.leads){ leads = data.leads; saveData(); renderLeads(); updateStats(); }
+      if(data.leads){ leads = data.leads; untombstoneCurrent(); saveData(); refreshAll(); }
       if(data.settings){ _appSettings = data.settings; localStorage.setItem('leado_settings',JSON.stringify(_appSettings)); }
       if(data.projects){ _customProjects = data.projects; saveProjects(); }
       if(data.sources){ _customSources = data.sources; saveSources(); }
@@ -5346,19 +5410,20 @@ function restoreData(input){
 
 // DATA CLEAR
 function clearAllData(type){
-  if(type==='all'){
-    if(!confirm('⚠️ SAARA DATA DELETE HOGA — Wapas nahi aayega!\n\nPehle backup lo!')) return;
-    leads = []; saveData(); renderLeads(); updateStats(); renderHomeDashboard();
+  if(!type || type==='all'){
+    if(!confirm('⚠️ सारा DATA DELETE होगा — वापस नहीं आएगा!\n\nपहले Backup ले लें!')) return;
+    addDeletedIds(leads.map(function(l){return l.id;}));
+    leads = []; saveData(); refreshAll();
     showToast('✅ Saara data clear ho gaya','success');
     closeSettings();
   } else if(type==='calls'){
     if(!confirm('Saari call history delete karni hai?')) return;
-    leads.forEach(function(l){ l.callHistory=[]; });
+    leads.forEach(function(l){ l.callHistory=[]; l.lastUpdated=new Date().toISOString(); });
     saveData(); updateStats();
     showToast('✅ Call history clear ho gayi','success');
   } else if(type==='visits'){
     if(!confirm('Saari visits delete karni hain?')) return;
-    leads.forEach(function(l){ l.visited=false; l.visitDate=''; l.visitNotes=''; });
+    leads.forEach(function(l){ l.visited=false; l.visitDate=''; l.visitNotes=''; l.visitPhotosLocal=null; l.visitPhotos=null; l.lastUpdated=new Date().toISOString(); });
     saveData(); renderVisits(); updateStats();
     showToast('✅ Visits clear ho gayi','success');
   }
@@ -5367,28 +5432,18 @@ function clearAllData(type){
 // Load settings on start
 document.addEventListener('DOMContentLoaded', function(){
   loadSettings();
-  // Apply saved theme
-  var savedTheme = getSetting('theme','dark');
-  if(savedTheme==='light') document.body.classList.add('light-mode');
-  else if(savedTheme==='amoled') document.body.style.background='#000';
-  // Apply saved font size
+  // पुराने वर्ज़न की theme setting को नए सिस्टम में ले आओ
+  if(!localStorage.getItem('leado_theme') && getSetting('theme','')) applyTheme(getSetting('theme','dark'));
   var savedFont = getSetting('fontSize','normal');
   if(savedFont!=='normal') applyFontSize(savedFont);
-  // Apply saved profile
-  var savedName = getSetting('name','');
-  var savedCity = getSetting('city','Jaipur');
-  var savedProf = getSetting('profession','Real Estate');
-  var savedPhoto = getSetting('profilePhoto','');
-  if(savedName){
-    var hn=document.getElementById('headerName');
-    if(hn) hn.textContent = savedName+' Ji';
+  // पुराने Settings वाले नाम को एक बार migrate करो
+  var oldName = getSetting('name','');
+  if(oldName && !localStorage.getItem('leado_fname')){
+    var pp = oldName.trim().split(/\s+/);
+    localStorage.setItem('leado_fname', pp[0]); localStorage.setItem('leado_lname', pp.slice(1).join(' '));
   }
-  var hs=document.getElementById('headerSub');
-  if(hs && (savedCity||savedProf)) hs.textContent=(savedProf||'Real Estate')+' · '+(savedCity||'Jaipur');
-  if(savedPhoto){
-    var ha=document.getElementById('headerAvatar');
-    if(ha) ha.innerHTML='<img src="'+savedPhoto+'" style="width:100%;height:100%;object-fit:cover;border-radius:inherit">';
-  }
+  if(localStorage.getItem('leado_fname')) updateUserUI();
+  try{ renderProjectChips(); }catch(e){}
 });
 // ═══════════════════════════════════════════════════
 // END SETTINGS
@@ -5469,7 +5524,7 @@ function isDNDTime(){
 }
 
 function sendLocalNotif(title, body, tag){
-  if(Notification.permission!=='granted') return;
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
   if(isDNDTime()) return;
   try{
     var n = new Notification(title,{
@@ -5481,16 +5536,16 @@ function sendLocalNotif(title, body, tag){
 }
 
 function getFollowupStats(){
-  var today = new Date().toISOString().split('T')[0];
+  var today = localDateStr(new Date());
   return {
-    todayFU: leads.filter(function(l){return l.nextDate===today;}),
-    overdueFU: leads.filter(function(l){return l.nextDate&&l.nextDate<today;}),
+    todayFU: leads.filter(function(l){return l.nextDate===today&&l.status!=='converted'&&l.status!=='dead';}),
+    overdueFU: leads.filter(function(l){return l.nextDate&&l.nextDate<today&&l.status!=='converted'&&l.status!=='dead';}),
     hotLeads: leads.filter(function(l){return l.status==='hot';})
   };
 }
 
 function checkAndSendNotifs(){
-  if(Notification.permission!=='granted') return;
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
   try{ loadSettings(); }catch(e){}
   var now = new Date();
   var h = now.getHours();
@@ -5499,9 +5554,9 @@ function checkAndSendNotifs(){
 
   // ── Morning Briefing ──
   if(getSetting('morningBriefing',true)){
-    var mTime = (getSetting('morningTime','09:00')||'09:00').split(':');
+    var mTime = (getSetting('morningTime','08:00')||'08:00').split(':');
     var mH=parseInt(mTime[0]), mM=parseInt(mTime[1]||0);
-    if(h===mH && m===mM){
+    var _nowMin=h*60+m; if(_nowMin>=mH*60+mM && h<12){ // ✅ v3: समय निकल जाए तो भी सुबह ऐप खोलने पर मिलेगा
       var lastMorn = localStorage.getItem('leado_last_morning');
       if(lastMorn!==todayStr){
         var stats = getFollowupStats();
@@ -5519,7 +5574,7 @@ function checkAndSendNotifs(){
   }
 
   // ── Shaam 5 baje Hot Lead Alert ──
-  if(h===17 && m===0){
+  if(h>=17 && h<21){
     var lastEvening = localStorage.getItem('leado_last_evening');
     if(lastEvening!==todayStr){
       var stats2 = getFollowupStats();
@@ -5536,7 +5591,7 @@ function checkAndSendNotifs(){
   }
 
   // ── Dopahar 1 baje — Aaj ke baaki follow-ups reminder ──
-  if(h===13 && m===0){
+  if(h>=13 && h<17){
     var lastNoon = localStorage.getItem('leado_last_noon');
     if(lastNoon!==todayStr){
       var stats3 = getFollowupStats();
@@ -5544,7 +5599,7 @@ function checkAndSendNotifs(){
         var pending = stats3.todayFU.filter(function(l){
           // Unhe dikhao jinhe aaj call nahi ki
           var lastCall = l.callHistory && l.callHistory.length ? l.callHistory[l.callHistory.length-1].date : '';
-          return !lastCall || !lastCall.startsWith(new Date().toISOString().split('T')[0]);
+          return !lastCall || isoToLocalDate(lastCall)!==todayStr();
         });
         if(pending.length>0){
           sendLocalNotif(
@@ -5562,6 +5617,7 @@ function checkAndSendNotifs(){
 // ── Scheduler start karo ──
 function startNotifScheduler(){
   if(window._notifScheduler) clearInterval(window._notifScheduler);
+  setTimeout(checkAndSendNotifs, 2000); // ऐप खुलते ही एक बार जाँचो
   // Har 60 second mein check karo
   window._notifScheduler = setInterval(checkAndSendNotifs, 60000);
   console.log('✅ Notification scheduler started');
@@ -5570,12 +5626,17 @@ function startNotifScheduler(){
 // ── Permission maango agar nahi hai ──
 function requestNotifPermission(){
   if(!('Notification' in window)) return;
+  function _granted(){
+    startNotifScheduler();
+    try{ scheduleAllNotifications(); }catch(e){}
+    try{ if(window.OneSignal && OneSignal.User) OneSignal.User.PushSubscription.optIn(); }catch(e){}
+  }
   if(Notification.permission==='default'){
     Notification.requestPermission().then(function(p){
-      if(p==='granted'){ startNotifScheduler(); showToast('✅ Notifications on ho gayi!','success'); }
+      if(p==='granted'){ _granted(); showToast('✅ Notifications on हो गईं!','success'); }
     });
   } else if(Notification.permission==='granted'){
-    startNotifScheduler();
+    _granted();
   }
 }
 
@@ -5583,7 +5644,6 @@ function requestNotifPermission(){
 window.addEventListener('load', function(){
   setTimeout(function(){
     requestNotifPermission();
-    startNotifScheduler();
   }, 3000);
   // Weekly chart aur funnel render karo
   setTimeout(function(){
